@@ -6,12 +6,7 @@
 <title>ATNM LFI Core Dashboard v4.9</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-/* === ATNM LFI CORE — dashboard.html v4.9 ===
-   Brand: DG=#4d555b  BL=#21409a  OR=#f58220
-   GitHub Pages edition — calls Apps Script JSON API
-   In production: replace DEMO_DATA with fetch(API_URL)
-   Download full file: drive.google.com/uc?export=download&id=182-lIw732qTTPHXAOIPKuzMCQ7z7IbLe
-*/
+/* ATNM LFI CORE DASHBOARD v4.9 — Brand: DG=#4d555b BL=#21409a OR=#f58220 */
 :root{--dg:#4d555b;--bl:#21409a;--or:#f58220;--gr:#28a745;--am:#ffc107;--rd:#dc3545;--cy:#17a2b8;--bg:#f0f2f5;--border:#e0e4ea;--muted:#6c757d;--sw:240px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:var(--bg);color:#212529;font-size:13px;display:flex;min-height:100vh}
@@ -30,44 +25,45 @@ nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or
 .mini-row strong{color:#fff}
 .sb-form-btn{display:block;margin:10px;padding:9px;background:var(--or);color:#fff;text-align:center;text-decoration:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
 .sb-form-btn:hover{background:#d46d16}
+#stog{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--dg);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:18px;cursor:pointer}
 #main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
 #topbar{background:#fff;padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.page-title{font-size:15px;font-weight:700;color:var(--dg);flex:1}
-.lang-toggle{display:flex;gap:4px}
+.ptitle{font-size:15px;font-weight:700;color:var(--dg);flex:1}
+.ltgl{display:flex;gap:4px}
 .lbt{padding:5px 10px;border:1px solid var(--border);border-radius:5px;background:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
 .lbt.active{background:var(--bl);color:#fff;border-color:var(--bl)}
-.btn-ref{padding:6px 14px;background:var(--dg);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer}
-.btn-ref:hover{background:var(--bl)}
+.bref{padding:6px 14px;background:var(--dg);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer}
+.bref:hover{background:var(--bl)}
+.bref.ld{opacity:.6;cursor:not-allowed}
 #lu{font-size:10px;color:var(--muted);white-space:nowrap}
 .grad{height:3px;background:linear-gradient(to right,var(--bl),var(--or) 60%,var(--gr))}
 #drillBar{background:#e8f0fe;border-bottom:1px solid #c5d1f0;padding:7px 20px;display:none;align-items:center;gap:10px;font-size:12px}
 #drillBar.vis{display:flex}
 #drillInfo{font-weight:600;color:var(--bl)}
-.clr-drill{padding:3px 10px;background:var(--bl);color:#fff;border:none;border-radius:4px;font-size:11px;cursor:pointer}
+.cld{padding:3px 10px;background:var(--bl);color:#fff;border:none;border-radius:4px;font-size:11px;cursor:pointer}
 #fb{background:#fff;padding:10px 20px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
 .fg{display:flex;flex-direction:column;gap:3px}
 .fg label{font-size:10px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:.5px}
 .fg select,.fg input{border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:12px;background:#fff;outline:none;height:30px}
 .fg select:focus,.fg input:focus{border-color:var(--bl)}
-.fg-s{flex:1;min-width:150px}
-.bfil{padding:0 12px;height:30px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer}
-.breset{background:var(--dg);color:#fff}.breset:hover{background:var(--bl)}
-.brefr{background:var(--or);color:#fff}.brefr:hover{background:#d46d16}
-#fc{font-size:11px;color:var(--muted);margin-left:auto;align-self:center}
+.fgs{flex:1;min-width:150px}
+.bf{padding:0 12px;height:30px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer}
+.brst{background:var(--dg);color:#fff}.brst:hover{background:var(--bl)}
+.brf{background:var(--or);color:#fff}.brf:hover{background:#d46d16}
+#frc{font-size:11px;color:var(--muted);margin-left:auto;align-self:center}
 #content{padding:16px 20px;flex:1}
 .page{display:none}.page.active{display:block}
-.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-.kc{flex:1;min-width:130px;border-radius:10px;padding:14px 12px;text-align:center}
-.ki{font-size:18px;margin-bottom:4px;opacity:.9}
-.kv{font-size:34px;font-weight:800;line-height:1;margin-bottom:4px}
+.krow{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.kc{flex:1;min-width:130px;border-radius:10px;padding:14px 12px;text-align:center;transition:transform .15s,box-shadow .15s}
+.kc:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.13)}
+.ki{font-size:18px;margin-bottom:4px;opacity:.9}.kv{font-size:34px;font-weight:800;line-height:1;margin-bottom:4px}
 .kl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;opacity:.88;font-weight:600}
 .kp{font-size:10px;opacity:.7;margin-top:2px}
-.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.crow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .cc{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .ch{font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--bg);display:flex;align-items:center;justify-content:space-between}
 .dh{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
-.cv{position:relative;height:260px}
-.cvl{position:relative;height:310px}
+.cv{position:relative;height:260px}.cvl{position:relative;height:310px}
 .fcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .fc{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden}
 .fc:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
@@ -91,27 +87,32 @@ nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or
 .fcc.rtl .fcs p{border-left:none;border-right:3px solid var(--bl)}
 .fps{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--bg)}
 .fp{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:#f0f4ff;color:var(--bl)}
-.fp.ok{background:#d4edda;color:#155724}
-.fp.pend{background:#fff3cd;color:#856404}
-.fpptlnk{display:flex;gap:6px;margin-top:6px}
-.plink{padding:4px 9px;border-radius:4px;font-size:11px;font-weight:600;text-decoration:none;background:var(--bl);color:#fff}
+.fp.ok{background:#d4edda;color:#155724}.fp.pnd{background:#fff3cd;color:#856404}
+.fpl{display:flex;gap:6px;margin-top:6px}
+.plnk{padding:4px 9px;border-radius:4px;font-size:11px;font-weight:600;text-decoration:none;background:var(--bl);color:#fff}
 .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
-.appr{background:#d4edda;color:#155724}
-.pend{background:#fff3cd;color:#856404}
-.ret{background:#f8d7da;color:#721c24}
-.msa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.ba{background:#d4edda;color:#155724}.bp{background:#fff3cd;color:#856404}.br{background:#f8d7da;color:#721c24}
+.msg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .mc{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid var(--border)}
-.mc.open{border-left-color:var(--rd)}
-.mc.closed{border-left-color:var(--gr)}
-.mc.notreq{border-left-color:var(--am)}
+.mc.open{border-left-color:var(--rd)}.mc.closed{border-left-color:var(--gr)}.mc.notreq{border-left-color:var(--am)}
 .mid{font-family:monospace;font-size:11px;color:var(--muted);margin-bottom:3px}
 .mdi{font-size:13px;font-weight:700;color:var(--dg);margin-bottom:5px}
 .mr{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;color:var(--muted)}
 .mr strong{color:#212529}
-@media(max-width:900px){.chart-row{grid-template-columns:1fr}}
+#loader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.75);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+#loader.vis{display:flex}
+.spin{width:40px;height:40px;border:4px solid #ddd;border-top-color:var(--bl);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#loader p{font-size:13px;color:var(--dg);font-weight:600}
+.empty{text-align:center;padding:40px;color:var(--muted);grid-column:1/-1}
+.empty p{font-size:14px;margin-top:8px}
+@media(max-width:900px){.crow{grid-template-columns:1fr}.fcg{grid-template-columns:1fr}}
+@media(max-width:700px){#sb{transform:translateX(-100%)}#sb.open{transform:translateX(0)}#main{margin-left:0}#stog{display:block}.kc{min-width:110px}}
 </style>
 </head>
 <body>
+
+<button id="stog" onclick="document.getElementById('sb').classList.toggle('open')">&#9776;</button>
 
 <div id="sb">
   <div class="sb-logo">
@@ -126,33 +127,31 @@ nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or
     <a onclick="navTo('form',this)">&#128221; Submit LFI Form</a>
     <div class="sb-sec" style="margin-top:6px">Quick Stats</div>
     <div class="sb-stats">
-      <div class="mini-row"><span>Total LFIs</span><strong id="sb-t">12</strong></div>
-      <div class="mini-row"><span>Approved</span><strong id="sb-a">8</strong></div>
-      <div class="mini-row"><span>Pending</span><strong id="sb-p">3</strong></div>
-      <div class="mini-row"><span>MS ATRs Open</span><strong id="sb-o">4</strong></div>
+      <div class="mini-row"><span>Total LFIs</span><strong id="sb-t">—</strong></div>
+      <div class="mini-row"><span>Approved</span><strong id="sb-a">—</strong></div>
+      <div class="mini-row"><span>Pending</span><strong id="sb-p">—</strong></div>
+      <div class="mini-row"><span>MS ATRs Open</span><strong id="sb-o">—</strong></div>
     </div>
   </nav>
-  <div class="sb-form-btn" onclick="navTo('form',null)">+ Submit New LFI</div>
+  <a id="sbFormBtn" class="sb-form-btn" href="#" target="_blank">+ Submit New LFI</a>
 </div>
 
 <div id="main">
   <div class="grad"></div>
   <div id="topbar">
-    <div class="page-title" id="ptitle">Overview Dashboard</div>
-    <div class="lang-toggle">
+    <div class="ptitle" id="ptitle">Overview Dashboard</div>
+    <div class="ltgl">
       <button class="lbt active" onclick="setLang('en',this)">&#127468;&#127463; EN</button>
       <button class="lbt" onclick="setLang('hi',this)">&#127470;&#127475; हि</button>
       <button class="lbt" onclick="setLang('ar',this)">&#127462;&#127466; ع</button>
     </div>
-    <button class="btn-ref" onclick="doRefresh()">&#8635; Refresh Data</button>
-    <span id="lu">Demo Data — 25-Jun-2026 09:42</span>
+    <button class="bref" id="refBtn" onclick="refresh()">&#8635; Refresh Data</button>
+    <span id="lu"></span>
   </div>
-
   <div id="drillBar">
     <span>Filtered by:</span><span id="drillInfo"></span>
-    <button class="clr-drill" onclick="clearDrill()">&#215; Clear</button>
+    <button class="cld" onclick="clearDrill()">&#215; Clear</button>
   </div>
-
   <div id="fb">
     <div class="fg"><label>From Date</label><input type="date" id="fFrom" onchange="applyAll()"></div>
     <div class="fg"><label>To Date</label><input type="date" id="fTo" onchange="applyAll()"></div>
@@ -161,16 +160,14 @@ nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or
     <div class="fg"><label>Cluster</label><select id="fLoc" onchange="applyAll()"><option value="">All Clusters</option></select></div>
     <div class="fg"><label>Status</label><select id="fSt" onchange="applyAll()"><option value="">All Statuses</option></select></div>
     <div class="fg"><label>Discipline</label><select id="fDisc" onchange="applyAll()"><option value="">All Disciplines</option></select></div>
-    <div class="fg fg-s"><label>Search</label><input type="text" id="fQ" placeholder="ID, name, location, summary..." oninput="applyAll()"></div>
-    <button class="bfil breset" onclick="resetF()">&#8635; Reset</button>
-    <button class="bfil brefr" onclick="doRefresh()">&#8635; Refresh</button>
-    <span id="fc"></span>
+    <div class="fg fgs"><label>Search</label><input type="text" id="fQ" placeholder="ID, name, location, summary..." oninput="applyAll()"></div>
+    <button class="bf brst" onclick="resetF()">&#8635; Reset</button>
+    <button class="bf brf" onclick="refresh()">&#8635; Refresh</button>
+    <span id="frc"></span>
   </div>
-
   <div id="content">
-
     <div class="page active" id="page-overview">
-      <div class="kpi-row">
+      <div class="krow">
         <div class="kc" style="background:#21409a;color:#fff"><div class="ki">&#128203;</div><div class="kv" id="k0">0</div><div class="kl">Total LFIs</div><div class="kp" id="kp0"></div></div>
         <div class="kc" style="background:#28a745;color:#fff"><div class="ki">&#10004;</div><div class="kv" id="k1">0</div><div class="kl">Approved</div><div class="kp" id="kp1"></div></div>
         <div class="kc" style="background:#ffc107;color:#212529"><div class="ki">&#9200;</div><div class="kv" id="k2">0</div><div class="kl">Pending</div><div class="kp" id="kp2"></div></div>
@@ -178,29 +175,27 @@ nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or
         <div class="kc" style="background:#4d555b;color:#fff"><div class="ki">&#128218;</div><div class="kv" id="k4">0</div><div class="kl">PPTs Created</div><div class="kp" id="kp4"></div></div>
         <div class="kc" style="background:#17a2b8;color:#fff"><div class="ki">&#128196;</div><div class="kv" id="k5">0</div><div class="kl">MS ATR Created</div><div class="kp" id="kp5"></div></div>
       </div>
-      <div class="chart-row">
-        <div class="cc"><div class="ch">By Incident Category<span class="dh">Click slice to drill</span></div><div class="cv"><canvas id="cCat"></canvas></div></div>
+      <div class="crow">
+        <div class="cc"><div class="ch">By Incident Category<span class="dh">Click slice to drill down</span></div><div class="cv"><canvas id="cCat"></canvas></div></div>
         <div class="cc"><div class="ch">Approval Status Distribution</div><div class="cv"><canvas id="cSt"></canvas></div></div>
       </div>
-      <div class="chart-row">
-        <div class="cc"><div class="ch">By ATNM Division<span class="dh">Click bar to drill</span></div><div class="cvl"><canvas id="cDiv"></canvas></div></div>
-        <div class="cc"><div class="ch">By Cluster / Location<span class="dh">Click bar to drill</span></div><div class="cvl"><canvas id="cLoc"></canvas></div></div>
+      <div class="crow">
+        <div class="cc"><div class="ch">By ATNM Division<span class="dh">Click bar to drill down</span></div><div class="cvl"><canvas id="cDiv"></canvas></div></div>
+        <div class="cc"><div class="ch">By Cluster / Location<span class="dh">Click bar to drill down</span></div><div class="cvl"><canvas id="cLoc"></canvas></div></div>
       </div>
     </div>
-
     <div class="page" id="page-lfi">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-        <div style="font-size:12px;color:var(--muted)">Click a card to expand. Use &#128266; to read aloud. Switch languages per card or globally.</div>
-        <button onclick="doRefresh()" class="btn-ref" style="font-size:11px;padding:5px 12px">&#8635; Refresh</button>
+        <div style="font-size:12px;color:var(--muted)">Click a card to expand. Use &#128266; to read aloud in EN / हि / ع.</div>
+        <button onclick="refresh()" class="bref" style="font-size:11px;padding:5px 12px">&#8635; Refresh</button>
       </div>
       <div class="fcg" id="fcGrid"></div>
     </div>
-
     <div class="page" id="page-msa">
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
         <div style="flex:1;font-size:12px;color:var(--muted)">Method Statement Action Tracker — linked to approved LFIs</div>
         <select id="msF" onchange="renderMsa()" style="border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:12px"><option value="">All Statuses</option><option value="Open">Open</option><option value="Closed">Closed</option><option value="Not Required">Not Required</option></select>
-        <button onclick="doRefresh()" class="btn-ref" style="font-size:11px;padding:5px 12px">&#8635; Refresh</button>
+        <button onclick="refresh()" class="bref" style="font-size:11px;padding:5px 12px">&#8635; Refresh</button>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
         <div style="flex:1;min-width:110px;background:#f58220;color:#fff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:24px;font-weight:800" id="ms-t">0</div><div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px">Total MS ATRs</div></div>
@@ -208,186 +203,37 @@ nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or
         <div style="flex:1;min-width:110px;background:#28a745;color:#fff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:24px;font-weight:800" id="ms-c">0</div><div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px">Closed</div></div>
         <div style="flex:1;min-width:110px;background:#ffc107;color:#212529;border-radius:8px;padding:12px;text-align:center"><div style="font-size:24px;font-weight:800" id="ms-n">0</div><div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px">Not Required</div></div>
       </div>
-      <div class="msa-grid" id="msaGrid"></div>
+      <div class="msg" id="msaGrid"></div>
     </div>
-
     <div class="page" id="page-form">
       <div style="background:#fff;border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
         <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--bg)">Submit a New LFI Incident Alert</div>
-        <div style="text-align:center;padding:50px 20px;color:#888">
-          <div style="font-size:40px">&#128221;</div>
-          <p style="margin-top:12px;font-size:14px">Google Form embedded here</p>
-          <p style="font-size:12px;margin-top:6px;color:#aaa">Set CFG.FORM_URL in Code.gs, redeploy, then this page shows the live form.</p>
-          <a href="#" style="display:inline-block;margin-top:16px;padding:10px 20px;background:var(--bl);color:#fff;border-radius:5px;text-decoration:none;font-size:13px;font-weight:600">Open Form in New Tab &#8599;</a>
-        </div>
+        <iframe id="formFrame" src="about:blank" style="width:100%;height:700px;border:none;border-radius:6px"></iframe>
+        <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--muted)">Having trouble? <a id="formLink" href="#" target="_blank" style="color:var(--bl);font-weight:600">Open form in a new tab</a></div>
       </div>
     </div>
-
   </div>
 </div>
 
+<div id="loader"><div class="spin"></div><p>Loading LFI data...</p></div>
+
 <script>
+// ============================================================
+// ATNM LFI CORE DASHBOARD v4.9 — GitHub Pages Edition
+// API URL: v4.9 deployment — Access: Anyone
+// ============================================================
+var API_URL='https://script.google.com/a/macros/altasnim.com/s/AKfycbzJo2bSVd5SxH74-a7FElfbPfQMoulItUB-XXcK83Ocn6utv3uO3pzccKNmlSxX1yWOjg/exec?action=api';
+
 var PAL=['#21409a','#f58220','#28a745','#dc3545','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#e83e8c','#6c757d','#0d6efd'];
-var CHARTS={};
-var LANG='en';
-var DRILL=null;
-
-var LABELS={
-  desc:{en:'Description of Incident',hi:'घटना का विवरण',ar:'وصف الحادث'},
-  find:{en:'Findings / Root Cause',hi:'निष्कर्ष / मूल कारण',ar:'النتائج / السبب الجذري'},
-  learn:{en:'Learnings from Incident',hi:'इस घटना से सीख',ar:'الدروس المستفادة'}
-};
-
-var DEMO={total:12,appr:8,pend:3,ret:1,ppt:8,msa:8,ts:'25-Jun-2026 09:42',errs:0,
-  rawRows:[
-    {id:'ATNM-HTSTRS-OG-ODCNIMR-20260521-001',cat:'Heat Stress',div:'O&G',loc:'Nimr',disc:'Mechanical',by:'Site Supervisor',dt:'21-May-2026',st:'Reviewed & Approved',ppt:true,msa:true,pptLink:'#',
-     descEN:'A worker suffered heat stress while working in an open excavation area with no shade or cooling station nearby. Temperature recorded at 52°C.',
-     findEN:'No shade canopy erected over work area. No cooling station within 50m. Worker did not take mandatory heat stress break.',
-     learnEN:'Shade structures must be erected in all open work areas before 09:00. Cooling stations mandatory every 50m. Buddy system for workers in extreme heat zones.',
-     descHI:'एक श्रमिक खुले उत्खनन क्षेत्र में काम करते समय हीट स्ट्रेस का शिकार हुआ।',
-     findHI:'काम के क्षेत्र में कोई छाया नहीं थी। 50 मीटर के भीतर कोई शीतलन स्टेशन नहीं था।',
-     learnHI:'09:00 बजे से पहले सभी खुले कार्य क्षेत्रों में छाया संरचनाएं स्थापित की जानी चाहिए।',
-     descAR:'أصيب عامل بإجهاد حراري أثناء العمل في منطقة حفر مكشوفة.',
-     findAR:'لم يتم تركيب مظلة فوق منطقة العمل. لا يوجد محطة تبريد.',
-     learnAR:'يجب تركيب هياكل الظل في جميع مناطق العمل المفتوحة قبل الساعة 09:00.'},
-    {id:'ATNM-SLPFALL-OG-ODCNIMR-20260515-002',cat:'Slip / Trip / Fall',div:'O&G',loc:'Nimr',disc:'Civil',by:'HSE Officer',dt:'15-May-2026',st:'Reviewed & Approved',ppt:true,msa:true,pptLink:'#',
-     descEN:'Worker slipped on wet concrete surface near pump station during morning shift after overnight rain.',
-     findEN:'No anti-slip matting installed. Warning signs not erected. Area not inspected after rainfall.',
-     learnEN:'Wet surface inspections mandatory after all rainfall. Anti-slip matting required at all pump station access points.',
-     descHI:'रात की बारिश के बाद पंप स्टेशन के पास गीले कंक्रीट पर श्रमिक फिसल गया।',
-     findHI:'कोई एंटी-स्लिप मैटिंग स्थापित नहीं थी।',
-     learnHI:'बारिश के बाद गीली सतह निरीक्षण अनिवार्य है।',
-     descAR:'انزلق عامل على سطح خرسانة مبلل بالقرب من محطة الضخ.',
-     findAR:'لم يتم تركيب حصائر مانعة للانزلاق.',
-     learnAR:'إلزامي فحص السطوح الرطبة بعد كل هطول للمطر.'},
-    {id:'ATNM-MTRVCL-OG-ODCAMAL-20260510-003',cat:'Motor Vehicle Incident',div:'O&G',loc:'Amal',disc:'Mechanical',by:'Site Manager',dt:'10-May-2026',st:'Reviewed & Approved',ppt:true,msa:true,pptLink:'#',
-     descEN:'Light vehicle reversed without spotter and made contact with stationary equipment causing minor asset damage.',
-     findEN:'No banksman deployed. Camera system offline. Driver did not sound horn before reversing.',
-     learnEN:'Banksman mandatory for all reversing operations. Camera systems to be maintained weekly. Three horn blasts mandatory before all reversing.',
-     descHI:'हल्के वाहन ने स्पॉटर के बिना रिवर्स किया और स्थिर उपकरण से टकरा गया।',
-     findHI:'कोई बैंक्समैन तैनात नहीं था।',
-     learnHI:'सभी रिवर्सिंग ऑपरेशन के लिए बैंक्समैन अनिवार्य है।',
-     descAR:'تراجعت مركبة خفيفة دون مراقب واصطدمت بمعدات ثابتة.',
-     findAR:'لم يتم نشر أي مرشد.',
-     learnAR:'المرشد إلزامي لجميع عمليات التراجع.'},
-    {id:'ATNM-FLLOBJ-CIVM-ODCGB-20260505-004',cat:'Falling Objects',div:'CIVIL & MEP',loc:'Greater Birba',disc:'Civil',by:'Work Coordinator',dt:'05-May-2026',st:'Reviewed & Approved',ppt:true,msa:true,pptLink:'#',
-     descEN:'Small tool fell from elevated work platform and landed in exclusion zone below.',
-     findEN:'No tethering system on tools at height. Exclusion zone barricading incomplete.',
-     learnEN:'100% tool tethering mandatory above 2m. Exclusion zones must be fully barricaded before elevated works commence.',
-     descHI:'ऊंचे काम के प्लेटफार्म से एक छोटा उपकरण गिरकर नीचे के बहिष्करण क्षेत्र में आ गया।',
-     findHI:'ऊंचाई पर उपकरणों पर कोई टेदरिंग सिस्टम नहीं था।',
-     learnHI:'2 मीटर से ऊपर 100% टूल टेदरिंग अनिवार्य है।',
-     descAR:'سقطت أداة صغيرة من منصة العمل المرتفعة وهبطت في منطقة الاستثناء.',
-     findAR:'لا يوجد نظام ربط للأدوات على الارتفاع.',
-     learnAR:'ربط 100% للأدوات إلزامي فوق 2 متر.'},
-    {id:'ATNM-ERGON-OG-ODCNIMR-20260428-005',cat:'Ergonomics',div:'O&G',loc:'Nimr',disc:'Instrument',by:'HSE Supervisor',dt:'28-Apr-2026',st:'Reviewed & Approved',ppt:true,msa:true,pptLink:'#',
-     descEN:'Worker reported musculoskeletal discomfort after prolonged manual handling of heavy pipe sections without mechanical aid.',
-     findEN:'No mechanical lifting aid available at location. Manual handling risk assessment not conducted for this activity.',
-     learnEN:'Risk assessment mandatory for all repetitive manual handling tasks. Mechanical aids must be available before heavy pipe works commence.',
-     descHI:'श्रमिक ने भारी पाइप सेक्शन के लंबे समय तक मैनुअल हैंडलिंग के बाद मस्कुलोस्केलेटल असुविधा की रिपोर्ट की।',
-     findHI:'स्थान पर कोई मैकेनिकल लिफ्टिंग एड उपलब्ध नहीं थी।',
-     learnHI:'सभी दोहराव वाले मैनुअल हैंडलिंग कार्यों के लिए जोखिम मूल्यांकन अनिवार्य है।',
-     descAR:'أبلغ عامل عن انزعاج عضلي هيكلي بعد المناولة اليدوية المطولة للأقسام.',
-     findAR:'لا توجد مساعدة رفع ميكانيكية في الموقع.',
-     learnAR:'تقييم المخاطر إلزامي لجميع مهام المناولة اليدوية المتكررة.'},
-    {id:'ATNM-FIEXPL-OG-ODCAMAL-20260420-006',cat:'Fire & Explosion',div:'O&G',loc:'Amal',disc:'Mechanical',by:'Site Engineer',dt:'20-Apr-2026',st:'Reviewed & Approved',ppt:true,msa:true,pptLink:'#',
-     descEN:'Small flash fire from welding spark igniting accumulated vapour near valve assembly. Extinguished immediately.',
-     findEN:'Vapour accumulation not detected by gas monitor. Hot work permit conditions not fully complied with.',
-     learnEN:'Gas monitoring continuous during all hot work within 10m of hydrocarbon lines. Hot work permit checklist to be verified every 2 hours.',
-     descHI:'वेल्डिंग स्पार्क से वाल्व असेंबली के पास जमा वाष्प में छोटी फ्लैश आग।',
-     findHI:'गैस मॉनिटर द्वारा वाष्प संचय का पता नहीं चला।',
-     learnHI:'हाइड्रोकार्बन लाइनों के 10 मीटर के भीतर सभी गर्म कार्यों के दौरान निरंतर गैस निगरानी।',
-     descAR:'حريق وميض صغير من شرارة لحام تشعل بخارًا متراكمًا بالقرب من تجميع الصمام.',
-     findAR:'لم يتم الكشف عن تراكم البخار من قبل مراقب الغاز.',
-     learnAR:'مراقبة الغاز المستمرة خلال جميع أعمال السخونة.'},
-    {id:'ATNM-PINCH-CIVM-ODCGB-20260415-007',cat:'Pinch Points',div:'CIVIL & MEP',loc:'Greater Birba',disc:'Electrical',by:'Electrician',dt:'15-Apr-2026',st:'Reviewed & Approved',ppt:true,msa:true,pptLink:'#',
-     descEN:'Workers hand caught in pinch point between pipe sections during alignment operation. Minor laceration treated on site.',
-     findEN:'Pinch point hazard not identified in task-specific risk assessment. No hand guard fitted.',
-     learnEN:'All pipe alignment tasks require specific pinch point assessment. Hand guards mandatory during mechanical alignment.',
-     descHI:'पाइप संरेखण ऑपरेशन के दौरान पाइप सेक्शन के बीच पिंच पॉइंट में श्रमिक का हाथ फंस गया।',
-     findHI:'कार्य-विशिष्ट जोखिम मूल्यांकन में पिंच पॉइंट खतरे की पहचान नहीं की गई।',
-     learnHI:'सभी पाइप संरेखण कार्यों के लिए विशिष्ट पिंच पॉइंट मूल्यांकन आवश्यक है।',
-     descAR:'تم إمساك يد العامل في نقطة ضغط بين أقسام الأنابيب.',
-     findAR:'لم يتم تحديد خطر نقطة الضغط في تقييم المخاطر.',
-     learnAR:'جميع مهام محاذاة الأنابيب تتطلب تقييم نقطة ضغط محددة.'},
-    {id:'ATNM-HTSTRS-OG-HARWEEL-20260410-008',cat:'Heat Stress',div:'O&G',loc:'Harweel',disc:'Civil',by:'Foreman',dt:'10-Apr-2026',st:'Reviewed & Approved',ppt:true,msa:true,pptLink:'#',
-     descEN:'Two workers presented symptoms of heat exhaustion during afternoon shift. Evacuated to medical room.',
-     findEN:'Work continued beyond approved hours without work-rest ratio review. Cold water supply inadequate.',
-     learnEN:'Work-rest ratios reviewed every 2 hours during Amber and Red heat alert periods. Water supply minimum 1.5L/hr per worker.',
-     descHI:'दो श्रमिकों ने दोपहर की शिफ्ट के दौरान गर्मी की थकावट के लक्षण दिखाए।',
-     findHI:'अनुमोदित घंटों के बाद काम जारी रहा।',
-     learnHI:'एम्बर और लाल गर्मी अलर्ट अवधि के दौरान हर 2 घंटे में काम-आराम अनुपात की समीक्षा।',
-     descAR:'أظهر عاملان أعراض إجهاد الحرارة خلال فترة بعد الظهر.',
-     findAR:'استمر العمل بعد الساعات المعتمدة دون مراجعة.',
-     learnAR:'مراجعة نسب العمل والراحة كل ساعتين خلال فترات التنبيه الحراري.'},
-    {id:'ATNM-ENVDMG-CIVM-ODCGB-20260405-009',cat:'Environmental Damage',div:'CIVIL & MEP',loc:'Greater Birba',disc:'Civil',by:'Site Manager',dt:'05-Apr-2026',st:'Reviewed & Returned',ppt:false,msa:false,pptLink:'',
-     descEN:'Minor hydrocarbon spill from pressure test connection. Estimated 15 litres. Contained within bunded area.',
-     findEN:'Inadequate seal on pressure test manifold connection. Bunding inspected 2 weeks prior but not after connection.',
-     learnEN:'Bunding inspection mandatory before every pressure test. Spill response kit must be positioned within 5m of test connection.',
-     descHI:'दबाव परीक्षण कनेक्शन से मामूली हाइड्रोकार्बन रिसाव।',
-     findHI:'दबाव परीक्षण मैनिफोल्ड कनेक्शन पर अपर्याप्त सील।',
-     learnHI:'प्रत्येक दबाव परीक्षण से पहले बंडिंग निरीक्षण अनिवार्य है।',
-     descAR:'تسرب هيدروكربوني طفيف من وصلة اختبار الضغط.',
-     findAR:'ختم غير كافٍ على وصلة مشعب اختبار الضغط.',
-     learnAR:'فحص السد إلزامي قبل كل اختبار ضغط.'},
-    {id:'ATNM-ASSDMG-OG-ODCNIMR-20260330-010',cat:'Asset Damage',div:'O&G',loc:'Nimr',disc:'Mechanical',by:'GPR Operator',dt:'30-Mar-2026',st:'Pending Approval',ppt:false,msa:false,pptLink:'',
-     descEN:'Excavator bucket made contact with buried utility line during trenching. Line confirmed deactivated but damage noted.',
-     findEN:'Utility survey not updated prior to excavation. Ground disturbance permit issued without updated survey.',
-     learnEN:'Utility survey must be refreshed maximum 5 days before any ground disturbance. Permit issuer to verify survey currency.',
-     descHI:'खाई खोदने के दौरान उत्खननकर्ता बाल्टी ने दबी उपयोगिता लाइन से संपर्क किया।',
-     findHI:'उत्खनन से पहले उपयोगिता सर्वेक्षण अपडेट नहीं किया गया।',
-     learnHI:'किसी भी जमीनी गड़बड़ी से अधिकतम 5 दिन पहले उपयोगिता सर्वेक्षण को ताज़ा किया जाना चाहिए।',
-     descAR:'لامست دلو الحفار خطًا مدفونًا أثناء الحفر.',
-     findAR:'لم يتم تحديث مسح المرافق قبل الحفر.',
-     learnAR:'يجب تجديد مسح المرافق قبل 5 أيام كحد أقصى من أي اضطراب للأرض.'},
-    {id:'ATNM-HTSTRS-OG-HARWEEL-20260325-011',cat:'Heat Stress',div:'O&G',loc:'Harweel',disc:'Mechanical',by:'Site Supervisor',dt:'25-Mar-2026',st:'Pending Approval',ppt:false,msa:false,pptLink:'',
-     descEN:'Worker collapsed during midday outdoor activity. No shade structure available at remote location.',
-     findEN:'Remote site inspection not completed before works. Shade structure availability not verified in PTW.',
-     learnEN:'Shade availability to be confirmed as part of PTW requirements for all remote outdoor activities.',
-     descHI:'दोपहर की बाहरी गतिविधि के दौरान श्रमिक गिर पड़ा।',
-     findHI:'कार्य से पहले दूरस्थ साइट निरीक्षण पूरा नहीं हुआ।',
-     learnHI:'सभी दूरस्थ बाहरी गतिविधियों के लिए छाया उपलब्धता की पुष्टि आवश्यक है।',
-     descAR:'انهار عامل خلال نشاط خارجي في منتصف النهار.',
-     findAR:'لم يتم إجراء فحص الموقع البعيد قبل الأعمال.',
-     learnAR:'يجب تأكيد توافر الظل كجزء من متطلبات PTW.'},
-    {id:'ATNM-MTVHCL-CIVM-ODCAMAL-20260318-012',cat:'Motor Vehicle Incident',div:'CIVIL & MEP',loc:'Amal',disc:'Civil',by:'Work Coordinator',dt:'18-Mar-2026',st:'Pending Approval',ppt:false,msa:false,pptLink:'',
-     descEN:'Near-miss between two light vehicles at site entrance due to poor visibility at blind corner.',
-     findEN:'Corner mirror not maintained. Speed limit signs faded and unreadable.',
-     learnEN:'Corner mirrors inspected monthly. All traffic management signage refreshed quarterly.',
-     descHI:'खराब दृश्यता के कारण साइट प्रवेश पर दो हल्के वाहनों के बीच नियर-मिस।',
-     findHI:'कॉर्नर मिरर का रखरखाव नहीं हुआ।',
-     learnHI:'कॉर्नर मिरर मासिक रूप से निरीक्षण किए जाते हैं।',
-     descAR:'اقتراب بين مركبتين خفيفتين عند مدخل الموقع.',
-     findAR:'لم تتم صيانة مرآة الزاوية.',
-     learnAR:'فحص مرآة الزاوية شهريًا.'}
-  ],
-  msRows:[
-    {id:'ATNM-HTSTRS-OG-ODCNIMR-20260521-001',disc:'Mechanical',gaps:'Yes',re1:'Ahmed Al-Balushi',ap:'Site Manager - ODC NIMR',acc:'HSE Lead - ATNM',st:'Open',ppt:'#'},
-    {id:'ATNM-SLPFALL-OG-ODCNIMR-20260515-002',disc:'Civil',gaps:'Yes',re1:'Mohammed Al-Amri',ap:'Work Coordinator',acc:'HSE Lead - ATNM',st:'Open',ppt:'#'},
-    {id:'ATNM-MTRVCL-OG-ODCAMAL-20260510-003',disc:'Mechanical',gaps:'Yes',re1:'Said Al-Hinai',ap:'Site Manager - Amal',acc:'HSE Manager - ATNM',st:'Closed',ppt:'#'},
-    {id:'ATNM-FLLOBJ-CIVM-ODCGB-20260505-004',disc:'Civil',gaps:'Yes',re1:'Khalid Al-Shukaili',ap:'Work Coordinator - GB',acc:'HSE Lead - ATNM',st:'Open',ppt:'#'},
-    {id:'ATNM-ERGON-OG-ODCNIMR-20260428-005',disc:'Instrument',gaps:'Yes',re1:'Rashid Al-Wahaibi',ap:'Site Engineer',acc:'HSE Supervisor',st:'Not Required',ppt:'#'},
-    {id:'ATNM-FIEXPL-OG-ODCAMAL-20260420-006',disc:'Mechanical',gaps:'Yes',re1:'Saif Al-Kindi',ap:'Mechanical Lead',acc:'HSE Manager - ATNM',st:'Open',ppt:'#'},
-    {id:'ATNM-PINCH-CIVM-ODCGB-20260415-007',disc:'Electrical',gaps:'Yes',re1:'Jaber Al-Rashidi',ap:'Electrical Lead',acc:'HSE Lead - ATNM',st:'Closed',ppt:'#'},
-    {id:'ATNM-HTSTRS-OG-HARWEEL-20260410-008',disc:'Civil',gaps:'Yes',re1:'Hamood Al-Nabhani',ap:'Site Manager - Harweel',acc:'HSE Manager - ATNM',st:'Not Required',ppt:'#'}
-  ]
-};
+var CH={};var RAW=null;var MSR=null;var LANG='en';var DRILL=null;
+var LBL={desc:{en:'Description of Incident',hi:'घटना का विवरण',ar:'وصف الحادث'},find:{en:'Findings / Root Cause',hi:'निष्कर्ष / मूल कारण',ar:'النتائج / السبب الجذري'},learn:{en:'Learnings from Incident',hi:'इस घटना से सीख',ar:'الدروس المستفادة'}};
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function pct(v,t){return t>0?Math.round(v/t*100)+'%':'--';}
-function badge(st){
-  if(st==='Reviewed & Approved')return '<span class="badge appr">Approved</span>';
-  if(st==='Reviewed & Returned')return '<span class="badge ret">Returned</span>';
-  return '<span class="badge pend">Pending</span>';
-}
-function uniq(arr){var s={},r=[];arr.forEach(function(v){if(v&&!s[v]){s[v]=1;r.push(v);}});return r.sort();}
-function fill(id,vals){
-  var el=document.getElementById(id);if(!el)return;
-  var cur=el.value;
-  while(el.options.length>1)el.remove(1);
-  vals.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});
-  el.value=cur;
-}
+function badge(st){if(st==='Reviewed & Approved')return'<span class="badge ba">Approved</span>';if(st==='Reviewed & Returned')return'<span class="badge br">Returned</span>';return'<span class="badge bp">Pending</span>';}
+function pd(dt){if(!dt)return null;var m={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};var p=dt.split('-');if(p.length===3)return new Date(parseInt(p[2]),m[p[1]]||0,parseInt(p[0]));return new Date(dt);}
+function uniq(a){var s={},r=[];a.forEach(function(v){if(v&&!s[v]){s[v]=1;r.push(v);}});return r.sort();}
+function fill(id,vals){var el=document.getElementById(id);if(!el)return;var cur=el.value;while(el.options.length>1)el.remove(1);vals.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});el.value=cur;}
 
 function navTo(page,el){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
@@ -396,217 +242,202 @@ function navTo(page,el){
   if(el)el.classList.add('active');
   var T={overview:'Overview Dashboard',lfi:'LFI Register — Interactive Flashcards',msa:'MS ATR — Action Tracker Board',form:'Submit LFI Incident Alert'};
   document.getElementById('ptitle').textContent=T[page]||'Dashboard';
-  if(page==='lfi')renderFC();
-  if(page==='msa')renderMsa();
+  if(page==='lfi')renderFC();if(page==='msa')renderMsa();if(page==='form')loadForm();
+  if(window.innerWidth<=700)document.getElementById('sb').classList.remove('open');
   return false;
 }
+function setLang(lang,btn){LANG=lang;document.querySelectorAll('.lbt').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');if(document.getElementById('page-lfi').classList.contains('active'))renderFC();}
+function showL(){document.getElementById('loader').classList.add('vis');}
+function hideL(){document.getElementById('loader').classList.remove('vis');}
 
-function setLang(lang,btn){
-  LANG=lang;
-  document.querySelectorAll('.lbt').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
-  if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
+function refresh(){
+  showL();document.getElementById('refBtn').classList.add('ld');
+  fetch(API_URL,{cache:'no-cache'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status+' — check deployment Access=Anyone');return r.json();})
+    .then(function(data){
+      RAW=data.rawRows||[];MSR=data.msRows||[];
+      RAW.forEach(function(r){r.dateObj=pd(r.dt);});
+      var fu=data.formUrl||'';var sb=document.getElementById('sbFormBtn');
+      if(fu&&fu.indexOf('YOUR_FORM_ID')===-1){if(sb)sb.href=fu;var fl=document.getElementById('formLink');if(fl)fl.href=fu;}
+      initF();applyAll();updateSB(data);
+      document.getElementById('lu').textContent='Updated: '+(data.ts||new Date().toLocaleString());
+    })
+    .catch(function(err){
+      hideL();document.getElementById('refBtn').classList.remove('ld');
+      document.getElementById('lu').textContent='Error loading data';
+      alert('Cannot fetch data:
+
+'+err.message+'
+
+Check:
+1. Deployment Access = Anyone
+2. Code.gs v4.9 deployed
+3. API_URL ends with ?action=api');
+    })
+    .finally(function(){hideL();document.getElementById('refBtn').classList.remove('ld');});
 }
 
-function doRefresh(){document.getElementById('lu').textContent='Updated: '+new Date().toLocaleString();}
+function initF(){
+  if(!RAW)return;
+  fill('fCat',uniq(RAW.map(function(r){return r.cat;})));
+  fill('fDiv',uniq(RAW.map(function(r){return r.div;})));
+  fill('fLoc',uniq(RAW.map(function(r){return r.loc;})));
+  fill('fSt',uniq(RAW.map(function(r){return r.st;})));
+  fill('fDisc',uniq(RAW.map(function(r){return r.disc;})));
+}
 
-function getFiltered(){
-  var rows=DEMO.rawRows;
+function getF(){
+  if(!RAW)return[];
+  var rows=RAW;
   if(DRILL)rows=rows.filter(function(r){return r[DRILL.f]===DRILL.v;});
-  var cat=document.getElementById('fCat').value;
-  var div=document.getElementById('fDiv').value;
-  var loc=document.getElementById('fLoc').value;
-  var st=document.getElementById('fSt').value;
-  var disc=document.getElementById('fDisc').value;
-  var q=document.getElementById('fQ').value.toLowerCase().trim();
-  var from=document.getElementById('fFrom').value;
-  var to=document.getElementById('fTo').value;
+  var cat=document.getElementById('fCat').value,div=document.getElementById('fDiv').value,
+      loc=document.getElementById('fLoc').value,st=document.getElementById('fSt').value,
+      disc=document.getElementById('fDisc').value,q=document.getElementById('fQ').value.toLowerCase().trim(),
+      from=document.getElementById('fFrom').value,to=document.getElementById('fTo').value;
   if(cat)rows=rows.filter(function(r){return r.cat===cat;});
   if(div)rows=rows.filter(function(r){return r.div===div;});
   if(loc)rows=rows.filter(function(r){return r.loc===loc;});
   if(st)rows=rows.filter(function(r){return r.st===st;});
   if(disc)rows=rows.filter(function(r){return r.disc===disc;});
-  if(q)rows=rows.filter(function(r){return [r.id,r.cat,r.div,r.loc,r.by,r.disc,r.st,r.descEN,r.descHI,r.descAR].join(' ').toLowerCase().indexOf(q)!==-1;});
+  if(from){var fd=new Date(from);rows=rows.filter(function(r){return r.dateObj&&r.dateObj>=fd;});}
+  if(to){var td=new Date(to);td.setHours(23,59,59);rows=rows.filter(function(r){return r.dateObj&&r.dateObj<=td;});}
+  if(q)rows=rows.filter(function(r){return[r.id,r.cat,r.div,r.loc,r.by,r.disc,r.st,r.descEN,r.descHI,r.descAR].join(' ').toLowerCase().indexOf(q)!==-1;});
   return rows;
 }
-function resetF(){
-  ['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
-  ['fCat','fDiv','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
-  clearDrill();applyAll();
-}
-function drillDown(f,v){
-  DRILL={f:f,v:v};
-  document.getElementById('drillBar').classList.add('vis');
-  document.getElementById('drillInfo').textContent=f.toUpperCase()+': '+v;
-  applyAll();
-}
+
+function resetF(){['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});['fCat','fDiv','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});clearDrill();}
+function drillDown(f,v){DRILL={f:f,v:v};document.getElementById('drillBar').classList.add('vis');document.getElementById('drillInfo').textContent=f.toUpperCase()+': '+v;applyAll();}
 function clearDrill(){DRILL=null;document.getElementById('drillBar').classList.remove('vis');applyAll();}
 
 function applyAll(){
-  var rows=getFiltered();
-  document.getElementById('fc').textContent=rows.length+' record'+(rows.length===1?'':'s');
-  updateKPIs(rows);renderCharts(rows);
+  var rows=getF();
+  document.getElementById('frc').textContent=rows.length+' record'+(rows.length===1?'':'s');
+  updateKPI(rows);renderCharts(rows);
   if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
   if(document.getElementById('page-msa').classList.contains('active'))renderMsa();
 }
 
-function updateKPIs(rows){
-  var t=rows.length;
-  var a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length;
-  var p=rows.filter(function(r){return r.st==='Pending Approval';}).length;
-  var re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length;
-  var pp=rows.filter(function(r){return r.ppt;}).length;
-  var ms=rows.filter(function(r){return r.msa;}).length;
+function updateKPI(rows){
+  var t=rows.length,a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,
+      p=rows.filter(function(r){return r.st==='Pending Approval';}).length,
+      re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length,
+      pp=rows.filter(function(r){return r.ppt;}).length,
+      ms=rows.filter(function(r){return r.msa;}).length;
   var vs=[t,a,p,re,pp,ms];
-  for(var i=0;i<6;i++){
-    document.getElementById('k'+i).textContent=vs[i];
-    document.getElementById('kp'+i).textContent=i>0&&t>0?pct(vs[i],t):'';
-  }
+  for(var i=0;i<6;i++){document.getElementById('k'+i).textContent=vs[i];document.getElementById('kp'+i).textContent=i>0&&t>0?pct(vs[i],t):'';}
 }
+function updateSB(d){document.getElementById('sb-t').textContent=d.total||0;document.getElementById('sb-a').textContent=d.appr||0;document.getElementById('sb-p').textContent=d.pend||0;document.getElementById('sb-o').textContent=(d.msRows||[]).filter(function(r){return r.st==='Open';}).length;}
 
 function cntBy(rows,k){var c={};rows.forEach(function(r){var v=r[k]||'?';c[v]=(c[v]||0)+1;});return c;}
 function mkChart(id,type,labels,data,colors,horiz,fn){
-  if(CHARTS[id])CHARTS[id].destroy();
-  var ctx=document.getElementById(id);if(!ctx)return;
-  CHARTS[id]=new Chart(ctx.getContext('2d'),{
-    type:type,
-    data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:1,borderColor:'#fff',hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:horiz?'top':'right',labels:{font:{size:11},boxWidth:12,padding:8}}},
-      indexAxis:horiz?'y':'x',
+  if(CH[id])CH[id].destroy();var ctx=document.getElementById(id);if(!ctx)return;
+  CH[id]=new Chart(ctx.getContext('2d'),{type:type,data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:1,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:horiz?'top':'right',labels:{font:{size:11},boxWidth:12,padding:8}}},indexAxis:horiz?'y':'x',
       scales:horiz?{x:{beginAtZero:true,ticks:{font:{size:11}}},y:{ticks:{font:{size:11}}}}:{},
-      onClick:function(e,els){if(fn&&els.length)fn(labels[els[0].index]);}
-    }
-  });
+      onClick:function(e,els){if(fn&&els.length)fn(labels[els[0].index]);}}});
 }
 function renderCharts(rows){
   var cc=cntBy(rows,'cat');var ck=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a];});
-  mkChart('cCat','pie',ck,ck.map(function(k){return cc[k];}),PAL,false,function(v){drillDown('cat',v);});
-  var a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length;
-  var p=rows.filter(function(r){return r.st==='Pending Approval';}).length;
-  var re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length;
-  mkChart('cSt','doughnut',['Approved','Pending','Returned'],[a,p,re],['#28a745','#ffc107','#dc3545'],false,null);
+  try{mkChart('cCat','pie',ck,ck.map(function(k){return cc[k];}),PAL,false,function(v){drillDown('cat',v);});}catch(e){}
+  var a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,p=rows.filter(function(r){return r.st==='Pending Approval';}).length,re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length;
+  try{mkChart('cSt','doughnut',['Approved','Pending','Returned'],[a,p,re],['#28a745','#ffc107','#dc3545'],false,null);}catch(e){}
   var dc=cntBy(rows,'div');var dk=Object.keys(dc).sort(function(a,b){return dc[b]-dc[a];});
-  mkChart('cDiv','bar',dk,dk.map(function(k){return dc[k];}),dk.map(function(_,i){return PAL[i%PAL.length];}),true,function(v){drillDown('div',v);});
+  try{mkChart('cDiv','bar',dk,dk.map(function(k){return dc[k];}),dk.map(function(_,i){return PAL[i%PAL.length];}),true,function(v){drillDown('div',v);});}catch(e){}
   var lc=cntBy(rows,'loc');var lk=Object.keys(lc).sort(function(a,b){return lc[b]-lc[a];});
-  mkChart('cLoc','bar',lk,lk.map(function(k){return lc[k];}),lk.map(function(_,i){return PAL[(i+3)%PAL.length];}),true,function(v){drillDown('loc',v);});
+  try{mkChart('cLoc','bar',lk,lk.map(function(k){return lc[k];}),lk.map(function(_,i){return PAL[(i+3)%PAL.length];}),true,function(v){drillDown('loc',v);});}catch(e){}
 }
 
-function getContent(r,lang){
-  return{
-    desc:lang==='ar'?r.descAR:(lang==='hi'?r.descHI:r.descEN),
-    find:lang==='ar'?r.findAR:(lang==='hi'?r.findHI:r.findEN),
-    learn:lang==='ar'?r.learnAR:(lang==='hi'?r.learnHI:r.learnEN)
-  };
-}
+function gc(r,lang){return{desc:lang==='ar'?r.descAR:(lang==='hi'?r.descHI:r.descEN),find:lang==='ar'?r.findAR:(lang==='hi'?r.findHI:r.findEN),learn:lang==='ar'?r.learnAR:(lang==='hi'?r.learnHI:r.learnEN)};}
 
 function renderFC(){
-  var rows=getFiltered();var grid=document.getElementById('fcGrid');if(!grid)return;
-  if(!rows.length){grid.innerHTML='<div style="text-align:center;padding:40px;color:#888;grid-column:1/-1"><div style="font-size:32px">&#128203;</div><p style="margin-top:8px">No LFI records match the current filters.</p></div>';return;}
+  var rows=getF();var grid=document.getElementById('fcGrid');if(!grid)return;
+  if(!RAW){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>Click Refresh to load data.</p></div>';return;}
+  if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>No LFI records match the current filters.</p></div>';return;}
   var html='';
   rows.slice().reverse().forEach(function(r){
-    var lang=LANG;var c=getContent(r,lang);var dir=lang==='ar'?'rtl':'ltr';
+    var lang=LANG;var c=gc(r,lang);var dir=lang==='ar'?'rtl':'ltr';
     var enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');
-    html+=
-      '<div class="fc" id="fc-'+esc(r.id)+'">'+ 
-      '<div class="fch" onclick="this.closest(\'.fc\').classList.toggle(\'open\')">'+
+    html+='<div class="fc" id="fc-'+esc(r.id.replace(/[^a-z0-9]/gi,'-'))+'">'+
+      '<div class="fch" onclick="this.closest('.fc').classList.toggle('open')">'+
         '<div class="fct"><span class="fid">'+esc(r.id)+'</span>'+badge(r.st)+'<span style="font-size:13px;color:var(--muted)">&#9660;</span></div>'+
         '<div class="fcv">'+esc(r.cat)+'</div>'+
         '<div class="fcm"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span></div>'+
       '</div>'+
       '<div class="fcb">'+
         '<div class="lbar">'+
-          '<button class="lb'+(lang==='en'?' active':'') +'" onclick="setCardL(this,\'en\')">&#127468;&#127463; EN</button>'+
-          '<button class="lb'+(lang==='hi'?' active':'') +'" onclick="setCardL(this,\'hi\')">&#127470;&#127475; हि</button>'+
-          '<button class="lb'+(lang==='ar'?' active':'') +'" onclick="setCardL(this,\'ar\')">&#127462;&#127466; ع</button>'+
+          '<button class="lb'+(lang==='en'?' active':'')+'" onclick="sclang(this,'en')">&#127468;&#127463; EN</button>'+
+          '<button class="lb'+(lang==='hi'?' active':'')+'" onclick="sclang(this,'hi')">&#127470;&#127475; हि</button>'+
+          '<button class="lb'+(lang==='ar'?' active':'')+'" onclick="sclang(this,'ar')">&#127462;&#127466; ع</button>'+
           '<button class="spk" onclick="speakCard(this)">&#128266; Read Aloud</button>'+
         '</div>'+
-        '<div class="fcc'+(dir==='rtl'?' rtl':'')+'" data-row=\''+enc+'\' data-lang="'+lang+'">'+
-          '<div class="fcs"><label>'+LABELS.desc[lang]+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not available in this language</em>')+'</p></div>'+
-          '<div class="fcs"><label>'+LABELS.find[lang]+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not available in this language</em>')+'</p></div>'+
-          '<div class="fcs"><label>'+LABELS.learn[lang]+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not available in this language</em>')+'</p></div>'+
+        '<div class="fcc'+(dir==='rtl'?' rtl':'')+'" data-row=''+enc+'' data-lang="'+lang+'">'+
+          '<div class="fcs"><label>'+LBL.desc[lang]+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
+          '<div class="fcs"><label>'+LBL.find[lang]+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
+          '<div class="fcs"><label>'+LBL.learn[lang]+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
         '</div>'+
         '<div class="fps">'+
-          '<span class="fp">'+esc(r.div)+'</span>'+
-          '<span class="fp">'+esc(r.by)+'</span>'+
-          (r.ppt?'<span class="fp ok">PPT &#10003;</span>':'<span class="fp pend">PPT Pending</span>')+
-          (r.msa?'<span class="fp ok">MS ATR &#10003;</span>':'<span class="fp pend">MS ATR Pending</span>')+
+          '<span class="fp">'+esc(r.div)+'</span><span class="fp">'+esc(r.by)+'</span>'+
+          (r.ppt?'<span class="fp ok">PPT &#10003;</span>':'<span class="fp pnd">PPT Pending</span>')+
+          (r.msa?'<span class="fp ok">MS ATR &#10003;</span>':'<span class="fp pnd">MS ATR Pending</span>')+
         '</div>'+
-        (r.pptLink&&r.pptLink!='#'?'<div class="fpptlnk"><a href="'+esc(r.pptLink)+'" target="_blank" class="plink">&#128218; Open PPT</a></div>':'')+
+        (r.pptLink?'<div class="fpl"><a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">&#128218; Open PPT</a></div>':'')+
       '</div></div>';
   });
   grid.innerHTML=html;
 }
 
-function setCardL(btn,lang){
-  var card=btn.closest('.fc');
-  var cont=card.querySelector('.fcc');
+function sclang(btn,lang){
+  var card=btn.closest('.fc');var cont=card.querySelector('.fcc');
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
-  var c=getContent(r,lang);
-  var dir=lang==='ar'?'rtl':'ltr';
-  cont.className='fcc'+(dir==='rtl'?' rtl':'');
-  cont.dataset.lang=lang;
-  cont.innerHTML=
-    '<div class="fcs"><label>'+LABELS.desc[lang]+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not available</em>')+'</p></div>'+
-    '<div class="fcs"><label>'+LABELS.find[lang]+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not available</em>')+'</p></div>'+
-    '<div class="fcs"><label>'+LABELS.learn[lang]+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not available</em>')+'</p></div>';
-  card.querySelectorAll('.lb').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
+  var c=gc(r,lang);var dir=lang==='ar'?'rtl':'ltr';
+  cont.className='fcc'+(dir==='rtl'?' rtl':'');cont.dataset.lang=lang;
+  cont.innerHTML='<div class="fcs"><label>'+LBL.desc[lang]+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
+    '<div class="fcs"><label>'+LBL.find[lang]+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
+    '<div class="fcs"><label>'+LBL.learn[lang]+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>';
+  card.querySelectorAll('.lb').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');
 }
 
 function speakCard(btn){
-  var card=btn.closest('.fc');
-  var cont=card.querySelector('.fcc');
-  var lang=cont.dataset.lang||'en';
+  var card=btn.closest('.fc');var cont=card.querySelector('.fcc');var lang=cont.dataset.lang||'en';
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
-  var c=getContent(r,lang);
-  var text=[c.desc,c.find,c.learn].filter(Boolean).join('. ');
-  if(!text){alert('No content in this language.');return;}
-  if(!window.speechSynthesis){alert('Speech not supported in this browser.');return;}
-  window.speechSynthesis.cancel();
-  var u=new SpeechSynthesisUtterance(text);
-  u.lang=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';
-  u.rate=0.9;
-  window.speechSynthesis.speak(u);
-  btn.textContent='&#128266; Reading...';
-  u.onend=function(){btn.textContent='&#128266; Read Aloud';};
+  var c=gc(r,lang);var text=[c.desc,c.find,c.learn].filter(Boolean).join('. ');
+  if(!text){alert('No content in this language yet.');return;}
+  if(!window.speechSynthesis){alert('Speech synthesis not supported.');return;}
+  window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);
+  u.lang=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';u.rate=0.9;
+  window.speechSynthesis.speak(u);btn.textContent='&#128266; Reading...';u.onend=function(){btn.textContent='&#128266; Read Aloud';};
 }
 
 function renderMsa(){
-  var f=document.getElementById('msF');
-  var sf=f?f.value:'';
-  var all=DEMO.msRows.filter(function(r){return r.id;});
+  if(!MSR)return;var f=document.getElementById('msF');var sf=f?f.value:'';
+  var all=MSR.filter(function(r){return r.id;});
   document.getElementById('ms-t').textContent=all.length;
   document.getElementById('ms-o').textContent=all.filter(function(r){return r.st==='Open';}).length;
   document.getElementById('ms-c').textContent=all.filter(function(r){return r.st==='Closed';}).length;
   document.getElementById('ms-n').textContent=all.filter(function(r){return r.st==='Not Required';}).length;
   var rows=all.filter(function(r){return!sf||r.st===sf;});
   var grid=document.getElementById('msaGrid');if(!grid)return;
-  if(!rows.length){grid.innerHTML='<div style="text-align:center;padding:40px;color:#888;grid-column:1/-1"><div style="font-size:32px">&#128196;</div><p style="margin-top:8px">No MS ATR records match the filter.</p></div>';return;}
+  if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128196;</div><p>No MS ATR records match the filter.</p></div>';return;}
   var sc={Open:'open',Closed:'closed','Not Required':'notreq'};
   grid.innerHTML=rows.map(function(r){
     var sb=r.st==='Open'?badge('Pending Approval'):r.st==='Closed'?badge('Reviewed & Approved'):badge('Reviewed & Returned');
-    return '<div class="mc '+(sc[r.st]||'')+'">'+
-      '<div class="mid">'+esc(r.id)+'</div>'+
-      '<div class="mdi">'+esc(r.disc||'— Discipline not set')+'</div>'+
+    return'<div class="mc '+(sc[r.st]||'')+'">'+
+      '<div class="mid">'+esc(r.id)+'</div><div class="mdi">'+esc(r.disc||'— Discipline not set')+'</div>'+
       '<div class="mr"><span>MS Gaps</span><strong>'+esc(r.gaps||'—')+'</strong></div>'+
       '<div class="mr"><span>Responsible</span><strong>'+esc(r.re1||'—')+'</strong></div>'+
       '<div class="mr"><span>Action Party</span><strong>'+esc(r.ap||'—')+'</strong></div>'+
       '<div class="mr"><span>Accountable</span><strong>'+esc(r.acc||'—')+'</strong></div>'+
       '<div style="margin-top:7px">'+sb+'</div>'+
-      (r.ppt&&r.ppt!='#'?'<div style="margin-top:6px"><a href="'+esc(r.ppt)+'" target="_blank" class="plink" style="font-size:11px">&#128218; Open PPT</a></div>':'')+
+      (r.ppt?'<div style="margin-top:6px"><a href="'+esc(r.ppt)+'" target="_blank" class="plnk" style="font-size:11px">&#128218; Open PPT</a></div>':'')+
     '</div>';
   }).join('');
 }
 
-document.addEventListener('DOMContentLoaded',function(){
-  fill('fCat',uniq(DEMO.rawRows.map(function(r){return r.cat;})));
-  fill('fDiv',uniq(DEMO.rawRows.map(function(r){return r.div;})));
-  fill('fLoc',uniq(DEMO.rawRows.map(function(r){return r.loc;})));
-  fill('fSt',uniq(DEMO.rawRows.map(function(r){return r.st;})));
-  fill('fDisc',uniq(DEMO.rawRows.map(function(r){return r.disc;})));
-  applyAll();
-});
+function loadForm(){
+  if(!document.getElementById('page-form').classList.contains('active'))return;
+}
+
+document.addEventListener('DOMContentLoaded',function(){refresh();});
 </script>
 </body>
 </html>
