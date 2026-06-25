@@ -108,6 +108,9 @@ nav a .ni{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 .lb.active{background:var(--bl);color:#fff;border-color:var(--bl)}
 .spk{padding:4px 9px;border:none;border-radius:4px;background:var(--or);color:#fff;font-size:11px;cursor:pointer;margin-left:auto}
 .spk:hover{background:#d46d16}
+.spk.playing{background:#dc3545;animation:pulse 1.2s ease-in-out infinite}
+.spk.playing:hover{background:#b02a37}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,53,69,.4)}50%{box-shadow:0 0 0 6px rgba(220,53,69,0)}}
 .fcc{font-size:12px;line-height:1.6}
 .fcc.rtl{direction:rtl;text-align:right}
 .fcs{margin-bottom:8px}
@@ -169,10 +172,15 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     <a onclick="navTo('lfi',this)">
       <span class="ni">&#128203;</span><span data-i18n="sb_lfi">LFI Register</span>
     </a>
+    <!-- Direct href — never blocked by browser popup blockers -->
+    <a id="sbFormBtn"
+       href="https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform?usp=dialog"
+       target="_blank"
+       rel="noopener noreferrer"
+       style="background:var(--or);color:#fff;border-left-color:var(--or);margin:6px 8px 8px;border-radius:6px;justify-content:center;font-weight:700">
+      <span class="ni">&#128221;</span><span data-i18n="btn_submit">+ Submit New LFI</span>
+    </a>
   </nav>
-  <button id="sbFormBtn" onclick="openForm()" style="margin:4px 10px 12px;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:var(--or);color:#fff;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;width:calc(100% - 20px)">
-    <span>&#128221;</span><span data-i18n="btn_submit">+ Submit New LFI</span>
-  </button>
 </div>
 
 <!-- MAIN -->
@@ -348,7 +356,7 @@ var I18N={
     ch_cat:'By Incident Category',ch_status:'Approval Status Distribution',ch_div:'By ATNM Division',ch_loc:'By Cluster / Location',ch_drill:'Click to drill down',
     lfi_hint:'Click a card to expand. Use 🔊 to read aloud.',lfi_empty:'No LFI records match the current filters.',lfi_load:'Click Refresh to load data.',
     badge_appr:'Approved',badge_pend:'Pending',badge_ret:'Returned',
-    fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT Pending',fc_read:'🔊 Read Aloud',fc_reading:'🔊 Reading...',fc_open_ppt:'📖 Open PPT',
+    fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT Pending',fc_read:'🔊 Read Aloud',fc_stop:'⏹ Stop',fc_open_ppt:'📖 Open PPT',
     drill_by:'Filtered by:',drill_clear:'✕ Clear',
     loading:'Loading LFI data...',not_translated:'Not yet translated',
     desc:'Description of Incident',find:'Findings / Root Cause',learn:'Learnings from Incident',rec:'records',
@@ -368,7 +376,7 @@ var I18N={
     ch_cat:'घटना श्रेणी अनुसार',ch_status:'अनुमोदन स्थिति',ch_div:'ATNM विभाग अनुसार',ch_loc:'क्लस्टर अनुसार',ch_drill:'ड्रिल के लिए क्लिक करें',
     lfi_hint:'विस्तार के लिए क्लिक करें। 🔊 से पढ़ें।',lfi_empty:'कोई LFI रिकॉर्ड नहीं मिला।',lfi_load:'डेटा लोड करने के लिए ताज़ा करें।',
     badge_appr:'अनुमोदित',badge_pend:'लंबित',badge_ret:'वापस',
-    fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT लंबित',fc_read:'🔊 पढ़ें',fc_reading:'🔊 पढ़ रहा है...',fc_open_ppt:'📖 PPT खोलें',
+    fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT लंबित',fc_read:'🔊 पढ़ें',fc_stop:'⏹ रोकें',fc_open_ppt:'📖 PPT खोलें',
     drill_by:'फ़िल्टर:',drill_clear:'✕ साफ',
     loading:'डेटा लोड हो रहा है...',not_translated:'अभी अनुवाद नहीं हुआ',
     desc:'घटना का विवरण',find:'निष्कर्ष / मूल कारण',learn:'इस घटना से सीख',rec:'रिकॉर्ड',
@@ -388,7 +396,7 @@ var I18N={
     ch_cat:'حسب فئة الحادث',ch_status:'توزيع الحالة',ch_div:'حسب قسم ATNM',ch_loc:'حسب المجموعة',ch_drill:'انقر للتفصيل',
     lfi_hint:'انقر للتوسع. استخدم 🔊 للقراءة.',lfi_empty:'لا توجد سجلات.',lfi_load:'انقر تحديث لتحميل البيانات.',
     badge_appr:'معتمد',badge_pend:'قيد الانتظار',badge_ret:'مُعاد',
-    fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT معلق',fc_read:'🔊 قراءة',fc_reading:'🔊 جارٍ القراءة...',fc_open_ppt:'📖 فتح PPT',
+    fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT معلق',fc_read:'🔊 قراءة',fc_stop:'⏹ إيقاف',fc_open_ppt:'📖 فتح PPT',
     drill_by:'مفلتر بـ:',drill_clear:'✕ مسح',
     loading:'جارٍ التحميل...',not_translated:'لم يُترجم بعد',
     desc:'وصف الحادث',find:'النتائج / السبب',learn:'الدروس المستفادة',rec:'سجلات',
@@ -400,6 +408,7 @@ var I18N={
 
 var LANG='en',DRILL=null,RAW=null;
 var CH={},CUR_PAGE='overview';
+var SPEAKING_BTN=null; // tracks the currently active speak button
 var PAL=['#21409a','#f58220','#28a745','#dc3545','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#e83e8c','#6c757d','#0d6efd'];
 
 function t(k){return(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;}
@@ -417,7 +426,7 @@ function translateUI(){
   if(fSt){fSt.options[0].textContent=t('fil_all_status');fSt.options[1].textContent=t('badge_appr');fSt.options[2].textContent=t('badge_pend');fSt.options[3].textContent=t('badge_ret');}
   var mp={fCat:'fil_all_cat',fDiv:'fil_all_div',fLoc:'fil_all_cluster',fDisc:'fil_all_disc'};
   Object.keys(mp).forEach(function(id){var el=document.getElementById(id);if(el&&el.options[0])el.options[0].textContent=t(mp[id]);});
-  document.getElementById('sbFormBtn').innerHTML='<span>&#128221;</span><span>'+t('btn_submit')+'</span>';
+  // sbFormBtn uses data-i18n on inner span — translated automatically above
   var lp=document.querySelector('#loader p');if(lp)lp.textContent=t('loading');
   if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
 }
@@ -623,7 +632,7 @@ function renderFC(){
     var lang=LANG,c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
     var enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');
     html+='<div class="fc">'+
-      '<div class="fch" onclick="this.closest(\'.fc\').classList.toggle(\'open\')">'+
+      '<div class="fch" onclick="stopSpeech();this.closest(\'.fc\').classList.toggle(\'open\')">'+
         '<div class="fct"><span class="fid">'+esc(r.id)+'</span>'+mkbadge(r.st)+'<span style="font-size:12px;color:var(--muted)">&#9660;</span></div>'+
         '<div class="fcv">'+esc(r.cat)+'</div>'+
         '<div class="fcm"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span></div>'+
@@ -651,6 +660,7 @@ function renderFC(){
 }
 
 function sclang(btn,lang){
+  stopSpeech(); // stop audio when user switches language
   var card=btn.closest('.fc'),cont=card.querySelector('.fcc');
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
   var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
@@ -664,17 +674,53 @@ function sclang(btn,lang){
   var spk=card.querySelector('.spk');if(spk)spk.textContent=t('fc_read');
 }
 
+// ── SPEECH: stop current audio and reset button ───────────────
+function stopSpeech(){
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  if(SPEAKING_BTN){
+    SPEAKING_BTN.textContent=t('fc_read');
+    SPEAKING_BTN.classList.remove('playing');
+    SPEAKING_BTN=null;
+  }
+}
+
+// ── SPEECH: play/stop toggle ────────────────────────────────────
+// First click → play (button turns red + pulses)
+// Second click on same button → stop
+// Clicking any other card interaction → auto-stop
 function speakCard(btn){
+  // STOP — same button clicked while playing
+  if(SPEAKING_BTN===btn){stopSpeech();return;}
+  // STOP any other card that is playing first
+  stopSpeech();
   var card=btn.closest('.fc'),cont=card.querySelector('.fcc'),lang=cont.dataset.lang||'en';
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
   var c=gc(r,lang),text=[c.desc,c.find,c.learn].filter(Boolean).join('. ');
-  if(!text)return;if(!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
+  if(!text){return;}
+  if(!window.speechSynthesis){alert('Speech synthesis not supported in this browser.');return;}
   var u=new SpeechSynthesisUtterance(text);
-  u.lang=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';u.rate=0.9;
+  u.lang=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';
+  u.rate=0.9;
+  // Mark button as playing
+  SPEAKING_BTN=btn;
+  btn.textContent=t('fc_stop');
+  btn.classList.add('playing');
   window.speechSynthesis.speak(u);
-  btn.textContent=t('fc_reading');
-  u.onend=function(){btn.textContent=t('fc_read');};
+  // Natural end → reset to play state
+  u.onend=function(){
+    if(SPEAKING_BTN===btn){
+      btn.textContent=t('fc_read');
+      btn.classList.remove('playing');
+      SPEAKING_BTN=null;
+    }
+  };
+  u.onerror=function(){
+    if(SPEAKING_BTN===btn){
+      btn.textContent=t('fc_read');
+      btn.classList.remove('playing');
+      SPEAKING_BTN=null;
+    }
+  };
 }
 
 // ── EXPORT: EXCEL ─────────────────────────────────────────────
