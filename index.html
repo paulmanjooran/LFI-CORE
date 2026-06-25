@@ -6,26 +6,27 @@
 <title>ATNM LFI Core Dashboard v4.9</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
+/* ATNM LFI CORE — Brand: DG=#4d555b BL=#21409a OR=#f58220 */
 :root{--dg:#4d555b;--bl:#21409a;--or:#f58220;--gr:#28a745;--am:#ffc107;--rd:#dc3545;--cy:#17a2b8;--bg:#f0f2f5;--border:#e0e4ea;--muted:#6c757d;--sw:250px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:var(--bg);color:#212529;font-size:13px;display:flex;min-height:100vh}
 #sb{width:var(--sw);min-width:var(--sw);background:var(--dg);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto;transition:transform .3s}
-.sb-brand{background:#2d3338;padding:14px 12px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--or)}
-.sb-logo-img{height:44px;width:auto;object-fit:contain;flex-shrink:0}
-.sb-logo-txt{width:44px;height:44px;border-radius:6px;background:var(--or);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:#fff;flex-shrink:0;line-height:1.2;text-align:center}
+.sb-brand{background:#2d3338;padding:12px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--or)}
+.sb-brand-img{height:44px;width:auto;object-fit:contain;flex-shrink:0}
+.sb-brand-fb{width:44px;height:44px;border-radius:6px;background:var(--or);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:#fff;text-align:center;line-height:1.2;flex-shrink:0}
 .sb-brand-text{color:#fff;flex:1}
 .sb-brand-text strong{display:block;font-size:14px;letter-spacing:.3px}
-.sb-brand-text span{font-size:10px;opacity:.7;display:block}
+.sb-brand-text span{font-size:10px;opacity:.65;display:block}
 nav{padding:10px 0;flex:1}
-nav a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.3px;transition:all .15s;border-left:3px solid transparent;cursor:pointer}
+nav a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;font-weight:600;transition:all .15s;border-left:3px solid transparent;cursor:pointer}
 nav a:hover{background:rgba(255,255,255,.08);color:#fff}
 nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or)}
 nav a .ni{font-size:16px;width:20px;text-align:center;flex-shrink:0}
-.sb-sec{padding:8px 16px 4px;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
-.sb-stats{padding:4px 14px 6px}
+.sb-sec{padding:8px 16px 4px;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.sb-stats{padding:4px 14px 8px}
 .mrow{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;color:rgba(255,255,255,.7)}
 .mrow strong{color:#fff}
-#sbFormBtn{display:block;margin:10px;padding:10px;background:var(--or);color:#fff;text-align:center;text-decoration:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;width:calc(100% - 20px)}
+#sbFormBtn{display:block;margin:10px;padding:10px;background:var(--or);color:#fff;text-align:center;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;width:calc(100% - 20px)}
 #sbFormBtn:hover{background:#d46d16}
 #stog{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--dg);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:18px;cursor:pointer}
 #main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
@@ -39,10 +40,11 @@ nav a .ni{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 .bref:hover{background:var(--bl)}
 .bref.ld{opacity:.6;cursor:not-allowed}
 #lu{font-size:10px;color:var(--muted);white-space:nowrap}
-#errBanner{background:#f8d7da;border-bottom:1px solid #f5c2c7;padding:10px 20px;display:none;align-items:flex-start;gap:10px;font-size:12px;color:#721c24}
+#errBanner{background:#f8d7da;border-bottom:1px solid #f5c2c7;padding:10px 20px;display:none;align-items:flex-start;gap:12px;font-size:12px;color:#721c24}
 #errBanner.vis{display:flex}
+#errBanner .ei{font-size:18px;flex-shrink:0}
 #errBanner .em{flex:1;line-height:1.6}
-#errBanner button{background:none;border:none;font-size:18px;cursor:pointer;color:#721c24}
+#errBanner .ec{background:none;border:none;font-size:18px;cursor:pointer;color:#721c24;flex-shrink:0}
 #drillBar{background:#e8f0fe;border-bottom:1px solid #c5d1f0;padding:7px 20px;display:none;align-items:center;gap:10px;font-size:12px}
 #drillBar.vis{display:flex}
 #drillInfo{font-weight:600;color:var(--bl)}
@@ -102,7 +104,7 @@ nav a .ni{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
 .ba{background:#d4edda;color:#155724}
 .bp{background:#fff3cd;color:#856404}
-.br{background:#f8d7da;color:#721c24}
+.br2{background:#f8d7da;color:#721c24}
 .msg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .mc{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid var(--border)}
 .mc.open{border-left-color:var(--rd)}
@@ -110,8 +112,8 @@ nav a .ni{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 .mc.notreq{border-left-color:var(--am)}
 .mid{font-family:monospace;font-size:10px;color:var(--muted);margin-bottom:3px}
 .mdi{font-size:13px;font-weight:700;color:var(--dg);margin-bottom:5px}
-.mr2{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;color:var(--muted)}
-.mr2 strong{color:#212529}
+.mr{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;color:var(--muted)}
+.mr strong{color:#212529}
 #loader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.78);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 #loader.vis{display:flex}
 .spin{width:40px;height:40px;border:4px solid #ddd;border-top-color:var(--bl);border-radius:50%;animation:sp .8s linear infinite}
@@ -123,9 +125,10 @@ nav a .ni{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 html[dir="rtl"] #sb{left:auto;right:0}
 html[dir="rtl"] #main{margin-left:0;margin-right:var(--sw)}
 html[dir="rtl"] nav a{border-left:none;border-right:3px solid transparent}
-html[dir="rtl"] nav a.active{border-left:none;border-right-color:var(--or)}
+html[dir="rtl"] nav a.active{border-right-color:var(--or);border-left:none}
 html[dir="rtl"] #topbar,html[dir="rtl"] #fb,html[dir="rtl"] #drillBar,html[dir="rtl"] #errBanner{flex-direction:row-reverse}
 html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
+html[dir="rtl"] .kl,html[dir="rtl"] .kp{direction:rtl}
 @media(max-width:900px){.crow{grid-template-columns:1fr}.fcg{grid-template-columns:1fr}}
 @media(max-width:700px){#sb{transform:translateX(-100%)}html[dir="rtl"] #sb{transform:translateX(100%)}#sb.open{transform:translateX(0)}#main{margin-left:0!important;margin-right:0!important}#stog{display:block}.kc{min-width:110px}}
 </style>
@@ -134,11 +137,13 @@ html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
 
 <button id="stog" onclick="document.getElementById('sb').classList.toggle('open')">&#9776;</button>
 
+<!-- SIDEBAR -->
 <div id="sb">
   <div class="sb-brand">
-    <img src="logo.png" class="sb-logo-img" alt="ATNM"
-         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="sb-logo-txt" style="display:none">ATNM</div>
+    <!-- Put your logo file (logo.png) in the same GitHub folder as dashboard.html -->
+    <img src="logo.png" class="sb-brand-img" alt="ATNM"
+         onerror="this.style.display='none';document.getElementById('sbLogoFb').style.display='flex'">
+    <div class="sb-brand-fb" id="sbLogoFb" style="display:none">ATNM</div>
     <div class="sb-brand-text">
       <strong>LFI CORE</strong>
       <span>PDO ODC Programme</span>
@@ -166,8 +171,10 @@ html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
   <button id="sbFormBtn" onclick="openForm()" data-i18n="btn_submit">+ Submit New LFI</button>
 </div>
 
+<!-- MAIN -->
 <div id="main">
   <div class="grad"></div>
+
   <div id="topbar">
     <div id="ptitle">Overview Dashboard</div>
     <div class="ltgl">
@@ -179,18 +186,21 @@ html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
     <span id="lu"></span>
   </div>
 
+  <!-- Error Banner -->
   <div id="errBanner">
-    <span style="font-size:18px;flex-shrink:0">&#9888;</span>
+    <span class="ei">&#9888;</span>
     <div class="em" id="errMsg"></div>
-    <button onclick="document.getElementById('errBanner').classList.remove('vis')">&#215;</button>
+    <button class="ec" onclick="document.getElementById('errBanner').classList.remove('vis')">&#215;</button>
   </div>
 
+  <!-- Drill Bar -->
   <div id="drillBar">
     <span data-i18n="drill_by">Filtered by:</span>
     <span id="drillInfo" style="font-weight:600;color:var(--bl)"></span>
     <button class="cld" onclick="clearDrill()" data-i18n="drill_clear">✕ Clear</button>
   </div>
 
+  <!-- Filter Bar -->
   <div id="fb">
     <div class="fg"><label data-i18n="fil_from">From Date</label><input type="date" id="fFrom" onchange="applyAll()"></div>
     <div class="fg"><label data-i18n="fil_to">To Date</label><input type="date" id="fTo" onchange="applyAll()"></div>
@@ -210,9 +220,9 @@ html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
       <label data-i18n="fil_status">Status</label>
       <select id="fSt" onchange="applyAll()">
         <option value="" data-i18n="fil_all_status">All Statuses</option>
-        <option value="Reviewed & Approved" data-i18n="badge_approved">Approved</option>
-        <option value="Pending Approval" data-i18n="badge_pending">Pending</option>
-        <option value="Reviewed & Returned" data-i18n="badge_returned">Returned</option>
+        <option value="Reviewed & Approved" data-i18n="badge_appr">Approved</option>
+        <option value="Pending Approval" data-i18n="badge_pend">Pending</option>
+        <option value="Reviewed & Returned" data-i18n="badge_ret">Returned</option>
       </select>
     </div>
     <div class="fg">
@@ -230,6 +240,7 @@ html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
 
   <div id="content">
 
+    <!-- OVERVIEW -->
     <div class="page active" id="page-overview">
       <div class="krow">
         <div class="kc" style="background:#21409a;color:#fff"><div class="ki">&#128203;</div><div class="kv" id="k0">0</div><div class="kl" data-i18n="kpi_total">Total LFIs</div><div class="kp" id="kp0"></div></div>
@@ -249,6 +260,7 @@ html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
       </div>
     </div>
 
+    <!-- LFI REGISTER -->
     <div class="page" id="page-lfi">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
         <div style="font-size:12px;color:var(--muted)" data-i18n="lfi_hint">Click a card to expand. Use 🔊 to read aloud.</div>
@@ -257,6 +269,7 @@ html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
       <div class="fcg" id="fcGrid"></div>
     </div>
 
+    <!-- MS ATR -->
     <div class="page" id="page-msa">
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
         <div style="flex:1;font-size:12px;color:var(--muted)" data-i18n="msa_sub">Method Statement Action Tracker</div>
@@ -284,39 +297,144 @@ html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
 
 <script>
 // ============================================================
-// ATNM LFI CORE DASHBOARD v4.9 — JSONP Edition
-// JSONP bypasses CORS for altasnim.com workspace URLs
+// ATNM LFI CORE DASHBOARD v4.9
+// CORS FIX: Uses JSONP instead of fetch() to bypass workspace
+// domain authentication redirect on GitHub Pages.
+// Requires doGet() in Code.gs to support ?callback= parameter.
 // ============================================================
-var API_URL='https://script.google.com/a/macros/altasnim.com/s/AKfycbzJo2bSVd5SxH74-a7FElfbPfQMoulItUB-XXcK83Ocn6utv3uO3pzccKNmlSxX1yWOjg/exec?action=api';
-var FORM_URL=''; // Set your Google Form URL here
 
+// ── CONFIGURE ──────────────────────────────────────────────
+// Base URL WITHOUT ?action=api — the script adds it
+var API_BASE = 'https://script.google.com/a/macros/altasnim.com/s/AKfycbzJo2bSVd5SxH74-a7FElfbPfQMoulItUB-XXcK83Ocn6utv3uO3pzccKNmlSxX1yWOjg/exec';
+var FORM_URL = '';  // ← Set your Google Form URL here
+// ───────────────────────────────────────────────────────────
+
+// ── I18N ───────────────────────────────────────────────────
 var I18N={
-  en:{sb_nav:'Dashboard',sb_overview:'Overview',sb_lfi:'LFI Register',sb_msa:'MS ATR Board',sb_stats_hdr:'Quick Stats',sb_total:'Total LFIs',sb_approved:'Approved',sb_pending:'Pending',sb_ms_open:'MS ATRs Open',btn_submit:'+ Submit New LFI',pg_overview:'Overview Dashboard',pg_lfi:'LFI Register — Interactive Flashcards',pg_msa:'MS ATR — Action Tracker Board',btn_refresh:'↺ Refresh Data',btn_refresh_sm:'↺ Refresh',btn_reset:'↺ Reset',fil_from:'From Date',fil_to:'To Date',fil_cat:'Category',fil_div:'Division',fil_cluster:'Cluster',fil_status:'Status',fil_disc:'Discipline',fil_search:'Search',fil_all_cat:'All Categories',fil_all_div:'All Divisions',fil_all_cluster:'All Clusters',fil_all_status:'All Statuses',fil_all_disc:'All Disciplines',fil_search_ph:'ID, name, location, summary...',kpi_total:'Total LFIs',kpi_approved:'Approved',kpi_pending:'Pending',kpi_returned:'Returned',kpi_ppt:'PPTs Created',kpi_msa:'MS ATR Created',ch_cat:'By Incident Category',ch_status:'Approval Status Distribution',ch_div:'By ATNM Division',ch_loc:'By Cluster / Location',ch_drill:'Click to drill down',lfi_hint:'Click a card to expand. Use 🔊 to read aloud.',lfi_empty:'No LFI records match the current filters.',lfi_load:'Click Refresh to load data.',badge_approved:'Approved',badge_pending:'Pending',badge_returned:'Returned',fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT Pending',fc_msa_ok:'MS ATR ✓',fc_msa_pend:'MS ATR Pending',fc_open_ppt:'📖 Open PPT',fc_read:'🔊 Read Aloud',fc_reading:'🔊 Reading...',msa_sub:'Method Statement Action Tracker — linked to approved LFIs',msa_total:'Total MS ATRs',msa_open:'Open',msa_closed:'Closed',msa_notreq:'Not Required',msa_empty:'No MS ATR records match the filter.',msa_gaps:'MS Gaps',msa_resp:'Responsible',msa_ap:'Action Party',msa_acc:'Accountable',drill_by:'Filtered by:',drill_clear:'✕ Clear',loading:'Loading LFI data...',not_translated:'Not yet translated',desc:'Description of Incident',find:'Findings / Root Cause',learn:'Learnings from Incident',rec:'records',err_cors:'Cannot load data. The updated doGet() with JSONP support is needed in Code.gs — paste the new doGet() function and redeploy.',err_timeout:'Request timed out. Check your internet connection and that the deployment URL is correct.',err_generic:'Error loading data. Check Code.gs v4.9 is deployed with the JSONP-enabled doGet().'
+  en:{
+    sb_nav:'Dashboard',sb_overview:'Overview',sb_lfi:'LFI Register',sb_msa:'MS ATR Board',
+    sb_stats_hdr:'Quick Stats',sb_total:'Total LFIs',sb_approved:'Approved',sb_pending:'Pending',
+    sb_ms_open:'MS ATRs Open',btn_submit:'+ Submit New LFI',
+    pg_overview:'Overview Dashboard',pg_lfi:'LFI Register — Interactive Flashcards',pg_msa:'MS ATR — Action Tracker Board',
+    btn_refresh:'↺ Refresh Data',btn_refresh_sm:'↺ Refresh',btn_reset:'↺ Reset',
+    fil_from:'From Date',fil_to:'To Date',fil_cat:'Category',fil_div:'Division',fil_cluster:'Cluster',
+    fil_status:'Status',fil_disc:'Discipline',fil_search:'Search',
+    fil_all_cat:'All Categories',fil_all_div:'All Divisions',fil_all_cluster:'All Clusters',
+    fil_all_status:'All Statuses',fil_all_disc:'All Disciplines',
+    fil_search_ph:'ID, name, location, summary...',
+    kpi_total:'Total LFIs',kpi_approved:'Approved',kpi_pending:'Pending',
+    kpi_returned:'Returned',kpi_ppt:'PPTs Created',kpi_msa:'MS ATR Created',
+    ch_cat:'By Incident Category',ch_status:'Approval Status Distribution',
+    ch_div:'By ATNM Division',ch_loc:'By Cluster / Location',ch_drill:'Click to drill down',
+    lfi_hint:'Click a card to expand. Use 🔊 to read aloud.',
+    lfi_empty:'No LFI records match the current filters.',
+    lfi_load:'Waiting for data — click Refresh.',
+    badge_appr:'Approved',badge_pend:'Pending',badge_ret:'Returned',
+    fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT Pending',fc_msa_ok:'MS ATR ✓',fc_msa_pend:'MS ATR Pending',
+    fc_open_ppt:'📖 Open PPT',fc_read:'🔊 Read Aloud',fc_reading:'🔊 Reading...',
+    msa_sub:'Method Statement Action Tracker — linked to approved LFIs',
+    msa_total:'Total MS ATRs',msa_open:'Open',msa_closed:'Closed',msa_notreq:'Not Required',
+    msa_empty:'No MS ATR records match the filter.',
+    msa_gaps:'MS Gaps',msa_resp:'Responsible',msa_ap:'Action Party',msa_acc:'Accountable',
+    drill_by:'Filtered by:',drill_clear:'✕ Clear',
+    loading:'Loading LFI data...',not_translated:'Not yet translated',
+    desc:'Description of Incident',find:'Findings / Root Cause',learn:'Learnings from Incident',
+    rec:'records',
+    err_auth:'Sign-in required. Please open this URL in your browser while signed into your altasnim.com Google account, then click Refresh: '+API_BASE+'?action=api',
+    err_timeout:'Request timed out. Make sure you are signed into your altasnim.com Google account in this browser, then click Refresh.',
+    err_load:'Could not load data. Ensure deployment Access = Anyone and Code.gs v4.9 is active.'
   },
-  hi:{sb_nav:'डैशबोर्ड',sb_overview:'अवलोकन',sb_lfi:'LFI रजिस्टर',sb_msa:'MS ATR बोर्ड',sb_stats_hdr:'त्वरित आँकड़े',sb_total:'कुल LFIs',sb_approved:'अनुमोदित',sb_pending:'लंबित',sb_ms_open:'MS ATR खुले',btn_submit:'+ नया LFI जमा करें',pg_overview:'अवलोकन डैशबोर्ड',pg_lfi:'LFI रजिस्टर — फ्लैशकार्ड',pg_msa:'MS ATR — कार्य ट्रैकर',btn_refresh:'↺ डेटा ताज़ा करें',btn_refresh_sm:'↺ ताज़ा करें',btn_reset:'↺ रीसेट',fil_from:'शुरू तिथि',fil_to:'अंत तिथि',fil_cat:'श्रेणी',fil_div:'विभाग',fil_cluster:'क्लस्टर',fil_status:'स्थिति',fil_disc:'अनुशासन',fil_search:'खोज',fil_all_cat:'सभी श्रेणियाँ',fil_all_div:'सभी विभाग',fil_all_cluster:'सभी क्लस्टर',fil_all_status:'सभी स्थितियाँ',fil_all_disc:'सभी अनुशासन',fil_search_ph:'ID, नाम, स्थान, सारांश...',kpi_total:'कुल LFIs',kpi_approved:'अनुमोदित',kpi_pending:'लंबित',kpi_returned:'वापस',kpi_ppt:'PPT बनाए',kpi_msa:'MS ATR बनाए',ch_cat:'घटना श्रेणी अनुसार',ch_status:'अनुमोदन स्थिति वितरण',ch_div:'ATNM विभाग अनुसार',ch_loc:'क्लस्टर / स्थान अनुसार',ch_drill:'ड्रिल डाउन के लिए क्लिक करें',lfi_hint:'विस्तार के लिए क्लिक करें। 🔊 से पढ़ें।',lfi_empty:'कोई LFI रिकॉर्ड नहीं मिला।',lfi_load:'डेटा लोड करने के लिए ताज़ा करें।',badge_approved:'अनुमोदित',badge_pending:'लंबित',badge_returned:'वापस',fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT लंबित',fc_msa_ok:'MS ATR ✓',fc_msa_pend:'MS ATR लंबित',fc_open_ppt:'📖 PPT खोलें',fc_read:'🔊 पढ़ें',fc_reading:'🔊 पढ़ रहा है...',msa_sub:'विधि विवरण क्रिया ट्रैकर',msa_total:'कुल MS ATR',msa_open:'खुले',msa_closed:'बंद',msa_notreq:'आवश्यक नहीं',msa_empty:'कोई MS ATR रिकॉर्ड नहीं मिला।',msa_gaps:'MS अंतराल',msa_resp:'जिम्मेदार',msa_ap:'कार्य पक्ष',msa_acc:'जवाबदेह',drill_by:'फ़िल्टर किया:',drill_clear:'✕ साफ करें',loading:'LFI डेटा लोड हो रहा है...',not_translated:'अभी अनुवाद नहीं हुआ',desc:'घटना का विवरण',find:'निष्कर्ष / मूल कारण',learn:'इस घटना से सीख',rec:'रिकॉर्ड',err_cors:'डेटा लोड नहीं हो सका। Code.gs में नया doGet() डालें और फिर से डिप्लॉय करें।',err_timeout:'अनुरोध का समय समाप्त।',err_generic:'डेटा लोड करने में त्रुटि।'
+  hi:{
+    sb_nav:'डैशबोर्ड',sb_overview:'अवलोकन',sb_lfi:'LFI रजिस्टर',sb_msa:'MS ATR बोर्ड',
+    sb_stats_hdr:'त्वरित आँकड़े',sb_total:'कुल LFIs',sb_approved:'अनुमोदित',sb_pending:'लंबित',
+    sb_ms_open:'MS ATR खुले',btn_submit:'+ नया LFI जमा करें',
+    pg_overview:'अवलोकन डैशबोर्ड',pg_lfi:'LFI रजिस्टर — फ्लैशकार्ड',pg_msa:'MS ATR — कार्य ट्रैकर',
+    btn_refresh:'↺ डेटा ताज़ा करें',btn_refresh_sm:'↺ ताज़ा करें',btn_reset:'↺ रीसेट',
+    fil_from:'शुरू तिथि',fil_to:'अंत तिथि',fil_cat:'श्रेणी',fil_div:'विभाग',fil_cluster:'क्लस्टर',
+    fil_status:'स्थिति',fil_disc:'अनुशासन',fil_search:'खोज',
+    fil_all_cat:'सभी श्रेणियाँ',fil_all_div:'सभी विभाग',fil_all_cluster:'सभी क्लस्टर',
+    fil_all_status:'सभी स्थितियाँ',fil_all_disc:'सभी अनुशासन',
+    fil_search_ph:'ID, नाम, स्थान, सारांश...',
+    kpi_total:'कुल LFIs',kpi_approved:'अनुमोदित',kpi_pending:'लंबित',
+    kpi_returned:'वापस',kpi_ppt:'PPT बनाए',kpi_msa:'MS ATR बनाए',
+    ch_cat:'घटना श्रेणी अनुसार',ch_status:'अनुमोदन स्थिति वितरण',
+    ch_div:'ATNM विभाग अनुसार',ch_loc:'क्लस्टर / स्थान अनुसार',ch_drill:'ड्रिल के लिए क्लिक करें',
+    lfi_hint:'विस्तार के लिए क्लिक करें। 🔊 से पढ़ें।',
+    lfi_empty:'कोई LFI रिकॉर्ड नहीं मिला।',lfi_load:'डेटा की प्रतीक्षा — ताज़ा करें पर क्लिक करें।',
+    badge_appr:'अनुमोदित',badge_pend:'लंबित',badge_ret:'वापस',
+    fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT लंबित',fc_msa_ok:'MS ATR ✓',fc_msa_pend:'MS ATR लंबित',
+    fc_open_ppt:'📖 PPT खोलें',fc_read:'🔊 पढ़ें',fc_reading:'🔊 पढ़ रहा है...',
+    msa_sub:'विधि विवरण क्रिया ट्रैकर — अनुमोदित LFIs से जुड़ा',
+    msa_total:'कुल MS ATR',msa_open:'खुले',msa_closed:'बंद',msa_notreq:'आवश्यक नहीं',
+    msa_empty:'कोई MS ATR रिकॉर्ड नहीं मिला।',
+    msa_gaps:'MS अंतराल',msa_resp:'जिम्मेदार',msa_ap:'कार्य पक्ष',msa_acc:'जवाबदेह',
+    drill_by:'फ़िल्टर किया:',drill_clear:'✕ साफ करें',
+    loading:'LFI डेटा लोड हो रहा है...',not_translated:'अभी अनुवाद नहीं हुआ',
+    desc:'घटना का विवरण',find:'निष्कर्ष / मूल कारण',learn:'इस घटना से सीख',rec:'रिकॉर्ड',
+    err_auth:'साइन-इन आवश्यक है। altasnim.com खाते से साइन इन करके ब्राउज़र में API URL खोलें, फिर ताज़ा करें।',
+    err_timeout:'अनुरोध समय समाप्त। altasnim.com खाते से साइन इन करें और ताज़ा करें।',
+    err_load:'डेटा लोड नहीं हो सका। Deployment Access = Anyone सुनिश्चित करें।'
   },
-  ar:{sb_nav:'لوحة التحكم',sb_overview:'نظرة عامة',sb_lfi:'سجل LFI',sb_msa:'لوحة MS ATR',sb_stats_hdr:'إحصائيات سريعة',sb_total:'إجمالي LFIs',sb_approved:'معتمد',sb_pending:'قيد الانتظار',sb_ms_open:'MS ATR مفتوح',btn_submit:'+ تقديم LFI جديد',pg_overview:'لوحة المراقبة العامة',pg_lfi:'سجل LFI — البطاقات التفاعلية',pg_msa:'MS ATR — متتبع الإجراءات',btn_refresh:'↺ تحديث البيانات',btn_refresh_sm:'↺ تحديث',btn_reset:'↺ إعادة تعيين',fil_from:'من تاريخ',fil_to:'إلى تاريخ',fil_cat:'الفئة',fil_div:'القسم',fil_cluster:'المجموعة',fil_status:'الحالة',fil_disc:'التخصص',fil_search:'بحث',fil_all_cat:'جميع الفئات',fil_all_div:'جميع الأقسام',fil_all_cluster:'جميع المجموعات',fil_all_status:'جميع الحالات',fil_all_disc:'جميع التخصصات',fil_search_ph:'المعرف، الاسم، الموقع...',kpi_total:'إجمالي LFIs',kpi_approved:'معتمد',kpi_pending:'قيد الانتظار',kpi_returned:'مُعاد',kpi_ppt:'PPT منشأ',kpi_msa:'MS ATR منشأ',ch_cat:'حسب فئة الحادث',ch_status:'توزيع حالة الموافقة',ch_div:'حسب قسم ATNM',ch_loc:'حسب المجموعة / الموقع',ch_drill:'انقر للتفصيل',lfi_hint:'انقر للتوسع. استخدم 🔊 للقراءة.',lfi_empty:'لا توجد سجلات LFI تطابق الفلاتر.',lfi_load:'انقر تحديث لتحميل البيانات.',badge_approved:'معتمد',badge_pending:'قيد الانتظار',badge_returned:'مُعاد',fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT معلق',fc_msa_ok:'MS ATR ✓',fc_msa_pend:'MS ATR معلق',fc_open_ppt:'📖 فتح PPT',fc_read:'🔊 قراءة',fc_reading:'🔊 جارٍ القراءة...',msa_sub:'متتبع إجراءات بيان المنهجية',msa_total:'إجمالي MS ATR',msa_open:'مفتوح',msa_closed:'مغلق',msa_notreq:'غير مطلوب',msa_empty:'لا توجد سجلات MS ATR.',msa_gaps:'فجوات MS',msa_resp:'المسؤول',msa_ap:'طرف الإجراء',msa_acc:'المساءلة',drill_by:'مفلتر بـ:',drill_clear:'✕ مسح',loading:'جارٍ تحميل بيانات LFI...',not_translated:'لم يُترجم بعد',desc:'وصف الحادث',find:'النتائج / السبب الجذري',learn:'الدروس المستفادة',rec:'سجلات',err_cors:'تعذّر تحميل البيانات. أضف doGet() الجديد في Code.gs وأعد النشر.',err_timeout:'انتهت مهلة الطلب.',err_generic:'خطأ في تحميل البيانات.'
+  ar:{
+    sb_nav:'لوحة التحكم',sb_overview:'نظرة عامة',sb_lfi:'سجل LFI',sb_msa:'لوحة MS ATR',
+    sb_stats_hdr:'إحصائيات سريعة',sb_total:'إجمالي LFIs',sb_approved:'معتمد',sb_pending:'قيد الانتظار',
+    sb_ms_open:'MS ATR مفتوح',btn_submit:'+ تقديم LFI جديد',
+    pg_overview:'لوحة المراقبة العامة',pg_lfi:'سجل LFI — البطاقات التفاعلية',pg_msa:'MS ATR — متتبع الإجراءات',
+    btn_refresh:'↺ تحديث البيانات',btn_refresh_sm:'↺ تحديث',btn_reset:'↺ إعادة تعيين',
+    fil_from:'من تاريخ',fil_to:'إلى تاريخ',fil_cat:'الفئة',fil_div:'القسم',fil_cluster:'المجموعة',
+    fil_status:'الحالة',fil_disc:'التخصص',fil_search:'بحث',
+    fil_all_cat:'جميع الفئات',fil_all_div:'جميع الأقسام',fil_all_cluster:'جميع المجموعات',
+    fil_all_status:'جميع الحالات',fil_all_disc:'جميع التخصصات',
+    fil_search_ph:'المعرف، الاسم، الموقع...',
+    kpi_total:'إجمالي LFIs',kpi_approved:'معتمد',kpi_pending:'قيد الانتظار',
+    kpi_returned:'مُعاد',kpi_ppt:'PPT منشأ',kpi_msa:'MS ATR منشأ',
+    ch_cat:'حسب فئة الحادث',ch_status:'توزيع حالة الموافقة',
+    ch_div:'حسب قسم ATNM',ch_loc:'حسب المجموعة / الموقع',ch_drill:'انقر للتفصيل',
+    lfi_hint:'انقر للتوسع. استخدم 🔊 للقراءة.',
+    lfi_empty:'لا توجد سجلات LFI تطابق الفلاتر.',lfi_load:'في انتظار البيانات — انقر تحديث.',
+    badge_appr:'معتمد',badge_pend:'قيد الانتظار',badge_ret:'مُعاد',
+    fc_ppt_ok:'PPT ✓',fc_ppt_pend:'PPT معلق',fc_msa_ok:'MS ATR ✓',fc_msa_pend:'MS ATR معلق',
+    fc_open_ppt:'📖 فتح PPT',fc_read:'🔊 قراءة',fc_reading:'🔊 جارٍ القراءة...',
+    msa_sub:'متتبع إجراءات بيان المنهجية — مرتبط بـ LFIs المعتمدة',
+    msa_total:'إجمالي MS ATR',msa_open:'مفتوح',msa_closed:'مغلق',msa_notreq:'غير مطلوب',
+    msa_empty:'لا توجد سجلات MS ATR.',
+    msa_gaps:'فجوات MS',msa_resp:'المسؤول',msa_ap:'طرف الإجراء',msa_acc:'المساءلة',
+    drill_by:'مفلتر بـ:',drill_clear:'✕ مسح',
+    loading:'جارٍ تحميل بيانات LFI...',not_translated:'لم يُترجم بعد',
+    desc:'وصف الحادث',find:'النتائج / السبب الجذري',learn:'الدروس المستفادة',rec:'سجلات',
+    err_auth:'مطلوب تسجيل الدخول. افتح رابط API في المتصفح وأنت مسجّل الدخول بحساب altasnim.com، ثم أعد تحديث.',
+    err_timeout:'انتهت مهلة الطلب. سجّل الدخول بحساب altasnim.com وأعد المحاولة.',
+    err_load:'تعذّر تحميل البيانات. تحقق من إعدادات النشر.'
   }
 };
 
-var LANG='en',DRILL=null,RAW=null,MSR=null,CH={},CUR_PAGE='overview';
+var LANG='en',DRILL=null,RAW=null,MSR=null,CH={};
 var PAL=['#21409a','#f58220','#28a745','#dc3545','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#e83e8c','#6c757d','#0d6efd'];
 var PAGES={overview:'pg_overview',lfi:'pg_lfi',msa:'pg_msa'};
+var CUR_PAGE='overview';
 
+// ── TRANSLATE ──────────────────────────────────────────────
 function t(k){return(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;}
 
 function translateUI(){
   var dir=LANG==='ar'?'rtl':'ltr';
   document.documentElement.setAttribute('dir',dir);
+  document.documentElement.setAttribute('lang',LANG==='ar'?'ar':LANG==='hi'?'hi':'en');
+  // Text elements
   document.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.getAttribute('data-i18n'));});
+  // Placeholders
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){el.placeholder=t(el.getAttribute('data-i18n-ph'));});
+  // Page title
   document.getElementById('ptitle').textContent=t(PAGES[CUR_PAGE]||'pg_overview');
+  // Status dropdown options
   var fSt=document.getElementById('fSt');
-  if(fSt){fSt.options[0].textContent=t('fil_all_status');fSt.options[1].textContent=t('badge_approved');fSt.options[2].textContent=t('badge_pending');fSt.options[3].textContent=t('badge_returned');}
+  if(fSt){fSt.options[0].textContent=t('fil_all_status');fSt.options[1].textContent=t('badge_appr');fSt.options[2].textContent=t('badge_pend');fSt.options[3].textContent=t('badge_ret');}
   var msF=document.getElementById('msF');
   if(msF){msF.options[0].textContent=t('fil_all_status');msF.options[1].textContent=t('msa_open');msF.options[2].textContent=t('msa_closed');msF.options[3].textContent=t('msa_notreq');}
-  [{id:'fCat',k:'fil_all_cat'},{id:'fDiv',k:'fil_all_div'},{id:'fLoc',k:'fil_all_cluster'},{id:'fDisc',k:'fil_all_disc'}].forEach(function(x){var e=document.getElementById(x.id);if(e&&e.options[0])e.options[0].textContent=t(x.k);});
+  var mp={fCat:'fil_all_cat',fDiv:'fil_all_div',fLoc:'fil_all_cluster',fDisc:'fil_all_disc'};
+  Object.keys(mp).forEach(function(id){var el=document.getElementById(id);if(el&&el.options[0])el.options[0].textContent=t(mp[id]);});
   document.getElementById('sbFormBtn').textContent=t('btn_submit');
+  var lp=document.querySelector('#loader p');if(lp)lp.textContent=t('loading');
   if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
   if(document.getElementById('page-msa').classList.contains('active'))renderMsa();
 }
@@ -328,22 +446,33 @@ function setLang(lang,btn){
   translateUI();
 }
 
+// ── UTILS ──────────────────────────────────────────────────
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function pct(v,n){return n>0?Math.round(v/n*100)+'%':'--';}
-function badge(st){
-  if(st==='Reviewed & Approved')return'<span class="badge ba">'+t('badge_approved')+'</span>';
-  if(st==='Reviewed & Returned')return'<span class="badge br">'+t('badge_returned')+'</span>';
-  return'<span class="badge bp">'+t('badge_pending')+'</span>';
+function mkbadge(st){
+  if(st==='Reviewed & Approved')return'<span class="badge ba">'+t('badge_appr')+'</span>';
+  if(st==='Reviewed & Returned')return'<span class="badge br2">'+t('badge_ret')+'</span>';
+  return'<span class="badge bp">'+t('badge_pend')+'</span>';
 }
 function pd(dt){if(!dt)return null;var m={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};var p=dt.split('-');if(p.length===3)return new Date(parseInt(p[2]),m[p[1]]||0,parseInt(p[0]));return new Date(dt);}
 function uniq(a){var s={},r=[];a.forEach(function(v){if(v&&!s[v]){s[v]=1;r.push(v);}});return r.sort();}
-function fill(id,vals){var el=document.getElementById(id);if(!el)return;var cur=el.value;while(el.options.length>1)el.remove(1);vals.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});el.value=cur;}
+function fill(id,vals){
+  var el=document.getElementById(id);if(!el)return;var cur=el.value;
+  while(el.options.length>1)el.remove(1);
+  vals.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});
+  el.value=cur;
+}
 function showErr(msg){document.getElementById('errMsg').textContent=msg;document.getElementById('errBanner').classList.add('vis');}
 function hideErr(){document.getElementById('errBanner').classList.remove('vis');}
 function showL(){document.getElementById('loader').classList.add('vis');}
 function hideL(){document.getElementById('loader').classList.remove('vis');}
-function openForm(){var url=FORM_URL||(window._formUrl)||'';if(!url){alert('Form URL not set.\nAdd your Google Form URL to the FORM_URL variable at the top of dashboard.html.');return;}window.open(url,'_blank');}
+function openForm(){
+  var url=FORM_URL||(window._formUrl)||'';
+  if(!url){alert('Set your Google Form URL in the FORM_URL variable at the top of dashboard.html');return;}
+  window.open(url,'_blank');
+}
 
+// ── NAVIGATION ─────────────────────────────────────────────
 function navTo(page,el){
   CUR_PAGE=page;
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
@@ -357,45 +486,51 @@ function navTo(page,el){
   return false;
 }
 
-// ── JSONP DATA FETCH ─────────────────────────────────────────
-// Uses <script> tag injection — completely bypasses CORS.
-// Requires doGet() in Code.gs to support ?callback= parameter.
-// ─────────────────────────────────────────────────────────────
+// ── JSONP FETCH — bypasses CORS for workspace domain URLs ──
 function refresh(){
   showL();hideErr();
   document.getElementById('refBtn').classList.add('ld');
   document.getElementById('lu').textContent='';
 
-  var cbName='_lfiCB'+Date.now();
+  // Unique callback name for this request
+  var cbName='_lfiCb'+Date.now();
   var script=document.createElement('script');
   var done=false;
 
-  var cleanup=function(){
+  function cleanup(){
     done=true;
-    try{delete window[cbName];}catch(e){}
-    if(script&&script.parentNode)script.parentNode.removeChild(script);
+    delete window[cbName];
+    if(script.parentNode)script.parentNode.removeChild(script);
+    clearTimeout(timer);
     hideL();
     document.getElementById('refBtn').classList.remove('ld');
-  };
+  }
 
-  // 15-second timeout
-  var timer=setTimeout(function(){
-    if(!done){cleanup();showErr(t('err_timeout'));}
-  },15000);
-
+  // Success: data returned by Apps Script as callback(json)
   window[cbName]=function(data){
-    clearTimeout(timer);cleanup();
+    cleanup();
     processData(data);
   };
 
+  // Script load error (network, 404, etc.)
   script.onerror=function(){
-    clearTimeout(timer);cleanup();
-    showErr(t('err_cors'));
+    if(done)return;
+    cleanup();
+    showErr(t('err_load'));
+    document.getElementById('lu').textContent='Error';
   };
 
-  // Build JSONP URL — append callback param
-  var sep=API_URL.indexOf('?')>=0?'&':'?';
-  script.src=API_URL+sep+'callback='+cbName;
+  // Timeout — likely auth redirect (login page returned, no callback called)
+  var timer=setTimeout(function(){
+    if(!done){
+      cleanup();
+      showErr(t('err_auth'));
+      document.getElementById('lu').textContent='Auth error';
+    }
+  },12000);
+
+  // Build JSONP URL: base URL + ?action=api&callback=cbName
+  script.src=API_BASE+'?action=api&callback='+cbName;
   document.head.appendChild(script);
 }
 
@@ -407,19 +542,22 @@ function processData(data){
   document.getElementById('sb-t').textContent=data.total||0;
   document.getElementById('sb-a').textContent=data.appr||0;
   document.getElementById('sb-p').textContent=data.pend||0;
-  document.getElementById('sb-o').textContent=(MSR||[]).filter(function(r){return r.st==='Open';}).length;
+  document.getElementById('sb-o').textContent=(data.msRows||[]).filter(function(r){return r.st==='Open';}).length;
   document.getElementById('lu').textContent='Updated: '+(data.ts||'');
-  initFilters();applyAll();
+  hideErr();
+  initFilters();
+  applyAll();
 }
 
-// ── FILTERS ──────────────────────────────────────────────────
+// ── FILTERS ────────────────────────────────────────────────
 function initFilters(){
   if(!RAW)return;
   fill('fCat',uniq(RAW.map(function(r){return r.cat;})));
   fill('fDiv',uniq(RAW.map(function(r){return r.div;})));
   fill('fLoc',uniq(RAW.map(function(r){return r.loc;})));
   fill('fDisc',uniq(RAW.map(function(r){return r.disc;})));
-  [{id:'fCat',k:'fil_all_cat'},{id:'fDiv',k:'fil_all_div'},{id:'fLoc',k:'fil_all_cluster'},{id:'fDisc',k:'fil_all_disc'}].forEach(function(x){var e=document.getElementById(x.id);if(e&&e.options[0])e.options[0].textContent=t(x.k);});
+  var mp={fCat:'fil_all_cat',fDiv:'fil_all_div',fLoc:'fil_all_cluster',fDisc:'fil_all_disc'};
+  Object.keys(mp).forEach(function(id){var el=document.getElementById(id);if(el&&el.options[0])el.options[0].textContent=t(mp[id]);});
 }
 
 function getF(){
@@ -430,18 +568,22 @@ function getF(){
       loc=document.getElementById('fLoc').value,st=document.getElementById('fSt').value,
       disc=document.getElementById('fDisc').value,q=document.getElementById('fQ').value.toLowerCase().trim(),
       from=document.getElementById('fFrom').value,to=document.getElementById('fTo').value;
-  if(cat)rows=rows.filter(function(r){return r.cat===cat;});
-  if(div)rows=rows.filter(function(r){return r.div===div;});
-  if(loc)rows=rows.filter(function(r){return r.loc===loc;});
-  if(st)rows=rows.filter(function(r){return r.st===st;});
+  if(cat) rows=rows.filter(function(r){return r.cat===cat;});
+  if(div) rows=rows.filter(function(r){return r.div===div;});
+  if(loc) rows=rows.filter(function(r){return r.loc===loc;});
+  if(st)  rows=rows.filter(function(r){return r.st===st;});
   if(disc)rows=rows.filter(function(r){return r.disc===disc;});
   if(from){var fd=new Date(from);rows=rows.filter(function(r){return r.dateObj&&r.dateObj>=fd;});}
-  if(to){var td=new Date(to);td.setHours(23,59,59);rows=rows.filter(function(r){return r.dateObj&&r.dateObj<=td;});}
-  if(q)rows=rows.filter(function(r){return[r.id,r.cat,r.div,r.loc,r.by,r.disc,r.st,r.descEN,r.descHI,r.descAR].join(' ').toLowerCase().indexOf(q)!==-1;});
+  if(to)  {var td=new Date(to);td.setHours(23,59,59);rows=rows.filter(function(r){return r.dateObj&&r.dateObj<=td;});}
+  if(q)   rows=rows.filter(function(r){return[r.id,r.cat,r.div,r.loc,r.by,r.disc,r.st,r.descEN,r.descHI,r.descAR].join(' ').toLowerCase().indexOf(q)!==-1;});
   return rows;
 }
 
-function resetF(){['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});['fCat','fDiv','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});clearDrill();}
+function resetF(){
+  ['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['fCat','fDiv','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  clearDrill();
+}
 function drillDown(f,v){DRILL={f:f,v:v};document.getElementById('drillBar').classList.add('vis');document.getElementById('drillInfo').textContent=f.toUpperCase()+': '+v;applyAll();}
 function clearDrill(){DRILL=null;document.getElementById('drillBar').classList.remove('vis');applyAll();}
 
@@ -454,6 +596,7 @@ function applyAll(){
   if(document.getElementById('page-msa').classList.contains('active'))renderMsa();
 }
 
+// ── KPI ────────────────────────────────────────────────────
 function updateKPI(rows){
   var n=rows.length,
       a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,
@@ -465,22 +608,32 @@ function updateKPI(rows){
   for(var i=0;i<6;i++){document.getElementById('k'+i).textContent=vs[i];document.getElementById('kp'+i).textContent=i>0&&n>0?pct(vs[i],n):'';}
 }
 
+// ── CHARTS ─────────────────────────────────────────────────
 function cntBy(rows,k){var c={};rows.forEach(function(r){var v=r[k]||'?';c[v]=(c[v]||0)+1;});return c;}
 function mkChart(id,type,labels,data,colors,horiz,fn){
   if(CH[id])CH[id].destroy();var ctx=document.getElementById(id);if(!ctx)return;
-  CH[id]=new Chart(ctx.getContext('2d'),{type:type,data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:1,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:horiz?'top':'right',labels:{font:{size:11},boxWidth:12,padding:8}}},indexAxis:horiz?'y':'x',scales:horiz?{x:{beginAtZero:true,ticks:{font:{size:11}}},y:{ticks:{font:{size:11}}}}:{},onClick:function(e,els){if(fn&&els.length)fn(labels[els[0].index]);}}});
+  CH[id]=new Chart(ctx.getContext('2d'),{
+    type:type,data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:1,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:horiz?'top':'right',labels:{font:{size:11},boxWidth:12,padding:8}}},
+      indexAxis:horiz?'y':'x',
+      scales:horiz?{x:{beginAtZero:true,ticks:{font:{size:11}}},y:{ticks:{font:{size:11}}}}:{},
+      onClick:function(e,els){if(fn&&els.length)fn(labels[els[0].index]);}}});
 }
 function renderCharts(rows){
   var cc=cntBy(rows,'cat');var ck=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a];});
   mkChart('cCat','pie',ck,ck.map(function(k){return cc[k];}),PAL,false,function(v){drillDown('cat',v);});
-  var a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,p=rows.filter(function(r){return r.st==='Pending Approval';}).length,re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length;
-  mkChart('cSt','doughnut',[t('badge_approved'),t('badge_pending'),t('badge_returned')],[a,p,re],['#28a745','#ffc107','#dc3545'],false,null);
+  var a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,
+      p=rows.filter(function(r){return r.st==='Pending Approval';}).length,
+      re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length;
+  mkChart('cSt','doughnut',[t('badge_appr'),t('badge_pend'),t('badge_ret')],[a,p,re],['#28a745','#ffc107','#dc3545'],false,null);
   var dc=cntBy(rows,'div');var dk=Object.keys(dc).sort(function(a,b){return dc[b]-dc[a];});
   mkChart('cDiv','bar',dk,dk.map(function(k){return dc[k];}),dk.map(function(_,i){return PAL[i%PAL.length];}),true,function(v){drillDown('div',v);});
   var lc=cntBy(rows,'loc');var lk=Object.keys(lc).sort(function(a,b){return lc[b]-lc[a];});
   mkChart('cLoc','bar',lk,lk.map(function(k){return lc[k];}),lk.map(function(_,i){return PAL[(i+3)%PAL.length];}),true,function(v){drillDown('loc',v);});
 }
 
+// ── FLASHCARDS ─────────────────────────────────────────────
 function gc(r,lang){return{desc:lang==='ar'?r.descAR:(lang==='hi'?r.descHI:r.descEN),find:lang==='ar'?r.findAR:(lang==='hi'?r.findHI:r.findEN),learn:lang==='ar'?r.learnAR:(lang==='hi'?r.learnHI:r.learnEN)};}
 
 function renderFC(){
@@ -493,7 +646,7 @@ function renderFC(){
     var enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');
     html+='<div class="fc">'+
       '<div class="fch" onclick="this.closest(\'.fc\').classList.toggle(\'open\')">'+
-        '<div class="fct"><span class="fid">'+esc(r.id)+'</span>'+badge(r.st)+'<span style="font-size:12px;color:var(--muted)">&#9660;</span></div>'+
+        '<div class="fct"><span class="fid">'+esc(r.id)+'</span>'+mkbadge(r.st)+'<span style="font-size:12px;color:var(--muted)">&#9660;</span></div>'+
         '<div class="fcv">'+esc(r.cat)+'</div>'+
         '<div class="fcm"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span></div>'+
       '</div>'+
@@ -525,27 +678,30 @@ function sclang(btn,lang){
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
   var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
   cont.className='fcc'+(dir==='rtl'?' rtl':'');cont.dataset.lang=lang;
-  cont.innerHTML='<div class="fcs"><label>'+t('desc')+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
+  cont.innerHTML=
+    '<div class="fcs"><label>'+t('desc')+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
     '<div class="fcs"><label>'+t('find')+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
     '<div class="fcs"><label>'+t('learn')+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>';
-  card.querySelectorAll('.lb').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');
+  card.querySelectorAll('.lb').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
   var spk=card.querySelector('.spk');if(spk)spk.textContent=t('fc_read');
 }
 
 function speakCard(btn){
-  var card=btn.closest('.fc'),cont=card.querySelector('.fcc');
-  var lang=cont.dataset.lang||'en';
+  var card=btn.closest('.fc'),cont=card.querySelector('.fcc'),lang=cont.dataset.lang||'en';
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
   var c=gc(r,lang),text=[c.desc,c.find,c.learn].filter(Boolean).join('. ');
-  if(!text){return;}
+  if(!text)return;
   if(!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
   var u=new SpeechSynthesisUtterance(text);
   u.lang=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';u.rate=0.9;
   window.speechSynthesis.speak(u);
-  btn.textContent=t('fc_reading');u.onend=function(){btn.textContent=t('fc_read');};
+  btn.textContent=t('fc_reading');
+  u.onend=function(){btn.textContent=t('fc_read');};
 }
 
+// ── MS ATR ─────────────────────────────────────────────────
 function renderMsa(){
   if(!MSR)return;
   var f=document.getElementById('msF'),sf=f?f.value:'';
@@ -559,21 +715,25 @@ function renderMsa(){
   if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128196;</div><p>'+t('msa_empty')+'</p></div>';return;}
   var sc={Open:'open',Closed:'closed','Not Required':'notreq'};
   grid.innerHTML=rows.map(function(r){
-    var sb=r.st==='Open'?badge('Pending Approval'):r.st==='Closed'?badge('Reviewed & Approved'):badge('Reviewed & Returned');
+    var stb=r.st==='Open'?mkbadge('Pending Approval'):r.st==='Closed'?mkbadge('Reviewed & Approved'):mkbadge('Reviewed & Returned');
     return'<div class="mc '+(sc[r.st]||'')+'">'+
       '<div class="mid">'+esc(r.id)+'</div>'+
       '<div class="mdi">'+esc(r.disc||'—')+'</div>'+
-      '<div class="mr2"><span>'+t('msa_gaps')+'</span><strong>'+esc(r.gaps||'—')+'</strong></div>'+
-      '<div class="mr2"><span>'+t('msa_resp')+'</span><strong>'+esc(r.re1||'—')+'</strong></div>'+
-      '<div class="mr2"><span>'+t('msa_ap')+'</span><strong>'+esc(r.ap||'—')+'</strong></div>'+
-      '<div class="mr2"><span>'+t('msa_acc')+'</span><strong>'+esc(r.acc||'—')+'</strong></div>'+
-      '<div style="margin-top:7px">'+sb+'</div>'+
+      '<div class="mr"><span>'+t('msa_gaps')+'</span><strong>'+esc(r.gaps||'—')+'</strong></div>'+
+      '<div class="mr"><span>'+t('msa_resp')+'</span><strong>'+esc(r.re1||'—')+'</strong></div>'+
+      '<div class="mr"><span>'+t('msa_ap')+'</span><strong>'+esc(r.ap||'—')+'</strong></div>'+
+      '<div class="mr"><span>'+t('msa_acc')+'</span><strong>'+esc(r.acc||'—')+'</strong></div>'+
+      '<div style="margin-top:7px">'+stb+'</div>'+
       (r.ppt?'<div style="margin-top:6px"><a href="'+esc(r.ppt)+'" target="_blank" class="plnk" style="font-size:11px">'+t('fc_open_ppt')+'</a></div>':'')+
     '</div>';
   }).join('');
 }
 
-document.addEventListener('DOMContentLoaded',function(){translateUI();refresh();});
+// ── INIT ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  translateUI();
+  refresh();
+});
 </script>
 </body>
 </html>
