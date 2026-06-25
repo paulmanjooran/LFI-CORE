@@ -1,75 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ATNM LFI Core Dashboard v4.9</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-/* ATNM LFI CORE DASHBOARD v4.9 — Brand: DG=#4d555b BL=#21409a OR=#f58220 */
-:root{--dg:#4d555b;--bl:#21409a;--or:#f58220;--gr:#28a745;--am:#ffc107;--rd:#dc3545;--cy:#17a2b8;--bg:#f0f2f5;--border:#e0e4ea;--muted:#6c757d;--sw:240px}
+/* ATNM LFI CORE — Brand: DG=#4d555b BL=#21409a OR=#f58220 */
+:root{
+  --dg:#4d555b;--bl:#21409a;--or:#f58220;--gr:#28a745;--am:#ffc107;
+  --rd:#dc3545;--cy:#17a2b8;--bg:#f0f2f5;--border:#e0e4ea;--muted:#6c757d;--sw:250px
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:var(--bg);color:#212529;font-size:13px;display:flex;min-height:100vh}
-#sb{width:var(--sw);min-width:var(--sw);background:var(--dg);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
-.sb-logo{background:#3a4249;padding:14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1)}
-.logo-badge{background:var(--or);color:#fff;font-weight:800;font-size:13px;padding:5px 10px;border-radius:4px;letter-spacing:1px}
-.logo-text{color:#fff;font-size:12px;line-height:1.3;opacity:.85}
-.logo-text strong{display:block;font-size:14px;opacity:1}
-nav{padding:12px 0;flex:1}
+/* ── SIDEBAR ── */
+#sb{width:var(--sw);min-width:var(--sw);background:var(--dg);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto;transition:transform .3s}
+.sb-brand{background:#2d3338;padding:14px 12px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--or)}
+.sb-brand-logo{height:44px;width:auto;object-fit:contain;flex-shrink:0}
+.sb-brand-logo-fallback{width:44px;height:44px;border-radius:6px;background:var(--or);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:#fff;letter-spacing:.5px;line-height:1.2;text-align:center;flex-shrink:0}
+.sb-brand-text{color:#fff;flex:1;min-width:0}
+.sb-brand-text strong{display:block;font-size:14px;letter-spacing:.3px}
+.sb-brand-text span{font-size:10px;opacity:.7;display:block}
+nav{padding:10px 0;flex:1}
 nav a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.3px;transition:all .15s;border-left:3px solid transparent;cursor:pointer}
 nav a:hover{background:rgba(255,255,255,.08);color:#fff}
 nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or)}
-.sb-sec{padding:8px 16px 4px;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
-.sb-stats{padding:6px 16px}
-.mini-row{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;color:rgba(255,255,255,.7)}
-.mini-row strong{color:#fff}
-.sb-form-btn{display:block;margin:10px;padding:9px;background:var(--or);color:#fff;text-align:center;text-decoration:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
-.sb-form-btn:hover{background:#d46d16}
+nav a .ni{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sb-sec{padding:8px 16px 4px;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.sb-stats{padding:4px 14px 6px}
+.mrow{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;color:rgba(255,255,255,.7)}
+.mrow strong{color:#fff}
+#sbFormBtn{display:block;margin:10px;padding:10px;background:var(--or);color:#fff;text-align:center;text-decoration:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;width:calc(100% - 20px)}
+#sbFormBtn:hover{background:#d46d16}
 #stog{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--dg);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:18px;cursor:pointer}
+/* ── MAIN ── */
 #main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
+.grad{height:3px;background:linear-gradient(to right,var(--bl),var(--or) 60%,var(--gr))}
+/* ── TOP BAR ── */
 #topbar{background:#fff;padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.ptitle{font-size:15px;font-weight:700;color:var(--dg);flex:1}
+#ptitle{font-size:15px;font-weight:700;color:var(--dg);flex:1}
 .ltgl{display:flex;gap:4px}
 .lbt{padding:5px 10px;border:1px solid var(--border);border-radius:5px;background:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
 .lbt.active{background:var(--bl);color:#fff;border-color:var(--bl)}
-.bref{padding:6px 14px;background:var(--dg);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer}
+.bref{padding:6px 14px;background:var(--dg);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
 .bref:hover{background:var(--bl)}
 .bref.ld{opacity:.6;cursor:not-allowed}
 #lu{font-size:10px;color:var(--muted);white-space:nowrap}
-.grad{height:3px;background:linear-gradient(to right,var(--bl),var(--or) 60%,var(--gr))}
+/* ── DRILL BAR ── */
 #drillBar{background:#e8f0fe;border-bottom:1px solid #c5d1f0;padding:7px 20px;display:none;align-items:center;gap:10px;font-size:12px}
 #drillBar.vis{display:flex}
 #drillInfo{font-weight:600;color:var(--bl)}
 .cld{padding:3px 10px;background:var(--bl);color:#fff;border:none;border-radius:4px;font-size:11px;cursor:pointer}
+/* ── FILTER BAR ── */
 #fb{background:#fff;padding:10px 20px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
 .fg{display:flex;flex-direction:column;gap:3px}
-.fg label{font-size:10px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:.5px}
+.fg label{font-size:10px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
 .fg select,.fg input{border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:12px;background:#fff;outline:none;height:30px}
 .fg select:focus,.fg input:focus{border-color:var(--bl)}
-.fgs{flex:1;min-width:150px}
-.bf{padding:0 12px;height:30px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer}
+.fgs{flex:1;min-width:140px}
+.bf{padding:0 12px;height:30px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
 .brst{background:var(--dg);color:#fff}.brst:hover{background:var(--bl)}
 .brf{background:var(--or);color:#fff}.brf:hover{background:#d46d16}
-#frc{font-size:11px;color:var(--muted);margin-left:auto;align-self:center}
+#frc{font-size:11px;color:var(--muted);margin-left:auto;align-self:center;white-space:nowrap}
+/* ── ERROR BANNER ── */
+#errBanner{background:#f8d7da;border-bottom:1px solid #f5c2c7;padding:10px 20px;display:none;align-items:flex-start;gap:12px;font-size:12px;color:#721c24}
+#errBanner.vis{display:flex}
+#errBanner .err-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+#errBanner .err-msg{flex:1;line-height:1.6}
+#errBanner .err-close{background:none;border:none;font-size:18px;cursor:pointer;color:#721c24;flex-shrink:0}
+/* ── PAGES ── */
 #content{padding:16px 20px;flex:1}
 .page{display:none}.page.active{display:block}
+/* ── KPI ── */
 .krow{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
 .kc{flex:1;min-width:130px;border-radius:10px;padding:14px 12px;text-align:center;transition:transform .15s,box-shadow .15s}
 .kc:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.13)}
-.ki{font-size:18px;margin-bottom:4px;opacity:.9}.kv{font-size:34px;font-weight:800;line-height:1;margin-bottom:4px}
+.ki{font-size:18px;margin-bottom:4px;opacity:.9}
+.kv{font-size:34px;font-weight:800;line-height:1;margin-bottom:4px}
 .kl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;opacity:.88;font-weight:600}
 .kp{font-size:10px;opacity:.7;margin-top:2px}
+/* ── CHARTS ── */
 .crow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .cc{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .ch{font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--bg);display:flex;align-items:center;justify-content:space-between}
 .dh{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
-.cv{position:relative;height:260px}.cvl{position:relative;height:310px}
+.cv{position:relative;height:260px}
+.cvl{position:relative;height:310px}
+/* ── FLASHCARDS ── */
 .fcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .fc{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden}
 .fc:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
 .fch{padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:5px}
-.fct{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.fid{font-family:monospace;font-size:11px;color:var(--muted);font-weight:600}
+.fct{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fid{font-family:monospace;font-size:10px;color:var(--muted);font-weight:600}
 .fcv{font-size:13px;color:var(--dg);font-weight:700}
 .fcm{font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
 .fcb{border-top:1px solid var(--bg);padding:12px 14px;display:none}
@@ -77,7 +100,7 @@ nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or
 .lbar{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
 .lb{padding:4px 9px;border:1px solid var(--border);border-radius:4px;background:#fff;font-size:11px;font-weight:700;cursor:pointer}
 .lb.active{background:var(--bl);color:#fff;border-color:var(--bl)}
-.spk{padding:4px 9px;border:none;border-radius:4px;background:var(--or);color:#fff;font-size:11px;cursor:pointer;margin-left:auto}
+.spk{padding:4px 10px;border:none;border-radius:4px;background:var(--or);color:#fff;font-size:11px;cursor:pointer;margin-left:auto}
 .spk:hover{background:#d46d16}
 .fcc{font-size:12px;line-height:1.6}
 .fcc.rtl{direction:rtl;text-align:right}
@@ -87,300 +110,707 @@ nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or
 .fcc.rtl .fcs p{border-left:none;border-right:3px solid var(--bl)}
 .fps{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--bg)}
 .fp{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:#f0f4ff;color:var(--bl)}
-.fp.ok{background:#d4edda;color:#155724}.fp.pnd{background:#fff3cd;color:#856404}
+.fp.ok{background:#d4edda;color:#155724}
+.fp.pnd{background:#fff3cd;color:#856404}
 .fpl{display:flex;gap:6px;margin-top:6px}
 .plnk{padding:4px 9px;border-radius:4px;font-size:11px;font-weight:600;text-decoration:none;background:var(--bl);color:#fff}
+/* ── BADGES ── */
 .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
-.ba{background:#d4edda;color:#155724}.bp{background:#fff3cd;color:#856404}.br{background:#f8d7da;color:#721c24}
+.ba{background:#d4edda;color:#155724}
+.bp{background:#fff3cd;color:#856404}
+.br{background:#f8d7da;color:#721c24}
+/* ── MS ATR ── */
 .msg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .mc{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid var(--border)}
-.mc.open{border-left-color:var(--rd)}.mc.closed{border-left-color:var(--gr)}.mc.notreq{border-left-color:var(--am)}
-.mid{font-family:monospace;font-size:11px;color:var(--muted);margin-bottom:3px}
+.mc.open{border-left-color:var(--rd)}
+.mc.closed{border-left-color:var(--gr)}
+.mc.notreq{border-left-color:var(--am)}
+.mid{font-family:monospace;font-size:10px;color:var(--muted);margin-bottom:3px}
 .mdi{font-size:13px;font-weight:700;color:var(--dg);margin-bottom:5px}
 .mr{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;color:var(--muted)}
 .mr strong{color:#212529}
-#loader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.75);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+/* ── LOADER ── */
+#loader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.78);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 #loader.vis{display:flex}
 .spin{width:40px;height:40px;border:4px solid #ddd;border-top-color:var(--bl);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 #loader p{font-size:13px;color:var(--dg);font-weight:600}
+/* ── EMPTY / MISC ── */
 .empty{text-align:center;padding:40px;color:var(--muted);grid-column:1/-1}
 .empty p{font-size:14px;margin-top:8px}
+/* ── RTL SUPPORT ── */
+html[dir="rtl"] #sb{left:auto;right:0}
+html[dir="rtl"] #main{margin-left:0;margin-right:var(--sw)}
+html[dir="rtl"] nav a{border-left:none;border-right:3px solid transparent}
+html[dir="rtl"] nav a.active{border-left:none;border-right-color:var(--or)}
+html[dir="rtl"] #topbar,html[dir="rtl"] #fb,html[dir="rtl"] #drillBar{flex-direction:row-reverse}
+html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
+/* ── RESPONSIVE ── */
 @media(max-width:900px){.crow{grid-template-columns:1fr}.fcg{grid-template-columns:1fr}}
-@media(max-width:700px){#sb{transform:translateX(-100%)}#sb.open{transform:translateX(0)}#main{margin-left:0}#stog{display:block}.kc{min-width:110px}}
+@media(max-width:700px){
+  #sb{transform:translateX(-100%)}
+  html[dir="rtl"] #sb{transform:translateX(100%)}
+  #sb.open{transform:translateX(0)}
+  #main{margin-left:0!important;margin-right:0!important}
+  #stog{display:block}
+  .kc{min-width:110px}
+}
 </style>
 </head>
 <body>
 
 <button id="stog" onclick="document.getElementById('sb').classList.toggle('open')">&#9776;</button>
 
+<!-- ── SIDEBAR ── -->
 <div id="sb">
-  <div class="sb-logo">
-    <div class="logo-badge">ATNM</div>
-    <div class="logo-text"><strong>LFI CORE</strong>PDO ODC Programme</div>
+  <div class="sb-brand">
+    <!-- Replace 'logo.png' with your logo filename in the same GitHub folder -->
+    <img src="logo.png" class="sb-brand-logo" alt="ATNM"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="sb-brand-logo-fallback" style="display:none">ATNM</div>
+    <div class="sb-brand-text">
+      <strong>LFI CORE</strong>
+      <span>PDO ODC Programme</span>
+    </div>
   </div>
   <nav>
-    <div class="sb-sec">Dashboard</div>
-    <a class="active" onclick="navTo('overview',this)">&#128200; Overview</a>
-    <a onclick="navTo('lfi',this)">&#128203; LFI Register</a>
-    <a onclick="navTo('msa',this)">&#128196; MS ATR Board</a>
-    <a onclick="navTo('form',this)">&#128221; Submit LFI Form</a>
-    <div class="sb-sec" style="margin-top:6px">Quick Stats</div>
+    <div class="sb-sec" data-i18n="sb_nav">Dashboard</div>
+    <a class="active" onclick="navTo('overview',this)">
+      <span class="ni">&#128200;</span><span data-i18n="sb_overview">Overview</span>
+    </a>
+    <a onclick="navTo('lfi',this)">
+      <span class="ni">&#128203;</span><span data-i18n="sb_lfi">LFI Register</span>
+    </a>
+    <a onclick="navTo('msa',this)">
+      <span class="ni">&#128196;</span><span data-i18n="sb_msa">MS ATR Board</span>
+    </a>
+    <div class="sb-sec" data-i18n="sb_stats_hdr">Quick Stats</div>
     <div class="sb-stats">
-      <div class="mini-row"><span>Total LFIs</span><strong id="sb-t">—</strong></div>
-      <div class="mini-row"><span>Approved</span><strong id="sb-a">—</strong></div>
-      <div class="mini-row"><span>Pending</span><strong id="sb-p">—</strong></div>
-      <div class="mini-row"><span>MS ATRs Open</span><strong id="sb-o">—</strong></div>
+      <div class="mrow"><span data-i18n="sb_total">Total LFIs</span><strong id="sb-t">—</strong></div>
+      <div class="mrow"><span data-i18n="sb_approved">Approved</span><strong id="sb-a">—</strong></div>
+      <div class="mrow"><span data-i18n="sb_pending">Pending</span><strong id="sb-p">—</strong></div>
+      <div class="mrow"><span data-i18n="sb_ms_open">MS ATRs Open</span><strong id="sb-o">—</strong></div>
     </div>
   </nav>
-  <a id="sbFormBtn" class="sb-form-btn" href="#" target="_blank">+ Submit New LFI</a>
+  <button id="sbFormBtn" onclick="openForm()" data-i18n="btn_submit">+ Submit New LFI</button>
 </div>
 
+<!-- ── MAIN ── -->
 <div id="main">
   <div class="grad"></div>
+
+  <!-- Top Bar -->
   <div id="topbar">
-    <div class="ptitle" id="ptitle">Overview Dashboard</div>
+    <div id="ptitle">Overview Dashboard</div>
     <div class="ltgl">
       <button class="lbt active" onclick="setLang('en',this)">&#127468;&#127463; EN</button>
       <button class="lbt" onclick="setLang('hi',this)">&#127470;&#127475; हि</button>
       <button class="lbt" onclick="setLang('ar',this)">&#127462;&#127466; ع</button>
     </div>
-    <button class="bref" id="refBtn" onclick="refresh()">&#8635; Refresh Data</button>
+    <button class="bref" id="refBtn" onclick="refresh()" data-i18n="btn_refresh">&#8635; Refresh Data</button>
     <span id="lu"></span>
   </div>
-  <div id="drillBar">
-    <span>Filtered by:</span><span id="drillInfo"></span>
-    <button class="cld" onclick="clearDrill()">&#215; Clear</button>
+
+  <!-- Error Banner -->
+  <div id="errBanner">
+    <span class="err-icon">&#9888;</span>
+    <div class="err-msg" id="errMsg"></div>
+    <button class="err-close" onclick="document.getElementById('errBanner').classList.remove('vis')">&#215;</button>
   </div>
+
+  <!-- Drill-down Breadcrumb -->
+  <div id="drillBar">
+    <span data-i18n="drill_by">Filtered by:</span>
+    <span id="drillInfo" style="font-weight:600;color:var(--bl)"></span>
+    <button class="cld" onclick="clearDrill()" data-i18n="drill_clear">✕ Clear</button>
+  </div>
+
+  <!-- Filter Bar -->
   <div id="fb">
-    <div class="fg"><label>From Date</label><input type="date" id="fFrom" onchange="applyAll()"></div>
-    <div class="fg"><label>To Date</label><input type="date" id="fTo" onchange="applyAll()"></div>
-    <div class="fg"><label>Category</label><select id="fCat" onchange="applyAll()"><option value="">All Categories</option></select></div>
-    <div class="fg"><label>Division</label><select id="fDiv" onchange="applyAll()"><option value="">All Divisions</option></select></div>
-    <div class="fg"><label>Cluster</label><select id="fLoc" onchange="applyAll()"><option value="">All Clusters</option></select></div>
-    <div class="fg"><label>Status</label><select id="fSt" onchange="applyAll()"><option value="">All Statuses</option></select></div>
-    <div class="fg"><label>Discipline</label><select id="fDisc" onchange="applyAll()"><option value="">All Disciplines</option></select></div>
-    <div class="fg fgs"><label>Search</label><input type="text" id="fQ" placeholder="ID, name, location, summary..." oninput="applyAll()"></div>
-    <button class="bf brst" onclick="resetF()">&#8635; Reset</button>
-    <button class="bf brf" onclick="refresh()">&#8635; Refresh</button>
+    <div class="fg"><label data-i18n="fil_from">From Date</label><input type="date" id="fFrom" onchange="applyAll()"></div>
+    <div class="fg"><label data-i18n="fil_to">To Date</label><input type="date" id="fTo" onchange="applyAll()"></div>
+    <div class="fg">
+      <label data-i18n="fil_cat">Category</label>
+      <select id="fCat" onchange="applyAll()">
+        <option value="" data-i18n="fil_all_cat">All Categories</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label data-i18n="fil_div">Division</label>
+      <select id="fDiv" onchange="applyAll()">
+        <option value="" data-i18n="fil_all_div">All Divisions</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label data-i18n="fil_cluster">Cluster</label>
+      <select id="fLoc" onchange="applyAll()">
+        <option value="" data-i18n="fil_all_cluster">All Clusters</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label data-i18n="fil_status">Status</label>
+      <select id="fSt" onchange="applyAll()">
+        <option value="" data-i18n="fil_all_status">All Statuses</option>
+        <option value="Reviewed & Approved" data-i18n="badge_approved">Approved</option>
+        <option value="Pending Approval" data-i18n="badge_pending">Pending</option>
+        <option value="Reviewed & Returned" data-i18n="badge_returned">Returned</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label data-i18n="fil_disc">Discipline</label>
+      <select id="fDisc" onchange="applyAll()">
+        <option value="" data-i18n="fil_all_disc">All Disciplines</option>
+      </select>
+    </div>
+    <div class="fg fgs">
+      <label data-i18n="fil_search">Search</label>
+      <input type="text" id="fQ" data-i18n-ph="fil_search_ph" placeholder="ID, name, location, summary..." oninput="applyAll()">
+    </div>
+    <button class="bf brst" onclick="resetF()" data-i18n="btn_reset">&#8635; Reset</button>
+    <button class="bf brf" onclick="refresh()" data-i18n="btn_refresh_sm">&#8635; Refresh</button>
     <span id="frc"></span>
   </div>
+
+  <!-- ── CONTENT ── -->
   <div id="content">
+
+    <!-- OVERVIEW PAGE -->
     <div class="page active" id="page-overview">
+      <!-- KPI Row -->
       <div class="krow">
-        <div class="kc" style="background:#21409a;color:#fff"><div class="ki">&#128203;</div><div class="kv" id="k0">0</div><div class="kl">Total LFIs</div><div class="kp" id="kp0"></div></div>
-        <div class="kc" style="background:#28a745;color:#fff"><div class="ki">&#10004;</div><div class="kv" id="k1">0</div><div class="kl">Approved</div><div class="kp" id="kp1"></div></div>
-        <div class="kc" style="background:#ffc107;color:#212529"><div class="ki">&#9200;</div><div class="kv" id="k2">0</div><div class="kl">Pending</div><div class="kp" id="kp2"></div></div>
-        <div class="kc" style="background:#dc3545;color:#fff"><div class="ki">&#8617;</div><div class="kv" id="k3">0</div><div class="kl">Returned</div><div class="kp" id="kp3"></div></div>
-        <div class="kc" style="background:#4d555b;color:#fff"><div class="ki">&#128218;</div><div class="kv" id="k4">0</div><div class="kl">PPTs Created</div><div class="kp" id="kp4"></div></div>
-        <div class="kc" style="background:#17a2b8;color:#fff"><div class="ki">&#128196;</div><div class="kv" id="k5">0</div><div class="kl">MS ATR Created</div><div class="kp" id="kp5"></div></div>
+        <div class="kc" style="background:#21409a;color:#fff">
+          <div class="ki">&#128203;</div><div class="kv" id="k0">0</div>
+          <div class="kl" data-i18n="kpi_total">Total LFIs</div><div class="kp" id="kp0"></div>
+        </div>
+        <div class="kc" style="background:#28a745;color:#fff">
+          <div class="ki">&#10004;</div><div class="kv" id="k1">0</div>
+          <div class="kl" data-i18n="kpi_approved">Approved</div><div class="kp" id="kp1"></div>
+        </div>
+        <div class="kc" style="background:#ffc107;color:#212529">
+          <div class="ki">&#9200;</div><div class="kv" id="k2">0</div>
+          <div class="kl" data-i18n="kpi_pending">Pending</div><div class="kp" id="kp2"></div>
+        </div>
+        <div class="kc" style="background:#dc3545;color:#fff">
+          <div class="ki">&#8617;</div><div class="kv" id="k3">0</div>
+          <div class="kl" data-i18n="kpi_returned">Returned</div><div class="kp" id="kp3"></div>
+        </div>
+        <div class="kc" style="background:#4d555b;color:#fff">
+          <div class="ki">&#128218;</div><div class="kv" id="k4">0</div>
+          <div class="kl" data-i18n="kpi_ppt">PPTs Created</div><div class="kp" id="kp4"></div>
+        </div>
+        <div class="kc" style="background:#17a2b8;color:#fff">
+          <div class="ki">&#128196;</div><div class="kv" id="k5">0</div>
+          <div class="kl" data-i18n="kpi_msa">MS ATR Created</div><div class="kp" id="kp5"></div>
+        </div>
       </div>
+      <!-- Charts Row 1 -->
       <div class="crow">
-        <div class="cc"><div class="ch">By Incident Category<span class="dh">Click slice to drill down</span></div><div class="cv"><canvas id="cCat"></canvas></div></div>
-        <div class="cc"><div class="ch">Approval Status Distribution</div><div class="cv"><canvas id="cSt"></canvas></div></div>
+        <div class="cc">
+          <div class="ch"><span data-i18n="ch_cat">By Incident Category</span><span class="dh" data-i18n="ch_drill">Click to drill down</span></div>
+          <div class="cv"><canvas id="cCat"></canvas></div>
+        </div>
+        <div class="cc">
+          <div class="ch" data-i18n="ch_status">Approval Status Distribution</div>
+          <div class="cv"><canvas id="cSt"></canvas></div>
+        </div>
       </div>
+      <!-- Charts Row 2 -->
       <div class="crow">
-        <div class="cc"><div class="ch">By ATNM Division<span class="dh">Click bar to drill down</span></div><div class="cvl"><canvas id="cDiv"></canvas></div></div>
-        <div class="cc"><div class="ch">By Cluster / Location<span class="dh">Click bar to drill down</span></div><div class="cvl"><canvas id="cLoc"></canvas></div></div>
+        <div class="cc">
+          <div class="ch"><span data-i18n="ch_div">By ATNM Division</span><span class="dh" data-i18n="ch_drill">Click to drill down</span></div>
+          <div class="cvl"><canvas id="cDiv"></canvas></div>
+        </div>
+        <div class="cc">
+          <div class="ch"><span data-i18n="ch_loc">By Cluster / Location</span><span class="dh" data-i18n="ch_drill">Click to drill down</span></div>
+          <div class="cvl"><canvas id="cLoc"></canvas></div>
+        </div>
       </div>
     </div>
+
+    <!-- LFI REGISTER PAGE -->
     <div class="page" id="page-lfi">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-        <div style="font-size:12px;color:var(--muted)">Click a card to expand. Use &#128266; to read aloud in EN / हि / ع.</div>
-        <button onclick="refresh()" class="bref" style="font-size:11px;padding:5px 12px">&#8635; Refresh</button>
+        <div style="font-size:12px;color:var(--muted)" data-i18n="lfi_hint">Click a card to expand. Use 🔊 to read aloud.</div>
+        <button onclick="refresh()" class="bref" style="font-size:11px;padding:5px 12px" data-i18n="btn_refresh_sm">&#8635; Refresh</button>
       </div>
       <div class="fcg" id="fcGrid"></div>
     </div>
+
+    <!-- MS ATR PAGE -->
     <div class="page" id="page-msa">
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-        <div style="flex:1;font-size:12px;color:var(--muted)">Method Statement Action Tracker — linked to approved LFIs</div>
-        <select id="msF" onchange="renderMsa()" style="border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:12px"><option value="">All Statuses</option><option value="Open">Open</option><option value="Closed">Closed</option><option value="Not Required">Not Required</option></select>
-        <button onclick="refresh()" class="bref" style="font-size:11px;padding:5px 12px">&#8635; Refresh</button>
+        <div style="flex:1;font-size:12px;color:var(--muted)" data-i18n="msa_sub">Method Statement Action Tracker</div>
+        <select id="msF" onchange="renderMsa()" style="border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:12px">
+          <option value="" data-i18n="fil_all_status">All Statuses</option>
+          <option value="Open" data-i18n="msa_open">Open</option>
+          <option value="Closed" data-i18n="msa_closed">Closed</option>
+          <option value="Not Required" data-i18n="msa_notreq">Not Required</option>
+        </select>
+        <button onclick="refresh()" class="bref" style="font-size:11px;padding:5px 12px" data-i18n="btn_refresh_sm">&#8635; Refresh</button>
       </div>
+      <!-- MS ATR KPIs -->
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
-        <div style="flex:1;min-width:110px;background:#f58220;color:#fff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:24px;font-weight:800" id="ms-t">0</div><div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px">Total MS ATRs</div></div>
-        <div style="flex:1;min-width:110px;background:#dc3545;color:#fff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:24px;font-weight:800" id="ms-o">0</div><div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px">Open</div></div>
-        <div style="flex:1;min-width:110px;background:#28a745;color:#fff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:24px;font-weight:800" id="ms-c">0</div><div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px">Closed</div></div>
-        <div style="flex:1;min-width:110px;background:#ffc107;color:#212529;border-radius:8px;padding:12px;text-align:center"><div style="font-size:24px;font-weight:800" id="ms-n">0</div><div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px">Not Required</div></div>
+        <div style="flex:1;min-width:110px;background:#f58220;color:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:24px;font-weight:800" id="ms-t">0</div>
+          <div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px" data-i18n="msa_total">Total MS ATRs</div>
+        </div>
+        <div style="flex:1;min-width:110px;background:#dc3545;color:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:24px;font-weight:800" id="ms-o">0</div>
+          <div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px" data-i18n="msa_open">Open</div>
+        </div>
+        <div style="flex:1;min-width:110px;background:#28a745;color:#fff;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:24px;font-weight:800" id="ms-c">0</div>
+          <div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px" data-i18n="msa_closed">Closed</div>
+        </div>
+        <div style="flex:1;min-width:110px;background:#ffc107;color:#212529;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:24px;font-weight:800" id="ms-n">0</div>
+          <div style="font-size:10px;text-transform:uppercase;opacity:.88;margin-top:3px" data-i18n="msa_notreq">Not Required</div>
+        </div>
       </div>
       <div class="msg" id="msaGrid"></div>
     </div>
-    <div class="page" id="page-form">
-      <div style="background:#fff;border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-        <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--bg)">Submit a New LFI Incident Alert</div>
-        <iframe id="formFrame" src="about:blank" style="width:100%;height:700px;border:none;border-radius:6px"></iframe>
-        <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--muted)">Having trouble? <a id="formLink" href="#" target="_blank" style="color:var(--bl);font-weight:600">Open form in a new tab</a></div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div id="loader"><div class="spin"></div><p>Loading LFI data...</p></div>
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<div id="loader"><div class="spin"></div><p data-i18n="loading">Loading LFI data...</p></div>
 
 <script>
 // ============================================================
-// ATNM LFI CORE DASHBOARD v4.9 — GitHub Pages Edition
-// API URL: v4.9 deployment — Access: Anyone
+// ATNM LFI CORE DASHBOARD v4.9
 // ============================================================
-var API_URL='https://script.google.com/a/macros/altasnim.com/s/AKfycbzJo2bSVd5SxH74-a7FElfbPfQMoulItUB-XXcK83Ocn6utv3uO3pzccKNmlSxX1yWOjg/exec?action=api';
 
+// ── CONFIGURE THESE TWO LINES ──────────────────────────────
+var API_URL  = 'https://script.google.com/a/macros/altasnim.com/s/AKfycbzJo2bSVd5SxH74-a7FElfbPfQMoulItUB-XXcK83Ocn6utv3uO3pzccKNmlSxX1yWOjg/exec?action=api';
+var FORM_URL = '';  // ← Paste your Google Form URL here e.g. 'https://docs.google.com/forms/d/xxx/viewform'
+// ───────────────────────────────────────────────────────────
+
+// ── FULL I18N DICTIONARY ───────────────────────────────────
+var I18N = {
+  en:{
+    sb_nav:'Dashboard', sb_overview:'Overview', sb_lfi:'LFI Register',
+    sb_msa:'MS ATR Board', sb_stats_hdr:'Quick Stats',
+    sb_total:'Total LFIs', sb_approved:'Approved', sb_pending:'Pending',
+    sb_ms_open:'MS ATRs Open', btn_submit:'+ Submit New LFI',
+    pg_overview:'Overview Dashboard',
+    pg_lfi:'LFI Register — Interactive Flashcards',
+    pg_msa:'MS ATR — Action Tracker Board',
+    btn_refresh:'↺ Refresh Data', btn_refresh_sm:'↺ Refresh', btn_reset:'↺ Reset',
+    fil_from:'From Date', fil_to:'To Date', fil_cat:'Category',
+    fil_div:'Division', fil_cluster:'Cluster', fil_status:'Status',
+    fil_disc:'Discipline', fil_search:'Search',
+    fil_all_cat:'All Categories', fil_all_div:'All Divisions',
+    fil_all_cluster:'All Clusters', fil_all_status:'All Statuses',
+    fil_all_disc:'All Disciplines', fil_search_ph:'ID, name, location, summary...',
+    kpi_total:'Total LFIs', kpi_approved:'Approved', kpi_pending:'Pending',
+    kpi_returned:'Returned', kpi_ppt:'PPTs Created', kpi_msa:'MS ATR Created',
+    ch_cat:'By Incident Category', ch_status:'Approval Status Distribution',
+    ch_div:'By ATNM Division', ch_loc:'By Cluster / Location',
+    ch_drill:'Click to drill down',
+    lfi_hint:'Click a card to expand. Use 🔊 to read aloud.',
+    lfi_empty:'No LFI records match the current filters.',
+    lfi_load:'Click Refresh to load data.',
+    badge_approved:'Approved', badge_pending:'Pending', badge_returned:'Returned',
+    fc_ppt_ok:'PPT ✓', fc_ppt_pend:'PPT Pending',
+    fc_msa_ok:'MS ATR ✓', fc_msa_pend:'MS ATR Pending',
+    fc_open_ppt:'📖 Open PPT', fc_read:'🔊 Read Aloud', fc_reading:'🔊 Reading...',
+    msa_sub:'Method Statement Action Tracker — linked to approved LFIs',
+    msa_total:'Total MS ATRs', msa_open:'Open', msa_closed:'Closed',
+    msa_notreq:'Not Required', msa_empty:'No MS ATR records match the filter.',
+    msa_gaps:'MS Gaps', msa_resp:'Responsible', msa_ap:'Action Party', msa_acc:'Accountable',
+    drill_by:'Filtered by:', drill_clear:'✕ Clear',
+    loading:'Loading LFI data...', not_translated:'Not yet translated',
+    desc:'Description of Incident', find:'Findings / Root Cause',
+    learn:'Learnings from Incident', rec:'records',
+    err_auth:'Authentication needed. Open the API URL in your browser while signed in to your altasnim.com account, then refresh this page.',
+    err_load:'Error loading data. Check that deployment Access = Anyone and Code.gs v4.9 is deployed.'
+  },
+  hi:{
+    sb_nav:'डैशबोर्ड', sb_overview:'अवलोकन', sb_lfi:'LFI रजिस्टर',
+    sb_msa:'MS ATR बोर्ड', sb_stats_hdr:'त्वरित आँकड़े',
+    sb_total:'कुल LFIs', sb_approved:'अनुमोदित', sb_pending:'लंबित',
+    sb_ms_open:'MS ATR खुले', btn_submit:'+ नया LFI जमा करें',
+    pg_overview:'अवलोकन डैशबोर्ड',
+    pg_lfi:'LFI रजिस्टर — फ्लैशकार्ड',
+    pg_msa:'MS ATR — कार्य ट्रैकर',
+    btn_refresh:'↺ डेटा ताज़ा करें', btn_refresh_sm:'↺ ताज़ा करें', btn_reset:'↺ रीसेट',
+    fil_from:'शुरू तिथि', fil_to:'अंत तिथि', fil_cat:'श्रेणी',
+    fil_div:'विभाग', fil_cluster:'क्लस्टर', fil_status:'स्थिति',
+    fil_disc:'अनुशासन', fil_search:'खोज',
+    fil_all_cat:'सभी श्रेणियाँ', fil_all_div:'सभी विभाग',
+    fil_all_cluster:'सभी क्लस्टर', fil_all_status:'सभी स्थितियाँ',
+    fil_all_disc:'सभी अनुशासन', fil_search_ph:'ID, नाम, स्थान, सारांश...',
+    kpi_total:'कुल LFIs', kpi_approved:'अनुमोदित', kpi_pending:'लंबित',
+    kpi_returned:'वापस', kpi_ppt:'PPT बनाए', kpi_msa:'MS ATR बनाए',
+    ch_cat:'घटना श्रेणी अनुसार', ch_status:'अनुमोदन स्थिति वितरण',
+    ch_div:'ATNM विभाग अनुसार', ch_loc:'क्लस्टर / स्थान अनुसार',
+    ch_drill:'ड्रिल डाउन के लिए क्लिक करें',
+    lfi_hint:'विस्तार के लिए क्लिक करें। 🔊 से पढ़ें।',
+    lfi_empty:'कोई LFI रिकॉर्ड नहीं मिला।',
+    lfi_load:'डेटा लोड करने के लिए ताज़ा करें पर क्लिक करें।',
+    badge_approved:'अनुमोदित', badge_pending:'लंबित', badge_returned:'वापस',
+    fc_ppt_ok:'PPT ✓', fc_ppt_pend:'PPT लंबित',
+    fc_msa_ok:'MS ATR ✓', fc_msa_pend:'MS ATR लंबित',
+    fc_open_ppt:'📖 PPT खोलें', fc_read:'🔊 पढ़ें', fc_reading:'🔊 पढ़ रहा है...',
+    msa_sub:'विधि विवरण क्रिया ट्रैकर — अनुमोदित LFIs से जुड़ा',
+    msa_total:'कुल MS ATR', msa_open:'खुले', msa_closed:'बंद',
+    msa_notreq:'आवश्यक नहीं', msa_empty:'कोई MS ATR रिकॉर्ड नहीं मिला।',
+    msa_gaps:'MS अंतराल', msa_resp:'जिम्मेदार', msa_ap:'कार्य पक्ष', msa_acc:'जवाबदेह',
+    drill_by:'फ़िल्टर किया:', drill_clear:'✕ साफ करें',
+    loading:'LFI डेटा लोड हो रहा है...', not_translated:'अभी अनुवाद नहीं हुआ',
+    desc:'घटना का विवरण', find:'निष्कर्ष / मूल कारण',
+    learn:'इस घटना से सीख', rec:'रिकॉर्ड',
+    err_auth:'प्रमाणीकरण आवश्यक है। altasnim.com खाते से साइन इन करके API URL खोलें।',
+    err_load:'डेटा लोड करने में त्रुटि। Deployment Access = Anyone सुनिश्चित करें।'
+  },
+  ar:{
+    sb_nav:'لوحة التحكم', sb_overview:'نظرة عامة', sb_lfi:'سجل LFI',
+    sb_msa:'لوحة MS ATR', sb_stats_hdr:'إحصائيات سريعة',
+    sb_total:'إجمالي LFIs', sb_approved:'معتمد', sb_pending:'قيد الانتظار',
+    sb_ms_open:'MS ATR مفتوح', btn_submit:'+ تقديم LFI جديد',
+    pg_overview:'لوحة المراقبة العامة',
+    pg_lfi:'سجل LFI — البطاقات التفاعلية',
+    pg_msa:'MS ATR — متتبع الإجراءات',
+    btn_refresh:'↺ تحديث البيانات', btn_refresh_sm:'↺ تحديث', btn_reset:'↺ إعادة تعيين',
+    fil_from:'من تاريخ', fil_to:'إلى تاريخ', fil_cat:'الفئة',
+    fil_div:'القسم', fil_cluster:'المجموعة', fil_status:'الحالة',
+    fil_disc:'التخصص', fil_search:'بحث',
+    fil_all_cat:'جميع الفئات', fil_all_div:'جميع الأقسام',
+    fil_all_cluster:'جميع المجموعات', fil_all_status:'جميع الحالات',
+    fil_all_disc:'جميع التخصصات', fil_search_ph:'المعرف، الاسم، الموقع...',
+    kpi_total:'إجمالي LFIs', kpi_approved:'معتمد', kpi_pending:'قيد الانتظار',
+    kpi_returned:'مُعاد', kpi_ppt:'PPT منشأ', kpi_msa:'MS ATR منشأ',
+    ch_cat:'حسب فئة الحادث', ch_status:'توزيع حالة الموافقة',
+    ch_div:'حسب قسم ATNM', ch_loc:'حسب المجموعة / الموقع',
+    ch_drill:'انقر للتفصيل',
+    lfi_hint:'انقر للتوسع. استخدم 🔊 للقراءة.',
+    lfi_empty:'لا توجد سجلات LFI تطابق الفلاتر الحالية.',
+    lfi_load:'انقر تحديث لتحميل البيانات.',
+    badge_approved:'معتمد', badge_pending:'قيد الانتظار', badge_returned:'مُعاد',
+    fc_ppt_ok:'PPT ✓', fc_ppt_pend:'PPT معلق',
+    fc_msa_ok:'MS ATR ✓', fc_msa_pend:'MS ATR معلق',
+    fc_open_ppt:'📖 فتح PPT', fc_read:'🔊 قراءة', fc_reading:'🔊 جارٍ القراءة...',
+    msa_sub:'متتبع إجراءات بيان المنهجية — مرتبط بـ LFIs المعتمدة',
+    msa_total:'إجمالي MS ATR', msa_open:'مفتوح', msa_closed:'مغلق',
+    msa_notreq:'غير مطلوب', msa_empty:'لا توجد سجلات MS ATR تطابق الفلتر.',
+    msa_gaps:'فجوات MS', msa_resp:'المسؤول', msa_ap:'طرف الإجراء', msa_acc:'المساءلة',
+    drill_by:'مفلتر بـ:', drill_clear:'✕ مسح',
+    loading:'جارٍ تحميل بيانات LFI...', not_translated:'لم يُترجم بعد',
+    desc:'وصف الحادث', find:'النتائج / السبب الجذري',
+    learn:'الدروس المستفادة', rec:'سجلات',
+    err_auth:'مطلوب تسجيل الدخول. افتح رابط API في المتصفح وأنت مسجّل الدخول بحساب altasnim.com.',
+    err_load:'خطأ في تحميل البيانات. تحقق من إعدادات النشر.'
+  }
+};
+
+var LANG='en', DRILL=null, RAW=null, MSR=null;
+var CH={};
 var PAL=['#21409a','#f58220','#28a745','#dc3545','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#e83e8c','#6c757d','#0d6efd'];
-var CH={};var RAW=null;var MSR=null;var LANG='en';var DRILL=null;
-var LBL={desc:{en:'Description of Incident',hi:'घटना का विवरण',ar:'وصف الحادث'},find:{en:'Findings / Root Cause',hi:'निष्कर्ष / मूल कारण',ar:'النتائج / السبب الجذري'},learn:{en:'Learnings from Incident',hi:'इस घटना से सीख',ar:'الدروس المستفادة'}};
+var PAGES={overview:'pg_overview',lfi:'pg_lfi',msa:'pg_msa'};
+var CUR_PAGE='overview';
 
+// ── TRANSLATE ──────────────────────────────────────────────
+function t(k){return(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;}
+
+function translateUI(){
+  // Direction
+  var dir=LANG==='ar'?'rtl':'ltr';
+  document.documentElement.setAttribute('dir',dir);
+  document.documentElement.setAttribute('lang',LANG==='ar'?'ar':LANG==='hi'?'hi':'en');
+
+  // All data-i18n text
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    el.textContent=t(el.getAttribute('data-i18n'));
+  });
+  // Placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
+    el.placeholder=t(el.getAttribute('data-i18n-ph'));
+  });
+  // Page title
+  document.getElementById('ptitle').textContent=t(PAGES[CUR_PAGE]||'pg_overview');
+  // Status filter options
+  var fSt=document.getElementById('fSt');
+  if(fSt){
+    fSt.options[0].textContent=t('fil_all_status');
+    fSt.options[1].textContent=t('badge_approved');
+    fSt.options[2].textContent=t('badge_pending');
+    fSt.options[3].textContent=t('badge_returned');
+  }
+  // MS ATR status filter
+  var msF=document.getElementById('msF');
+  if(msF){
+    msF.options[0].textContent=t('fil_all_status');
+    msF.options[1].textContent=t('msa_open');
+    msF.options[2].textContent=t('msa_closed');
+    msF.options[3].textContent=t('msa_notreq');
+  }
+  // Other first options
+  ['fCat','fDiv','fLoc','fDisc'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el&&el.options[0])el.options[0].textContent=t('fil_all_'+{fCat:'cat',fDiv:'div',fLoc:'cluster',fDisc:'disc'}[id]);
+  });
+  // Submit button
+  document.getElementById('sbFormBtn').textContent=t('btn_submit');
+  // Loader text
+  var lp=document.querySelector('#loader p');if(lp)lp.textContent=t('loading');
+  // Re-render active pages
+  if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
+  if(document.getElementById('page-msa').classList.contains('active'))renderMsa();
+}
+
+function setLang(lang,btn){
+  LANG=lang;
+  document.querySelectorAll('.lbt').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  translateUI();
+}
+
+// ── UTILS ──────────────────────────────────────────────────
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function pct(v,t){return t>0?Math.round(v/t*100)+'%':'--';}
-function badge(st){if(st==='Reviewed & Approved')return'<span class="badge ba">Approved</span>';if(st==='Reviewed & Returned')return'<span class="badge br">Returned</span>';return'<span class="badge bp">Pending</span>';}
-function pd(dt){if(!dt)return null;var m={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};var p=dt.split('-');if(p.length===3)return new Date(parseInt(p[2]),m[p[1]]||0,parseInt(p[0]));return new Date(dt);}
+function pct(v,n){return n>0?Math.round(v/n*100)+'%':'--';}
+function badge(st){
+  if(st==='Reviewed & Approved')return'<span class="badge ba">'+t('badge_approved')+'</span>';
+  if(st==='Reviewed & Returned')return'<span class="badge br">'+t('badge_returned')+'</span>';
+  return'<span class="badge bp">'+t('badge_pending')+'</span>';
+}
+function pd(dt){
+  if(!dt)return null;
+  var m={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  var p=dt.split('-');if(p.length===3)return new Date(parseInt(p[2]),m[p[1]]||0,parseInt(p[0]));
+  return new Date(dt);
+}
 function uniq(a){var s={},r=[];a.forEach(function(v){if(v&&!s[v]){s[v]=1;r.push(v);}});return r.sort();}
-function fill(id,vals){var el=document.getElementById(id);if(!el)return;var cur=el.value;while(el.options.length>1)el.remove(1);vals.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});el.value=cur;}
+function fill(id,vals){
+  var el=document.getElementById(id);if(!el)return;
+  var cur=el.value,first=el.options[0].textContent;
+  while(el.options.length>1)el.remove(1);
+  vals.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});
+  el.value=cur;
+}
+function showErr(msg){
+  document.getElementById('errMsg').textContent=msg;
+  document.getElementById('errBanner').classList.add('vis');
+}
+function hideErr(){document.getElementById('errBanner').classList.remove('vis');}
+function showL(){document.getElementById('loader').classList.add('vis');}
+function hideL(){document.getElementById('loader').classList.remove('vis');}
+function openForm(){
+  var url=FORM_URL||(RAW&&window._formUrl)||'';
+  if(!url){alert('Form URL not configured.\nAdd your Google Form URL to the FORM_URL variable at the top of dashboard.html');return;}
+  window.open(url,'_blank');
+}
 
+// ── NAVIGATION ─────────────────────────────────────────────
 function navTo(page,el){
+  CUR_PAGE=page;
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   var pg=document.getElementById('page-'+page);if(pg)pg.classList.add('active');
   document.querySelectorAll('nav a').forEach(function(a){a.classList.remove('active');});
   if(el)el.classList.add('active');
-  var T={overview:'Overview Dashboard',lfi:'LFI Register — Interactive Flashcards',msa:'MS ATR — Action Tracker Board',form:'Submit LFI Incident Alert'};
-  document.getElementById('ptitle').textContent=T[page]||'Dashboard';
-  if(page==='lfi')renderFC();if(page==='msa')renderMsa();if(page==='form')loadForm();
+  document.getElementById('ptitle').textContent=t(PAGES[page]||'pg_overview');
+  if(page==='lfi')renderFC();
+  if(page==='msa')renderMsa();
   if(window.innerWidth<=700)document.getElementById('sb').classList.remove('open');
   return false;
 }
-function setLang(lang,btn){LANG=lang;document.querySelectorAll('.lbt').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');if(document.getElementById('page-lfi').classList.contains('active'))renderFC();}
-function showL(){document.getElementById('loader').classList.add('vis');}
-function hideL(){document.getElementById('loader').classList.remove('vis');}
 
+// ── API FETCH ──────────────────────────────────────────────
 function refresh(){
-  showL();document.getElementById('refBtn').classList.add('ld');
+  showL();hideErr();
+  document.getElementById('refBtn').classList.add('ld');
+  document.getElementById('lu').textContent='';
   fetch(API_URL,{cache:'no-cache'})
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status+' — check deployment Access=Anyone');return r.json();})
+    .then(function(r){
+      // Check if we got redirected to a login page
+      var ct=r.headers.get('content-type')||'';
+      if(ct.indexOf('text/html')!==-1){
+        throw new Error('AUTH');
+      }
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      return r.json();
+    })
     .then(function(data){
-      RAW=data.rawRows||[];MSR=data.msRows||[];
+      RAW=data.rawRows||[];
+      MSR=data.msRows||[];
       RAW.forEach(function(r){r.dateObj=pd(r.dt);});
-      var fu=data.formUrl||'';var sb=document.getElementById('sbFormBtn');
-      if(fu&&fu.indexOf('YOUR_FORM_ID')===-1){if(sb)sb.href=fu;var fl=document.getElementById('formLink');if(fl)fl.href=fu;}
-      initF();applyAll();updateSB(data);
-      document.getElementById('lu').textContent='Updated: '+(data.ts||new Date().toLocaleString());
+      // Store form URL from API response
+      if(data.formUrl&&data.formUrl.indexOf('YOUR_FORM_ID')===-1){
+        window._formUrl=data.formUrl;
+        document.getElementById('sbFormBtn').onclick=openForm;
+      }
+      // Update sidebar stats
+      document.getElementById('sb-t').textContent=data.total||0;
+      document.getElementById('sb-a').textContent=data.appr||0;
+      document.getElementById('sb-p').textContent=data.pend||0;
+      document.getElementById('sb-o').textContent=(data.msRows||[]).filter(function(r){return r.st==='Open';}).length;
+      document.getElementById('lu').textContent='Updated: '+(data.ts||'');
+      initFilters();
+      applyAll();
     })
     .catch(function(err){
-      hideL();document.getElementById('refBtn').classList.remove('ld');
-      document.getElementById('lu').textContent='Error loading data';
-      alert('Cannot fetch data:
-
-'+err.message+'
-
-Check:
-1. Deployment Access = Anyone
-2. Code.gs v4.9 deployed
-3. API_URL ends with ?action=api');
+      var msg=err.message==='AUTH'?t('err_auth'):(t('err_load')+' ('+err.message+')');
+      showErr(msg);
+      document.getElementById('lu').textContent='Error';
+      // If we have cached data, still render it
+      if(RAW)applyAll();
     })
     .finally(function(){hideL();document.getElementById('refBtn').classList.remove('ld');});
 }
 
-function initF(){
+// ── FILTERS ────────────────────────────────────────────────
+function initFilters(){
   if(!RAW)return;
   fill('fCat',uniq(RAW.map(function(r){return r.cat;})));
   fill('fDiv',uniq(RAW.map(function(r){return r.div;})));
   fill('fLoc',uniq(RAW.map(function(r){return r.loc;})));
-  fill('fSt',uniq(RAW.map(function(r){return r.st;})));
   fill('fDisc',uniq(RAW.map(function(r){return r.disc;})));
+  // Re-apply first option translations
+  var map={fCat:'fil_all_cat',fDiv:'fil_all_div',fLoc:'fil_all_cluster',fDisc:'fil_all_disc'};
+  Object.keys(map).forEach(function(id){
+    var el=document.getElementById(id);if(el&&el.options[0])el.options[0].textContent=t(map[id]);
+  });
 }
 
 function getF(){
   if(!RAW)return[];
   var rows=RAW;
   if(DRILL)rows=rows.filter(function(r){return r[DRILL.f]===DRILL.v;});
-  var cat=document.getElementById('fCat').value,div=document.getElementById('fDiv').value,
-      loc=document.getElementById('fLoc').value,st=document.getElementById('fSt').value,
-      disc=document.getElementById('fDisc').value,q=document.getElementById('fQ').value.toLowerCase().trim(),
-      from=document.getElementById('fFrom').value,to=document.getElementById('fTo').value;
-  if(cat)rows=rows.filter(function(r){return r.cat===cat;});
-  if(div)rows=rows.filter(function(r){return r.div===div;});
-  if(loc)rows=rows.filter(function(r){return r.loc===loc;});
-  if(st)rows=rows.filter(function(r){return r.st===st;});
+  var cat=document.getElementById('fCat').value,
+      div=document.getElementById('fDiv').value,
+      loc=document.getElementById('fLoc').value,
+      st =document.getElementById('fSt').value,
+      disc=document.getElementById('fDisc').value,
+      q  =document.getElementById('fQ').value.toLowerCase().trim(),
+      from=document.getElementById('fFrom').value,
+      to  =document.getElementById('fTo').value;
+  if(cat) rows=rows.filter(function(r){return r.cat===cat;});
+  if(div) rows=rows.filter(function(r){return r.div===div;});
+  if(loc) rows=rows.filter(function(r){return r.loc===loc;});
+  if(st)  rows=rows.filter(function(r){return r.st===st;});
   if(disc)rows=rows.filter(function(r){return r.disc===disc;});
   if(from){var fd=new Date(from);rows=rows.filter(function(r){return r.dateObj&&r.dateObj>=fd;});}
-  if(to){var td=new Date(to);td.setHours(23,59,59);rows=rows.filter(function(r){return r.dateObj&&r.dateObj<=td;});}
-  if(q)rows=rows.filter(function(r){return[r.id,r.cat,r.div,r.loc,r.by,r.disc,r.st,r.descEN,r.descHI,r.descAR].join(' ').toLowerCase().indexOf(q)!==-1;});
+  if(to)  {var td=new Date(to);td.setHours(23,59,59);rows=rows.filter(function(r){return r.dateObj&&r.dateObj<=td;});}
+  if(q)   rows=rows.filter(function(r){return[r.id,r.cat,r.div,r.loc,r.by,r.disc,r.st,r.descEN,r.descHI,r.descAR].join(' ').toLowerCase().indexOf(q)!==-1;});
   return rows;
 }
 
-function resetF(){['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});['fCat','fDiv','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});clearDrill();}
-function drillDown(f,v){DRILL={f:f,v:v};document.getElementById('drillBar').classList.add('vis');document.getElementById('drillInfo').textContent=f.toUpperCase()+': '+v;applyAll();}
+function resetF(){
+  ['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['fCat','fDiv','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  clearDrill();
+}
+
+function drillDown(f,v){
+  DRILL={f:f,v:v};
+  document.getElementById('drillBar').classList.add('vis');
+  document.getElementById('drillInfo').textContent=f.toUpperCase()+': '+v;
+  applyAll();
+}
 function clearDrill(){DRILL=null;document.getElementById('drillBar').classList.remove('vis');applyAll();}
 
 function applyAll(){
   var rows=getF();
-  document.getElementById('frc').textContent=rows.length+' record'+(rows.length===1?'':'s');
-  updateKPI(rows);renderCharts(rows);
+  document.getElementById('frc').textContent=rows.length+' '+t('rec');
+  updateKPI(rows);
+  try{renderCharts(rows);}catch(e){}
   if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
   if(document.getElementById('page-msa').classList.contains('active'))renderMsa();
 }
 
+// ── KPI ────────────────────────────────────────────────────
 function updateKPI(rows){
-  var t=rows.length,a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,
+  var n=rows.length,
+      a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,
       p=rows.filter(function(r){return r.st==='Pending Approval';}).length,
       re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length,
       pp=rows.filter(function(r){return r.ppt;}).length,
       ms=rows.filter(function(r){return r.msa;}).length;
-  var vs=[t,a,p,re,pp,ms];
-  for(var i=0;i<6;i++){document.getElementById('k'+i).textContent=vs[i];document.getElementById('kp'+i).textContent=i>0&&t>0?pct(vs[i],t):'';}
+  var vs=[n,a,p,re,pp,ms];
+  for(var i=0;i<6;i++){
+    document.getElementById('k'+i).textContent=vs[i];
+    document.getElementById('kp'+i).textContent=i>0&&n>0?pct(vs[i],n):'';
+  }
+  // Update chart titles with current language
+  var titles=[['chCatLbl','ch_cat'],['chStLbl','ch_status'],['chDivLbl','ch_div'],['chLocLbl','ch_loc']];
+  titles.forEach(function(pair){var el=document.getElementById(pair[0]);if(el)el.textContent=t(pair[1]);});
 }
-function updateSB(d){document.getElementById('sb-t').textContent=d.total||0;document.getElementById('sb-a').textContent=d.appr||0;document.getElementById('sb-p').textContent=d.pend||0;document.getElementById('sb-o').textContent=(d.msRows||[]).filter(function(r){return r.st==='Open';}).length;}
 
+// ── CHARTS ─────────────────────────────────────────────────
 function cntBy(rows,k){var c={};rows.forEach(function(r){var v=r[k]||'?';c[v]=(c[v]||0)+1;});return c;}
 function mkChart(id,type,labels,data,colors,horiz,fn){
-  if(CH[id])CH[id].destroy();var ctx=document.getElementById(id);if(!ctx)return;
-  CH[id]=new Chart(ctx.getContext('2d'),{type:type,data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:1,borderColor:'#fff',hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:horiz?'top':'right',labels:{font:{size:11},boxWidth:12,padding:8}}},indexAxis:horiz?'y':'x',
+  if(CH[id])CH[id].destroy();
+  var ctx=document.getElementById(id);if(!ctx)return;
+  CH[id]=new Chart(ctx.getContext('2d'),{
+    type:type,data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:1,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:horiz?'top':'right',labels:{font:{size:11},boxWidth:12,padding:8}}},
+      indexAxis:horiz?'y':'x',
       scales:horiz?{x:{beginAtZero:true,ticks:{font:{size:11}}},y:{ticks:{font:{size:11}}}}:{},
-      onClick:function(e,els){if(fn&&els.length)fn(labels[els[0].index]);}}});
+      onClick:function(e,els){if(fn&&els.length)fn(labels[els[0].index]);}}
+  });
 }
 function renderCharts(rows){
   var cc=cntBy(rows,'cat');var ck=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a];});
-  try{mkChart('cCat','pie',ck,ck.map(function(k){return cc[k];}),PAL,false,function(v){drillDown('cat',v);});}catch(e){}
-  var a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,p=rows.filter(function(r){return r.st==='Pending Approval';}).length,re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length;
-  try{mkChart('cSt','doughnut',['Approved','Pending','Returned'],[a,p,re],['#28a745','#ffc107','#dc3545'],false,null);}catch(e){}
+  mkChart('cCat','pie',ck,ck.map(function(k){return cc[k];}),PAL,false,function(v){drillDown('cat',v);});
+  var a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,
+      p=rows.filter(function(r){return r.st==='Pending Approval';}).length,
+      re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length;
+  mkChart('cSt','doughnut',[t('badge_approved'),t('badge_pending'),t('badge_returned')],[a,p,re],['#28a745','#ffc107','#dc3545'],false,null);
   var dc=cntBy(rows,'div');var dk=Object.keys(dc).sort(function(a,b){return dc[b]-dc[a];});
-  try{mkChart('cDiv','bar',dk,dk.map(function(k){return dc[k];}),dk.map(function(_,i){return PAL[i%PAL.length];}),true,function(v){drillDown('div',v);});}catch(e){}
+  mkChart('cDiv','bar',dk,dk.map(function(k){return dc[k];}),dk.map(function(_,i){return PAL[i%PAL.length];}),true,function(v){drillDown('div',v);});
   var lc=cntBy(rows,'loc');var lk=Object.keys(lc).sort(function(a,b){return lc[b]-lc[a];});
-  try{mkChart('cLoc','bar',lk,lk.map(function(k){return lc[k];}),lk.map(function(_,i){return PAL[(i+3)%PAL.length];}),true,function(v){drillDown('loc',v);});}catch(e){}
+  mkChart('cLoc','bar',lk,lk.map(function(k){return lc[k];}),lk.map(function(_,i){return PAL[(i+3)%PAL.length];}),true,function(v){drillDown('loc',v);});
 }
 
-function gc(r,lang){return{desc:lang==='ar'?r.descAR:(lang==='hi'?r.descHI:r.descEN),find:lang==='ar'?r.findAR:(lang==='hi'?r.findHI:r.findEN),learn:lang==='ar'?r.learnAR:(lang==='hi'?r.learnHI:r.learnEN)};}
-
+// ── FLASHCARDS ─────────────────────────────────────────────
+function gc(r,lang){
+  return{
+    desc:lang==='ar'?r.descAR:(lang==='hi'?r.descHI:r.descEN),
+    find:lang==='ar'?r.findAR:(lang==='hi'?r.findHI:r.findEN),
+    learn:lang==='ar'?r.learnAR:(lang==='hi'?r.learnHI:r.learnEN)
+  };
+}
 function renderFC(){
   var rows=getF();var grid=document.getElementById('fcGrid');if(!grid)return;
-  if(!RAW){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>Click Refresh to load data.</p></div>';return;}
-  if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>No LFI records match the current filters.</p></div>';return;}
+  if(!RAW){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>'+t('lfi_load')+'</p></div>';return;}
+  if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>'+t('lfi_empty')+'</p></div>';return;}
   var html='';
   rows.slice().reverse().forEach(function(r){
-    var lang=LANG;var c=gc(r,lang);var dir=lang==='ar'?'rtl':'ltr';
+    var lang=LANG,c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
     var enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');
-    html+='<div class="fc" id="fc-'+esc(r.id.replace(/[^a-z0-9]/gi,'-'))+'">'+
-      '<div class="fch" onclick="this.closest('.fc').classList.toggle('open')">'+
-        '<div class="fct"><span class="fid">'+esc(r.id)+'</span>'+badge(r.st)+'<span style="font-size:13px;color:var(--muted)">&#9660;</span></div>'+
+    html+='<div class="fc">'+
+      '<div class="fch" onclick="this.closest(\'.fc\').classList.toggle(\'open\')">'+
+        '<div class="fct">'+
+          '<span class="fid">'+esc(r.id)+'</span>'+
+          badge(r.st)+
+          '<span style="font-size:12px;color:var(--muted)">&#9660;</span>'+
+        '</div>'+
         '<div class="fcv">'+esc(r.cat)+'</div>'+
-        '<div class="fcm"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span></div>'+
+        '<div class="fcm">'+
+          '<span>&#128205; '+esc(r.loc)+'</span>'+
+          '<span>&#128197; '+esc(r.dt)+'</span>'+
+          '<span>&#128736; '+esc(r.disc)+'</span>'+
+        '</div>'+
       '</div>'+
       '<div class="fcb">'+
         '<div class="lbar">'+
-          '<button class="lb'+(lang==='en'?' active':'')+'" onclick="sclang(this,'en')">&#127468;&#127463; EN</button>'+
-          '<button class="lb'+(lang==='hi'?' active':'')+'" onclick="sclang(this,'hi')">&#127470;&#127475; हि</button>'+
-          '<button class="lb'+(lang==='ar'?' active':'')+'" onclick="sclang(this,'ar')">&#127462;&#127466; ع</button>'+
-          '<button class="spk" onclick="speakCard(this)">&#128266; Read Aloud</button>'+
+          '<button class="lb'+(lang==='en'?' active':'')+'" onclick="sclang(this,\'en\')">&#127468;&#127463; EN</button>'+
+          '<button class="lb'+(lang==='hi'?' active':'')+'" onclick="sclang(this,\'hi\')">&#127470;&#127475; हि</button>'+
+          '<button class="lb'+(lang==='ar'?' active':'')+'" onclick="sclang(this,\'ar\')">&#127462;&#127466; ع</button>'+
+          '<button class="spk" onclick="speakCard(this)">'+t('fc_read')+'</button>'+
         '</div>'+
-        '<div class="fcc'+(dir==='rtl'?' rtl':'')+'" data-row=''+enc+'' data-lang="'+lang+'">'+
-          '<div class="fcs"><label>'+LBL.desc[lang]+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
-          '<div class="fcs"><label>'+LBL.find[lang]+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
-          '<div class="fcs"><label>'+LBL.learn[lang]+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
+        '<div class="fcc'+(dir==='rtl'?' rtl':'')+'" data-row=\''+enc+'\' data-lang="'+lang+'">'+
+          '<div class="fcs"><label>'+t('desc')+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
+          '<div class="fcs"><label>'+t('find')+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
+          '<div class="fcs"><label>'+t('learn')+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
         '</div>'+
         '<div class="fps">'+
-          '<span class="fp">'+esc(r.div)+'</span><span class="fp">'+esc(r.by)+'</span>'+
-          (r.ppt?'<span class="fp ok">PPT &#10003;</span>':'<span class="fp pnd">PPT Pending</span>')+
-          (r.msa?'<span class="fp ok">MS ATR &#10003;</span>':'<span class="fp pnd">MS ATR Pending</span>')+
+          '<span class="fp">'+esc(r.div)+'</span>'+
+          '<span class="fp">'+esc(r.by)+'</span>'+
+          (r.ppt?'<span class="fp ok">'+t('fc_ppt_ok')+'</span>':'<span class="fp pnd">'+t('fc_ppt_pend')+'</span>')+
+          (r.msa?'<span class="fp ok">'+t('fc_msa_ok')+'</span>':'<span class="fp pnd">'+t('fc_msa_pend')+'</span>')+
         '</div>'+
-        (r.pptLink?'<div class="fpl"><a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">&#128218; Open PPT</a></div>':'')+
+        (r.pptLink?'<div class="fpl"><a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">'+t('fc_open_ppt')+'</a></div>':'')+
       '</div></div>';
   });
   grid.innerHTML=html;
@@ -389,27 +819,37 @@ function renderFC(){
 function sclang(btn,lang){
   var card=btn.closest('.fc');var cont=card.querySelector('.fcc');
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
-  var c=gc(r,lang);var dir=lang==='ar'?'rtl':'ltr';
+  var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
   cont.className='fcc'+(dir==='rtl'?' rtl':'');cont.dataset.lang=lang;
-  cont.innerHTML='<div class="fcs"><label>'+LBL.desc[lang]+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
-    '<div class="fcs"><label>'+LBL.find[lang]+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
-    '<div class="fcs"><label>'+LBL.learn[lang]+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>';
-  card.querySelectorAll('.lb').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');
+  cont.innerHTML=
+    '<div class="fcs"><label>'+t('desc')+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
+    '<div class="fcs"><label>'+t('find')+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
+    '<div class="fcs"><label>'+t('learn')+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>';
+  card.querySelectorAll('.lb').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  // Update speak button label
+  var spk=card.querySelector('.spk');if(spk)spk.textContent=t('fc_read');
 }
 
 function speakCard(btn){
-  var card=btn.closest('.fc');var cont=card.querySelector('.fcc');var lang=cont.dataset.lang||'en';
+  var card=btn.closest('.fc'),cont=card.querySelector('.fcc');
+  var lang=cont.dataset.lang||'en';
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
-  var c=gc(r,lang);var text=[c.desc,c.find,c.learn].filter(Boolean).join('. ');
-  if(!text){alert('No content in this language yet.');return;}
-  if(!window.speechSynthesis){alert('Speech synthesis not supported.');return;}
-  window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);
+  var c=gc(r,lang),text=[c.desc,c.find,c.learn].filter(Boolean).join('. ');
+  if(!text){alert(t('not_translated'));return;}
+  if(!window.speechSynthesis){return;}
+  window.speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(text);
   u.lang=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';u.rate=0.9;
-  window.speechSynthesis.speak(u);btn.textContent='&#128266; Reading...';u.onend=function(){btn.textContent='&#128266; Read Aloud';};
+  window.speechSynthesis.speak(u);
+  btn.textContent=t('fc_reading');
+  u.onend=function(){btn.textContent=t('fc_read');};
 }
 
+// ── MS ATR ─────────────────────────────────────────────────
 function renderMsa(){
-  if(!MSR)return;var f=document.getElementById('msF');var sf=f?f.value:'';
+  if(!MSR)return;
+  var f=document.getElementById('msF'),sf=f?f.value:'';
   var all=MSR.filter(function(r){return r.id;});
   document.getElementById('ms-t').textContent=all.length;
   document.getElementById('ms-o').textContent=all.filter(function(r){return r.st==='Open';}).length;
@@ -417,27 +857,28 @@ function renderMsa(){
   document.getElementById('ms-n').textContent=all.filter(function(r){return r.st==='Not Required';}).length;
   var rows=all.filter(function(r){return!sf||r.st===sf;});
   var grid=document.getElementById('msaGrid');if(!grid)return;
-  if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128196;</div><p>No MS ATR records match the filter.</p></div>';return;}
+  if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128196;</div><p>'+t('msa_empty')+'</p></div>';return;}
   var sc={Open:'open',Closed:'closed','Not Required':'notreq'};
   grid.innerHTML=rows.map(function(r){
-    var sb=r.st==='Open'?badge('Pending Approval'):r.st==='Closed'?badge('Reviewed & Approved'):badge('Reviewed & Returned');
+    var stBadge=r.st==='Open'?badge('Pending Approval'):r.st==='Closed'?badge('Reviewed & Approved'):badge('Reviewed & Returned');
     return'<div class="mc '+(sc[r.st]||'')+'">'+
-      '<div class="mid">'+esc(r.id)+'</div><div class="mdi">'+esc(r.disc||'— Discipline not set')+'</div>'+
-      '<div class="mr"><span>MS Gaps</span><strong>'+esc(r.gaps||'—')+'</strong></div>'+
-      '<div class="mr"><span>Responsible</span><strong>'+esc(r.re1||'—')+'</strong></div>'+
-      '<div class="mr"><span>Action Party</span><strong>'+esc(r.ap||'—')+'</strong></div>'+
-      '<div class="mr"><span>Accountable</span><strong>'+esc(r.acc||'—')+'</strong></div>'+
-      '<div style="margin-top:7px">'+sb+'</div>'+
-      (r.ppt?'<div style="margin-top:6px"><a href="'+esc(r.ppt)+'" target="_blank" class="plnk" style="font-size:11px">&#128218; Open PPT</a></div>':'')+
+      '<div class="mid">'+esc(r.id)+'</div>'+
+      '<div class="mdi">'+esc(r.disc||'—')+'</div>'+
+      '<div class="mr"><span>'+t('msa_gaps')+'</span><strong>'+esc(r.gaps||'—')+'</strong></div>'+
+      '<div class="mr"><span>'+t('msa_resp')+'</span><strong>'+esc(r.re1||'—')+'</strong></div>'+
+      '<div class="mr"><span>'+t('msa_ap')+'</span><strong>'+esc(r.ap||'—')+'</strong></div>'+
+      '<div class="mr"><span>'+t('msa_acc')+'</span><strong>'+esc(r.acc||'—')+'</strong></div>'+
+      '<div style="margin-top:7px">'+stBadge+'</div>'+
+      (r.ppt?'<div style="margin-top:6px"><a href="'+esc(r.ppt)+'" target="_blank" class="plnk" style="font-size:11px">'+t('fc_open_ppt')+'</a></div>':'')+
     '</div>';
   }).join('');
 }
 
-function loadForm(){
-  if(!document.getElementById('page-form').classList.contains('active'))return;
-}
-
-document.addEventListener('DOMContentLoaded',function(){refresh();});
+// ── INIT ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  translateUI();
+  refresh();
+});
 </script>
 </body>
 </html>
