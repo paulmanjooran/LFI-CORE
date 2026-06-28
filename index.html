@@ -120,6 +120,17 @@ html[dir="rtl"] nav a.active{border-right-color:var(--or);border-left:none}
 html[dir="rtl"] #topbar,html[dir="rtl"] #fb,html[dir="rtl"] #drillBar,html[dir="rtl"] #errBanner{flex-direction:row-reverse}
 html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
 html[dir="rtl"] .exp-menu{right:auto;left:0}
+.vsbar{background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;align-items:center;flex-wrap:wrap;gap:10px;border-left:4px solid var(--bl);font-size:12px}
+.vtag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--border)}
+.vtag.ok{background:#d4edda;color:#155724;border-color:#a3d7b0}
+.vtag.loading{background:#fff3cd;color:#856404;border-color:#ffc107}
+.vtag.fail{background:#f8d7da;color:#721c24;border-color:#f5c2c7}
+.vbtn{padding:4px 10px;background:var(--bl);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.vbtn:hover{background:#1a337a}
+.vload-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;width:120px;flex-shrink:0}
+.vload-fill{height:100%;background:linear-gradient(to right,var(--bl),var(--or));border-radius:2px;transition:width .4s;width:0%}
+#adminModal.vis{display:flex}
+#adminPwdInput:focus{border-color:var(--bl)}
 #stog{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--dg);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:18px;cursor:pointer}
 #adminModal.vis{display:flex}
 #adminPwdInput:focus{border-color:var(--bl)}
@@ -262,6 +273,16 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 
     <!-- LFI REGISTER -->
     <div class="page" id="page-lfi">
+      <!-- Voice Status Bar: shows preload status of EN/Hindi/Arabic voices -->
+      <div class="vsbar" id="voiceStatusBar">
+        <span style="font-weight:700;color:var(--dg);flex-shrink:0">&#128266; Audio Voices:</span>
+        <span class="vtag loading" id="vtEN">&#8987; EN</span>
+        <span class="vtag loading" id="vtHI">&#8987; &#2361;&#2367;</span>
+        <span class="vtag loading" id="vtAR">&#8987; &#1593;</span>
+        <div class="vload-bar"><div class="vload-fill" id="vloadFill"></div></div>
+        <span id="vStatusMsg" style="color:var(--muted);font-size:11px;flex:1">Initialising voices...</span>
+        <button class="vbtn" onclick="forceLoadVoices()" title="Force-load Chrome cloud voices for all 3 languages">&#8635; Force Load Voices</button>
+      </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
         <div style="font-size:12px;color:var(--muted)" data-i18n="lfi_hint">Click a card to expand. Use the Read Aloud button to listen.</div>
         <div style="display:flex;gap:8px">
@@ -315,6 +336,21 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
             <button class="adm-btn" onclick="admClearScriptCache()">&#9881; Clear Script Cache</button>
             <button class="adm-btn" onclick="admGetSystemLog()">&#128220; View System Log</button>
             <button class="adm-btn" onclick="admExportDiag()">&#128229; Export Diagnostics</button>
+          </div>
+        </div>
+
+        <!-- Voice Management -->
+        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);grid-column:1/-1">
+          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">&#128266; Voice Engine Management</div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px" id="admVoiceTags">
+            <span class="vtag loading" id="admVEN">&#8987; English</span>
+            <span class="vtag loading" id="admVHI">&#8987; Hindi</span>
+            <span class="vtag loading" id="admVAR">&#8987; Arabic</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <button class="adm-btn" onclick="forceLoadVoices();admRefreshVoiceStatus()" style="flex:1">&#8635; Force Load All Voices</button>
+            <button class="adm-btn" onclick="admTestAllVoices()" style="flex:1">&#128266; Test All Voices</button>
+            <button class="adm-btn" onclick="admListAllVoices()" style="flex:1">&#128203; List Installed Voices</button>
           </div>
         </div>
 
@@ -660,36 +696,205 @@ function sclang(btn,lang){
 // Plays English as fallback when Hindi/Arabic voices not installed.
 // No blocking alerts. Toast notification only. Stop button always shows.
 
-// Preload voices (Chrome loads them async)
-if(window.speechSynthesis){
-  window.speechSynthesis.onvoiceschanged=function(){window.speechSynthesis.getVoices();};
-  window.speechSynthesis.getVoices();
+// ── VOICE PRELOAD SYSTEM ─────────────────────────────────────
+// Chrome includes Google cloud voices (300+ languages).
+// They load ASYNCHRONOUSLY after page load via onvoiceschanged.
+// Strategy: (a) call getVoices() immediately + on every change,
+//           (b) prime cloud voices with silent utterances so
+//               Chrome fetches the language packages from cloud,
+//           (c) poll until list is stable,
+//           (d) show live status bar in LFI Register screen.
+
+var VS = {
+  loading: true,  ready: false,
+  all:     [],
+  en: null, hi: null, ar: null,
+  primed: false, polls: 0
+};
+
+function initVoices(){
+  if(!window.speechSynthesis){ _vsUI("not-supported"); return; }
+  window.speechSynthesis.onvoiceschanged = function(){ _vsUpdate(); _vsUI(); };
+  _vsUpdate();
+  _vsUI();
+  setTimeout(_primeAll, 300);
+  _vsPoll();
 }
 
-// Find best TTS voice for a language code
-function _getVoice(lang){
-  var voices=window.speechSynthesis?window.speechSynthesis.getVoices():[];
-  if(!voices.length)return null;
-  var pfx=lang==="ar"?"ar":lang==="hi"?"hi":"en";
-  var exact=lang==="ar"?"ar-SA":lang==="hi"?"hi-IN":"en-US";
+// Silent utterance primer — triggers Chrome to fetch cloud voice
+function _primeLang(langCode, delay){
+  setTimeout(function(){
+    if(!window.speechSynthesis) return;
+    try{
+      var u = new SpeechSynthesisUtterance(".");
+      u.lang = langCode; u.volume = 0; u.rate = 10;
+      u.onerror = function(){};
+      u.onend   = function(){ _vsUpdate(); _vsUI(); };
+      window.speechSynthesis.speak(u);
+      setTimeout(function(){ try{window.speechSynthesis.cancel();}catch(e){} }, 150);
+    }catch(e){}
+  }, delay);
+}
+
+function _primeAll(){
+  if(VS.primed) return;
+  VS.primed = true;
+  _primeLang("en-US",    0); _primeLang("hi-IN",  500); _primeLang("ar-SA", 1000);
+  _primeLang("en-US", 2000); _primeLang("hi-IN", 2500); _primeLang("ar-SA", 3000);
+}
+
+// Force Load button handler — aggressive multi-pass priming
+function forceLoadVoices(){
+  VS.primed = false; VS.loading = true; VS.polls = 0;
+  _vsUI("forcing");
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  [0,400,900,1500,2300,3200].forEach(function(d){
+    _primeLang("en-US", d); _primeLang("hi-IN", d+150); _primeLang("ar-SA", d+300);
+  });
+  _vsPoll();
+  if(typeof admLog === "function") admLog("Voice force-load triggered. Priming EN / HI / AR...");
+}
+
+// Poll until voice list is stable
+function _vsPoll(){
+  VS.polls++;
+  if(VS.polls > 40) return;
+  setTimeout(function(){
+    var prev = VS.all.length;
+    _vsUpdate(); _vsUI();
+    if(VS.loading || VS.all.length !== prev) _vsPoll();
+  }, 500);
+}
+
+function _vsUpdate(){
+  var voices = window.speechSynthesis.getVoices();
+  VS.all = voices;
+  VS.en  = _vFind("en", voices);
+  VS.hi  = _vFind("hi", voices);
+  VS.ar  = _vFind("ar", voices);
+  if(voices.length > 0){ VS.loading = false; VS.ready = true; }
+}
+
+// Prefer Google/Microsoft cloud voices, then any local match
+function _vFind(lang, voices){
+  voices = voices || VS.all;
+  var exact = lang==="ar"?"ar-SA":lang==="hi"?"hi-IN":"en-US";
+  var pfx   = lang + "-";
+  var cloud = voices.filter(function(v){
+    var ln = v.lang.toLowerCase();
+    return (v.lang===exact || ln.startsWith(pfx)) &&
+           (v.name.indexOf("Google")!==-1 || v.name.indexOf("Microsoft")!==-1);
+  });
+  if(cloud.length) return cloud[0];
   return voices.find(function(v){return v.lang===exact;})||
-         voices.find(function(v){return v.lang.toLowerCase().startsWith(pfx+"-");})||
-         voices.find(function(v){return v.lang.toLowerCase()===pfx;})||
-         null;
+         voices.find(function(v){return v.lang.toLowerCase().startsWith(pfx);})||null;
 }
 
-// Non-blocking toast notification (bottom-right, 4 seconds)
-function _toast(msg){
-  var d=document.createElement("div");
-  d.style.cssText="position:fixed;bottom:24px;right:24px;background:#4d555b;color:#fff;"+"padding:12px 18px;border-radius:8px;font-size:12px;z-index:9999;max-width:300px;"+"box-shadow:0 4px 16px rgba(0,0,0,.3);line-height:1.5;transition:opacity 0.4s";
-  d.textContent=msg;
-  document.body.appendChild(d);
-  setTimeout(function(){d.style.opacity="0";setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},500);},3500);
+// Backward compat
+function _getVoice(lang){ return _vFind(lang); }
+
+// Update voice status bar in LFI Register page
+function _vsUI(state){
+  function setTag(id, voice, label){
+    var el = document.getElementById(id);
+    if(!el) return;
+    if(VS.loading && !voice){ el.className="vtag loading"; el.innerHTML="⌛ "+label; }
+    else if(voice){ el.className="vtag ok"; el.title=voice.name; el.innerHTML="✅ "+label; }
+    else{ el.className="vtag fail"; el.innerHTML="❌ "+label; }
+  }
+  setTag("vtEN", VS.en, "EN");
+  setTag("vtHI", VS.hi, "हि");
+  setTag("vtAR", VS.ar, "ع");
+
+  var progress = (VS.en?33:0)+(VS.hi?34:0)+(VS.ar?33:0);
+  var fill = document.getElementById("vloadFill");
+  if(fill) fill.style.width = progress + "%";
+
+  var msg = document.getElementById("vStatusMsg");
+  if(msg){
+    if(state==="forcing"){
+      msg.textContent="Force-loading cloud voices... please wait.";
+      msg.style.color="var(--or)";
+    }else if(state==="not-supported"){
+      msg.textContent="Speech not supported in this browser.";
+      msg.style.color="var(--rd)";
+    }else if(VS.loading){
+      msg.textContent="Loading browser cloud voices ("+VS.all.length+" found)...";
+      msg.style.color="var(--muted)";
+    }else if(VS.en && VS.hi && VS.ar){
+      msg.textContent="✓ All 3 voices ready — EN, Hindi, Arabic";
+      msg.style.color="#28a745";
+    }else{
+      var miss=[];
+      if(!VS.hi) miss.push("Hindi");
+      if(!VS.ar) miss.push("Arabic");
+      msg.textContent=(miss.join(" & "))+" voice not found. Click Force Load or install from device settings.";
+      msg.style.color="#856404";
+    }
+  }
+  if(typeof admRefreshVoiceStatus==="function") admRefreshVoiceStatus();
 }
 
-// Stop any active speech and reset its button
+// Admin: refresh voice tags
+function admRefreshVoiceStatus(){
+  function setAdmTag(id,voice,label){
+    var el=document.getElementById(id);
+    if(!el)return;
+    if(voice){ el.className="vtag ok"; el.innerHTML="✅ "+label+": "+voice.name.substring(0,30); }
+    else if(VS.loading){ el.className="vtag loading"; el.innerHTML="⌛ Loading "+label+"..."; }
+    else{ el.className="vtag fail"; el.innerHTML="❌ "+label+": Not found"; }
+  }
+  setAdmTag("admVEN",VS.en,"English");
+  setAdmTag("admVHI",VS.hi,"Hindi");
+  setAdmTag("admVAR",VS.ar,"Arabic");
+}
+
+// Admin: test all voices with spoken sample
+function admTestAllVoices(){
+  _vsUpdate();
+  admLog("=== Voice Test ===");
+  admLog("Total voices: "+VS.all.length);
+  admLog("EN: "+(VS.en?VS.en.name+" ["+VS.en.lang+"]":"NOT FOUND"));
+  admLog("HI: "+(VS.hi?VS.hi.name+" ["+VS.hi.lang+"]":"NOT FOUND"));
+  admLog("AR: "+(VS.ar?VS.ar.name+" ["+VS.ar.lang+"]":"NOT FOUND"));
+  if(VS.en){
+    admLog("Playing EN → HI → AR test phrases...");
+    var u=new SpeechSynthesisUtterance("ATNM LFI Core audio test");
+    u.voice=VS.en; u.lang="en-US"; u.rate=1;
+    u.onend=function(){
+      if(VS.hi){
+        var u2=new SpeechSynthesisUtterance("नमस्ते");
+        u2.voice=VS.hi; u2.lang="hi-IN"; u2.rate=0.9;
+        u2.onend=function(){
+          if(VS.ar){
+            var u3=new SpeechSynthesisUtterance("مرحبا");
+            u3.voice=VS.ar; u3.lang="ar-SA"; u3.rate=0.9;
+            u3.onend=function(){ admLog("Voice test complete."); };
+            window.speechSynthesis.speak(u3);
+          }
+        };
+        window.speechSynthesis.speak(u2);
+      }
+    };
+    window.speechSynthesis.speak(u);
+  }else{
+    admLog("No voices. Click Force Load Voices first.");
+  }
+}
+
+// Admin: list all installed voices
+function admListAllVoices(){
+  _vsUpdate();
+  admLog("=== All Voices ("+VS.all.length+") ===");
+  VS.all.forEach(function(v,i){
+    admLog((i+1)+". "+v.name+" ["+v.lang+"] "+(v.localService?"local":"cloud")+(v.default?" (DEFAULT)":""));
+  });
+  if(!VS.all.length) admLog("None found. Click Force Load Voices.");
+}
+
+// Stop any speech + reset button
 function stopSpeech(){
-  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
   if(SPEAKING_BTN){
     var cl=SPEAKING_BTN._spkLang||"en";
     SPEAKING_BTN.innerHTML=_spkLabel(cl,"read");
@@ -698,55 +903,37 @@ function stopSpeech(){
   }
 }
 
-// speakCard: play / stop toggle
-// - Tries the card language voice first
-// - Falls back to English voice + English text if no Hindi/Arabic voice installed
-// - Stop button always shows in the card language (Stop / roken / iqaf)
-// - No blocking alerts — uses toast only
+// speakCard: uses preloaded VS.en/hi/ar — no detection delay at click time
 function speakCard(btn){
-  if(SPEAKING_BTN===btn){stopSpeech();return;}
+  if(SPEAKING_BTN===btn){ stopSpeech(); return; }
   stopSpeech();
-
-  var card=btn.closest(".fc");
-  var cont=card.querySelector(".fcc");
+  var card=btn.closest(".fc"), cont=card.querySelector(".fcc");
   var cardLang=cont.dataset.lang||"en";
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,"<").replace(/&#39;/g,"'"));
+  if(!window.speechSynthesis) return;
 
-  if(!window.speechSynthesis)return;
+  // Use preloaded voice — instant, no detection latency
+  var voice  = cardLang==="hi"?VS.hi:cardLang==="ar"?VS.ar:VS.en;
+  var spkLng = cardLang;
+  if(cardLang!=="en" && !voice){ spkLng="en"; voice=VS.en; } // silent English fallback
 
-  // Try native voice for card language, fall back to English silently
-  var voice=_getVoice(cardLang);
-  var spkLang=cardLang;
-
-  if(cardLang!=="en"&&!voice){
-    spkLang="en";
-    voice=_getVoice("en");
-    // Silent fallback — no popup. Plays English audio automatically.
-  }
-
-  // Get text in the actual speak language
-  var c=gc(r,spkLang);
-  var text=[c.desc,c.find,c.learn].filter(function(s){return s&&s.trim();}).join(". ");
-
-  // Last resort: English text
+  var c    = gc(r, spkLng);
+  var text = [c.desc,c.find,c.learn].filter(function(s){return s&&s.trim();}).join(". ");
   if(!text){
     var ce=gc(r,"en");
     text=[ce.desc,ce.find,ce.learn].filter(function(s){return s&&s.trim();}).join(". ");
-    spkLang="en"; voice=_getVoice("en");
+    spkLng="en"; voice=VS.en;
   }
+  if(!text) return;
 
-  if(!text)return;
-
-  // Set Stop state BEFORE speaking
-  btn._spkLang=cardLang;
-  SPEAKING_BTN=btn;
+  btn._spkLang=cardLang; SPEAKING_BTN=btn;
   btn.innerHTML=_spkLabel(cardLang,"stop");
   btn.classList.add("playing");
 
   var u=new SpeechSynthesisUtterance(text);
-  u.lang=spkLang==="ar"?"ar-SA":spkLang==="hi"?"hi-IN":"en-US";
-  u.rate=0.85;
-  if(voice)u.voice=voice;
+  u.lang  = spkLng==="ar"?"ar-SA":spkLng==="hi"?"hi-IN":"en-US";
+  u.rate  = 0.85;
+  if(voice) u.voice=voice;
 
   function resetBtn(){
     if(SPEAKING_BTN===btn){
@@ -755,17 +942,10 @@ function speakCard(btn){
       SPEAKING_BTN=null;
     }
   }
-
-  u.onend=resetBtn;
-  u.onerror=resetBtn;
+  u.onend=resetBtn; u.onerror=resetBtn;
   window.speechSynthesis.speak(u);
 }
 
-// ── EXCEL EXPORT ──────────────────────────────────────────────
-// Uses Blob + URL.createObjectURL to trigger download.
-// This works in all contexts (GitHub Pages, Apps Script sandbox,
-// Chrome, Firefox, Safari, Edge). XLSX.writeFile() is not used
-// because it fails in sandboxed iframes and some CSP policies.
 function exportExcel(){
   if(typeof XLSX==='undefined'){alert('Excel library not loaded.\nCheck your internet connection and reload the page.');return;}
   var rows=getF();
@@ -1150,7 +1330,9 @@ function admLockPanel(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-  translateUI();refresh();
+  translateUI();
+  refresh();
+  initVoices(); // Start preloading EN/Hindi/Arabic voices immediately
 });
 </script>
 <!-- ADMIN PASSWORD MODAL -->
