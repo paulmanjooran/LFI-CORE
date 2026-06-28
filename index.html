@@ -709,16 +709,45 @@ var VS = {
   loading: true,  ready: false,
   all:     [],
   en: null, hi: null, ar: null,
-  primed: false, polls: 0
+  primed: false, polls: 0,
+  inIframe: (window.self !== window.top),  // true when embedded in Google Sites
+  gestureReceived: false
 };
 
 function initVoices(){
   if(!window.speechSynthesis){ _vsUI("not-supported"); return; }
+
   window.speechSynthesis.onvoiceschanged = function(){ _vsUpdate(); _vsUI(); };
   _vsUpdate();
-  _vsUI();
-  setTimeout(_primeAll, 300);
-  _vsPoll();
+
+  if(VS.inIframe){
+    // ── IFRAME MODE (Google Sites embed) ─────────────────
+    // Chrome blocks speechSynthesis.speak() in iframes until
+    // a user gesture has occurred on this frame.
+    // We register a one-time click/touch handler to prime voices
+    // the moment the user first interacts with the page.
+    _vsUI("iframe-waiting");
+    var _onGesture = function(){
+      if(VS.gestureReceived) return;
+      VS.gestureReceived = true;
+      document.removeEventListener("click",   _onGesture);
+      document.removeEventListener("touchend", _onGesture);
+      document.removeEventListener("keydown",  _onGesture);
+      _primeAll();
+      _vsPoll();
+    };
+    document.addEventListener("click",    _onGesture);
+    document.addEventListener("touchend", _onGesture);
+    document.addEventListener("keydown",  _onGesture);
+    // Also poll in case voices appear without priming (local voices)
+    _vsPoll();
+  } else {
+    // ── DIRECT MODE (GitHub Pages opened directly) ────────
+    // No iframe restriction — prime immediately
+    _vsUI();
+    setTimeout(_primeAll, 300);
+    _vsPoll();
+  }
 }
 
 // Silent utterance primer — triggers Chrome to fetch cloud voice
@@ -743,16 +772,24 @@ function _primeAll(){
   _primeLang("en-US", 2000); _primeLang("hi-IN", 2500); _primeLang("ar-SA", 3000);
 }
 
-// Force Load button handler — aggressive multi-pass priming
+// Force Load button handler — user gesture ensures Chrome allows speech
+// This is the PRIMARY fix for Google Sites iframe context.
 function forceLoadVoices(){
   VS.primed = false; VS.loading = true; VS.polls = 0;
+  VS.gestureReceived = true; // user clicked = gesture registered
   _vsUI("forcing");
   try{ window.speechSynthesis.cancel(); }catch(e){}
-  [0,400,900,1500,2300,3200].forEach(function(d){
-    _primeLang("en-US", d); _primeLang("hi-IN", d+150); _primeLang("ar-SA", d+300);
+  // Aggressive multi-pass: 6 rounds × 3 languages = 18 priming calls
+  // Arabic gets extra passes with alternate locale codes
+  [0,500,1100,1800,2600,3500].forEach(function(d){
+    _primeLang("en-US", d);
+    _primeLang("hi-IN", d+200);
+    _primeLang("ar-SA", d+400);  // Saudi Arabic (most common)
+    _primeLang("ar-EG", d+600);  // Egyptian Arabic (fallback)
+    _primeLang("ar",    d+800);  // Generic Arabic (fallback)
   });
   _vsPoll();
-  if(typeof admLog === "function") admLog("Voice force-load triggered. Priming EN / HI / AR...");
+  if(typeof admLog === "function") admLog("Voice force-load triggered (iframe="+VS.inIframe+"). Priming EN/HI/AR...");
 }
 
 // Poll until voice list is stable
@@ -776,17 +813,23 @@ function _vsUpdate(){
 }
 
 // Prefer Google/Microsoft cloud voices, then any local match
+// Checks ar-SA, ar-EG, ar-001, "ar" + cloud-first priority
 function _vFind(lang, voices){
   voices = voices || VS.all;
+  if(!voices.length) return null;
   var exact = lang==="ar"?"ar-SA":lang==="hi"?"hi-IN":"en-US";
   var pfx   = lang + "-";
+  // Cloud voices first (Google / Microsoft online TTS)
   var cloud = voices.filter(function(v){
     var ln = v.lang.toLowerCase();
-    return (v.lang===exact || ln.startsWith(pfx)) &&
-           (v.name.indexOf("Google")!==-1 || v.name.indexOf("Microsoft")!==-1);
+    var match = v.lang===exact || ln===lang || ln.startsWith(pfx);
+    var isCloud = v.name.indexOf("Google")!==-1||v.name.indexOf("Microsoft")!==-1;
+    return match && isCloud;
   });
   if(cloud.length) return cloud[0];
+  // Local OS voices
   return voices.find(function(v){return v.lang===exact;})||
+         voices.find(function(v){return v.lang.toLowerCase()===lang;})||
          voices.find(function(v){return v.lang.toLowerCase().startsWith(pfx);})||null;
 }
 
@@ -812,14 +855,23 @@ function _vsUI(state){
 
   var msg = document.getElementById("vStatusMsg");
   if(msg){
-    if(state==="forcing"){
-      msg.textContent="Force-loading cloud voices... please wait.";
+    if(state==="iframe-waiting"){
+      // Google Sites embed: need user gesture before priming
+      msg.innerHTML="⚠️ Embedded mode detected. "+
+        "<strong>Click the 'Force Load Voices' button</strong> to activate Arabic &amp; Hindi audio.";
+      msg.style.color="var(--or)";
+    }else if(state==="forcing"){
+      msg.textContent="Force-loading cloud voices... please wait (5–10s).";
       msg.style.color="var(--or)";
     }else if(state==="not-supported"){
-      msg.textContent="Speech not supported in this browser.";
+      msg.textContent="Speech synthesis not supported in this browser.";
       msg.style.color="var(--rd)";
+    }else if(VS.loading && VS.inIframe && !VS.gestureReceived){
+      msg.innerHTML="⚠️ Embedded in Google Sites. "+
+        "Click <strong>Force Load Voices</strong> to activate Arabic &amp; Hindi.";
+      msg.style.color="var(--or)";
     }else if(VS.loading){
-      msg.textContent="Loading browser cloud voices ("+VS.all.length+" found)...";
+      msg.textContent="Loading cloud voices ("+VS.all.length+" found so far)...";
       msg.style.color="var(--muted)";
     }else if(VS.en && VS.hi && VS.ar){
       msg.textContent="✓ All 3 voices ready — EN, Hindi, Arabic";
@@ -828,7 +880,8 @@ function _vsUI(state){
       var miss=[];
       if(!VS.hi) miss.push("Hindi");
       if(!VS.ar) miss.push("Arabic");
-      msg.textContent=(miss.join(" & "))+" voice not found. Click Force Load or install from device settings.";
+      var iframeHint=VS.inIframe?" (Tip: click Force Load Voices first when embedded in Google Sites)":"";
+      msg.textContent=(miss.join(" & "))+" voice not found. Click Force Load."+iframeHint;
       msg.style.color="#856404";
     }
   }
