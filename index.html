@@ -684,29 +684,78 @@ function stopSpeech(){
   }
 }
 
-// ── SPEECH: play/stop toggle ────────────────────────────────────
-// First click → play (button turns red + pulses)
-// Second click on same button → stop
-// Clicking any other card interaction → auto-stop
+// ── SPEECH: voice detection + play/stop toggle ──────────────────
+// Root cause of "counting numbers": device has no Hindi/Arabic TTS
+// voices installed — English voice reads Unicode as code points.
+// Fix: detect available voices first; warn if none found.
+
+var VOICES_LOADED=false;
+function loadVoices(){
+  if(!window.speechSynthesis)return;
+  var v=window.speechSynthesis.getVoices();
+  if(v.length)VOICES_LOADED=true;
+}
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged=loadVoices;
+  loadVoices(); // try immediately (desktop Chrome loads sync)
+}
+
+function getBestVoice(langCode){
+  var voices=window.speechSynthesis.getVoices();
+  // Exact locale first (hi-IN, ar-SA), then language prefix (hi, ar)
+  return voices.find(function(v){return v.lang===langCode;})
+      || voices.find(function(v){return v.lang.startsWith(langCode.split('-')[0]);})
+      || null;
+}
+
 function speakCard(btn){
   // STOP — same button clicked while playing
   if(SPEAKING_BTN===btn){stopSpeech();return;}
-  // STOP any other card that is playing first
+  // STOP any other card playing first
   stopSpeech();
+
   var card=btn.closest('.fc'),cont=card.querySelector('.fcc'),lang=cont.dataset.lang||'en';
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
   var c=gc(r,lang),text=[c.desc,c.find,c.learn].filter(Boolean).join('. ');
   if(!text){return;}
   if(!window.speechSynthesis){alert('Speech synthesis not supported in this browser.');return;}
+
+  // ── VOICE CHECK ──────────────────────────────────────────────
+  var langCode=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';
+  var voice=getBestVoice(langCode);
+
+  // If no Hindi/Arabic voice found → show helpful message, don't play garbage
+  if(lang!=='en'&&!voice){
+    var langName=lang==='hi'?'Hindi (हिंदी)':'Arabic (عربي)';
+    alert(
+      langName+' text-to-speech voice not found on this device.
+
+'+
+      'To install voices:
+'+
+      '• Windows 10/11: Settings → Time & Language → Language & Region → Add a language
+'+
+      '• Android: Settings → General Management → Language → Text-to-Speech
+'+
+      '• iOS/macOS: Settings → Accessibility → Spoken Content → Voices
+
+'+
+      'English audio works on all devices.'
+    );
+    return;
+  }
+
   var u=new SpeechSynthesisUtterance(text);
-  u.lang=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';
+  u.lang=langCode;
   u.rate=0.9;
-  // Mark button as playing
+  if(voice)u.voice=voice; // use specific voice to prevent fallback
+
+  // Mark button as playing (red + pulse)
   SPEAKING_BTN=btn;
   btn.textContent=t('fc_stop');
   btn.classList.add('playing');
   window.speechSynthesis.speak(u);
-  // Natural end → reset to play state
+
   u.onend=function(){
     if(SPEAKING_BTN===btn){
       btn.textContent=t('fc_read');
@@ -714,7 +763,7 @@ function speakCard(btn){
       SPEAKING_BTN=null;
     }
   };
-  u.onerror=function(){
+  u.onerror=function(e){
     if(SPEAKING_BTN===btn){
       btn.textContent=t('fc_read');
       btn.classList.remove('playing');
@@ -725,67 +774,171 @@ function speakCard(btn){
 
 // ── EXPORT: EXCEL ─────────────────────────────────────────────
 function exportExcel(){
-  var rows=getF();
-  if(!rows.length){alert('No data to export.');return;}
-  var header=['LFI ID','Category','Division','Cluster','Discipline','Reported By','Date','Time','Status','PPT Created','Description (EN)','Findings (EN)','Learnings (EN)','Description (HI)','Findings (HI)','Description (AR)','Findings (AR)'];
-  var data=[header];
-  rows.forEach(function(r){
-    data.push([r.id,r.cat,r.div,r.loc,r.disc,r.by,r.dt,r.time,
-      r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':'Pending',
-      r.ppt?'Yes':'No',r.descEN,r.findEN,r.learnEN,r.descHI,r.findHI,r.descAR,r.findAR]);
-  });
-  var ws=XLSX.utils.aoa_to_sheet(data);
-  // Column widths
-  ws['!cols']=[{wch:36},{wch:22},{wch:14},{wch:14},{wch:14},{wch:22},{wch:14},{wch:10},{wch:12},{wch:6},{wch:50},{wch:50},{wch:50},{wch:40},{wch:40},{wch:40},{wch:40}];
-  // Style header row
-  var range=XLSX.utils.decode_range(ws['!ref']);
-  for(var c=range.s.c;c<=range.e.c;c++){
-    var addr=XLSX.utils.encode_cell({r:0,c:c});
-    if(!ws[addr])continue;
-    ws[addr].s={fill:{fgColor:{rgb:'4D555B'}},font:{color:{rgb:'FFFFFF'},bold:true}};
+  // Library check
+  if(typeof XLSX==='undefined'){
+    alert('Excel library not loaded.\nCheck internet connection and reload the page.');return;
   }
-  var wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,'LFI Register',ws);
-  var fname='ATNM_LFI_Register_'+new Date().toISOString().slice(0,10)+'.xlsx';
-  XLSX.writeFile(wb,fname);
+  var rows=getF();
+  if(!rows.length){alert('No data to export. Apply filters or wait for data to load.');return;}
+  try{
+    var header=[
+      'LFI ID','Category','Division','Cluster','Discipline',
+      'Reported By','Date','Time','Status','PPT Created',
+      'Description (EN)','Findings (EN)','Learnings (EN)',
+      'Description (HI)','Findings (HI)','Learnings (HI)',
+      'Description (AR)','Findings (AR)','Learnings (AR)'
+    ];
+    var data=[header];
+    rows.forEach(function(r){
+      data.push([
+        r.id||'',r.cat||'',r.div||'',r.loc||'',r.disc||'',r.by||'',r.dt||'',r.time||'',
+        r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':'Pending',
+        r.ppt?'Yes':'No',
+        r.descEN||'',r.findEN||'',r.learnEN||'',
+        r.descHI||'',r.findHI||'',r.learnHI||'',
+        r.descAR||'',r.findAR||'',r.learnAR||''
+      ]);
+    });
+    var ws=XLSX.utils.aoa_to_sheet(data);
+    // Column widths (no cell styling — requires SheetJS Pro)
+    ws['!cols']=[
+      {wch:36},{wch:22},{wch:14},{wch:14},{wch:14},{wch:22},
+      {wch:14},{wch:10},{wch:12},{wch:6},
+      {wch:55},{wch:55},{wch:55},
+      {wch:45},{wch:45},{wch:45},
+      {wch:45},{wch:45},{wch:45}
+    ];
+    // Freeze header row
+    ws['!freeze']={xSplit:0,ySplit:1};
+    var wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,'LFI Register',ws);
+    XLSX.writeFile(wb,'ATNM_LFI_Register_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  }catch(err){
+    alert('Excel export failed:\n'+err.message);
+    console.error('exportExcel error:',err);
+  }
 }
 
 // ── EXPORT: PDF ───────────────────────────────────────────────
+// Structure:
+//   Page 1+  : Summary table (all records — ID, Cat, Div, Loc, Date, Status, PPT)
+//   Page n+  : Detail cards — one per record showing full EN description/findings/learnings
 function exportPDF(){
+  if(typeof window.jspdf==='undefined'&&typeof window.jsPDF==='undefined'){
+    alert('PDF library not loaded. Check internet connection and reload.');return;
+  }
   var rows=getF();
   if(!rows.length){alert('No data to export.');return;}
   var jsPDF=window.jspdf?window.jspdf.jsPDF:window.jsPDF;
-  if(!jsPDF){alert('PDF library not loaded. Check internet connection.');return;}
   var doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   var pw=297,ph=210;
-  // Header bar
-  doc.setFillColor(33,64,154);doc.rect(0,0,pw,18,'F');
-  doc.setFillColor(245,130,32);doc.rect(0,18,pw,2,'F');
-  doc.setTextColor(255,255,255);doc.setFontSize(14);doc.setFont('helvetica','bold');
-  doc.text('ATNM LFI Core — Incident Register',14,12);
-  doc.setFontSize(8);doc.setFont('helvetica','normal');
-  doc.text('Exported: '+new Date().toLocaleDateString()+' | Records: '+rows.length,pw-14,12,{align:'right'});
-  doc.setTextColor(0,0,0);
-  // Table
-  var headers=[['LFI ID','Category','Division','Cluster','Date','Status','PPT','Discipline']];
-  var body=rows.map(function(r){
-    return[r.id,r.cat,r.div,r.loc,r.dt,
+  var pageNum=function(){return doc.getCurrentPageInfo().pageNumber;};
+
+  // ── Reusable page header ──────────────────────────────────────
+  function drawHeader(title){
+    doc.setFillColor(33,64,154);doc.rect(0,0,pw,16,'F');
+    doc.setFillColor(245,130,32);doc.rect(0,16,pw,2,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('helvetica','bold');
+    doc.text('ATNM LFI Core  |  '+title,12,11);
+    doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text('Exported: '+new Date().toLocaleDateString()+'   Records: '+rows.length,pw-12,11,{align:'right'});
+    doc.setTextColor(0,0,0);
+  }
+
+  // ── Reusable page footer ──────────────────────────────────────
+  function drawFooter(){
+    doc.setFontSize(6);doc.setTextColor(150,150,150);
+    doc.text('ATNM HSE — PDO ODC Programme — LFI Core v5.0 — CONFIDENTIAL',12,ph-4);
+    doc.text('Page '+pageNum(),pw-12,ph-4,{align:'right'});
+    doc.setTextColor(0,0,0);
+  }
+
+  // ══ SECTION 1: SUMMARY TABLE ════════════════════════════════
+  drawHeader('Incident Register — Summary');
+  var summaryHead=[['LFI ID','Category','Division','Cluster','Discipline','Date','Status','PPT']];
+  var summaryBody=rows.map(function(r){
+    return[
+      r.id||'—',r.cat||'—',r.div||'—',r.loc||'—',r.disc||'—',r.dt||'—',
       r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':'Pending',
-      r.ppt?'Yes':'No',r.disc];
+      r.ppt?'Yes':'No'
+    ];
   });
-  doc.autoTable({head:headers,body:body,startY:23,
-    styles:{fontSize:8,cellPadding:2,overflow:'linebreak'},
-    headStyles:{fillColor:[77,85,91],textColor:[255,255,255],fontStyle:'bold',fontSize:8},
+  doc.autoTable({
+    head:summaryHead,body:summaryBody,startY:21,
+    styles:{fontSize:7.5,cellPadding:2,overflow:'linebreak',valign:'middle'},
+    headStyles:{fillColor:[77,85,91],textColor:[255,255,255],fontStyle:'bold',fontSize:7.5},
     alternateRowStyles:{fillColor:[240,242,245]},
-    columnStyles:{0:{cellWidth:36},1:{cellWidth:26},2:{cellWidth:20},3:{cellWidth:20},4:{cellWidth:20},5:{cellWidth:18},6:{cellWidth:10},7:{cellWidth:20}},
-    margin:{left:14,right:14},
-    didDrawPage:function(d){
-      // Footer on each page
-      doc.setFontSize(7);doc.setTextColor(128,128,128);
-      doc.text('ATNM HSE — PDO ODC Programme — LFI Core v5.0',14,ph-6);
-      doc.text('Page '+doc.getCurrentPageInfo().pageNumber,pw-14,ph-6,{align:'right'});
-    }
+    columnStyles:{
+      0:{cellWidth:40},1:{cellWidth:30},2:{cellWidth:22},
+      3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:20},
+      6:{cellWidth:22},7:{cellWidth:14}
+    },
+    margin:{left:12,right:12},
+    didDrawPage:function(){drawFooter();}
   });
+
+  // ══ SECTION 2: DETAIL CARDS (one per record, full EN text) ══
+  rows.forEach(function(r,idx){
+    doc.addPage();
+    drawHeader('Incident Detail — '+(r.id||'Record '+(idx+1)));
+
+    var startY=21;
+    var lm=12,rm=pw-12,cw=rm-lm,lineH=5;
+
+    // ── Record header bar ────────────────────────────────────
+    doc.setFillColor(240,242,245);
+    doc.rect(lm,startY,cw,10,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(33,64,154);
+    doc.text(r.id||'—',lm+2,startY+6.5);
+    doc.setFont('helvetica','normal');doc.setTextColor(77,85,91);
+    doc.setFontSize(8);
+    var meta=[r.cat,r.div,r.loc,r.dt].filter(Boolean).join('   |   ');
+    doc.text(meta,lm+2+55,startY+6.5);
+    // Status pill (right side)
+    var stLabel=r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':'Pending';
+    var stColor=r.st==='Reviewed & Approved'?[40,167,69]:r.st==='Reviewed & Returned'?[220,53,69]:[255,193,7];
+    doc.setFillColor(stColor[0],stColor[1],stColor[2]);
+    doc.roundedRect(rm-28,startY+1.5,26,7,2,2,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+    doc.text(stLabel,rm-15,startY+6.5,{align:'center'});
+    doc.setTextColor(0,0,0);
+
+    startY+=14;
+
+    // ── Text content helper ──────────────────────────────────
+    function drawSection(label,text,y,bgColor){
+      if(!text||!text.trim())return y;
+      // Section label
+      doc.setFillColor(bgColor[0],bgColor[1],bgColor[2]);
+      doc.rect(lm,y,cw,7,'F');
+      doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+      doc.text(label,lm+3,y+5);
+      doc.setTextColor(0,0,0);
+      y+=7;
+      // Wrap text
+      doc.setFontSize(8);doc.setFont('helvetica','normal');
+      var lines=doc.splitTextToSize(text,cw-6);
+      var textH=lines.length*lineH+4;
+      doc.setFillColor(250,250,250);
+      doc.rect(lm,y,cw,textH,'F');
+      doc.setDrawColor(220,220,220);
+      doc.rect(lm,y,cw,textH,'S');
+      doc.text(lines,lm+3,y+lineH);
+      y+=textH+3;
+      return y;
+    }
+
+    startY=drawSection('DESCRIPTION OF INCIDENT',r.descEN||'—',startY,[77,85,91]);
+    startY=drawSection('FINDINGS / ROOT CAUSE',r.findEN||'—',startY,[33,64,154]);
+    startY=drawSection('LEARNINGS FROM INCIDENT',r.learnEN||'—',startY,[40,167,69]);
+
+    // ── Reported by / discipline footer row ──────────────────
+    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(120,120,120);
+    doc.text('Reported by: '+(r.by||'—')+'   |   Discipline: '+(r.disc||'—')+(r.ppt?'   |   PPT: Created':''),lm,startY+4);
+
+    drawFooter();
+  });
+
   doc.save('ATNM_LFI_Register_'+new Date().toISOString().slice(0,10)+'.pdf');
 }
 
