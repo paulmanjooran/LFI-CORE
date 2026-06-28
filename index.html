@@ -378,26 +378,78 @@ function navTo(page,el){
 }
 
 // ── DATA FETCH via google.script.run ─────────────────────────
-// No CORS. No JSONP. Works because dashboard is served FROM
-// Apps Script — google.script.run is same-origin.
+// Works ONLY when this HTML is served from Apps Script HtmlService.
+// If you see an error here, the dashboard HTML file was not added
+// to the Apps Script project — follow the setup steps below.
 function refresh(){
   showL();
   document.getElementById('errBanner').style.display='none';
   document.getElementById('refBtn').classList.add('ld');
   document.getElementById('lu').textContent='';
-  google.script.run
-    .withSuccessHandler(function(data){
-      hideL();
-      document.getElementById('refBtn').classList.remove('ld');
-      processData(data);
-    })
-    .withFailureHandler(function(err){
-      hideL();
-      document.getElementById('refBtn').classList.remove('ld');
-      showErr('Error loading data: '+String(err));
-      document.getElementById('lu').textContent='Error';
-    })
-    .getPublicDashData();
+
+  // ── CHECK: is google.script.run available? ──────────────────
+  if(typeof google==='undefined'||typeof google.script==='undefined'||typeof google.script.run==='undefined'){
+    hideL();
+    document.getElementById('refBtn').classList.remove('ld');
+    showErr(
+      'Setup required: this dashboard must be opened via the Apps Script URL, '+
+      'not GitHub Pages or a local file.\n\n'+
+      'STEPS:\n'+
+      '1. In Apps Script editor → + (New file) → HTML → name it exactly: dashboard\n'+
+      '2. Paste dashboard.html content → Save\n'+
+      '3. Deploy → Manage Deployments → Edit → New version → Deploy\n'+
+      '4. Open the deployment URL directly.'
+    );
+    document.getElementById('lu').textContent='Setup required';
+    return;
+  }
+
+  // ── 30-second timeout ───────────────────────────────────────
+  var timeoutId=setTimeout(function(){
+    hideL();
+    document.getElementById('refBtn').classList.remove('ld');
+    showErr(
+      'Request timed out (30s). Possible causes:\n'+
+      '1. The getPublicDashData function is not in your Code.gs → paste Code.gs v5.1\n'+
+      '2. Apps Script authorization not granted → open Apps Script, run runFullSetup()\n'+
+      '3. Re-deploy: Manage Deployments → Edit → New version → Deploy\n'+
+      'Then click Refresh again.'
+    );
+    document.getElementById('lu').textContent='Timeout — see error above';
+  },30000);
+
+  try{
+    google.script.run
+      .withSuccessHandler(function(data){
+        clearTimeout(timeoutId);
+        hideL();
+        document.getElementById('refBtn').classList.remove('ld');
+        if(data&&data.error){
+          showErr('Server error: '+data.error+'\n\nRun runFullSetup() from the spreadsheet menu, then reload.');
+          document.getElementById('lu').textContent='Server error';
+          return;
+        }
+        processData(data);
+      })
+      .withFailureHandler(function(err){
+        clearTimeout(timeoutId);
+        hideL();
+        document.getElementById('refBtn').classList.remove('ld');
+        showErr(
+          'Server error: '+String(err)+'\n\n'+
+          'Fix: Open the spreadsheet → LFI Automation menu → Run Full Setup → '+
+          'then re-deploy and click Refresh.'
+        );
+        document.getElementById('lu').textContent='Server error — see above';
+      })
+      .getPublicDashData();
+  }catch(e){
+    clearTimeout(timeoutId);
+    hideL();
+    document.getElementById('refBtn').classList.remove('ld');
+    showErr('Script error: '+e.message+'\n\nEnsure the dashboard is opened via the Apps Script URL.');
+    document.getElementById('lu').textContent='Script error';
+  }
 }
 
 function processData(data){
