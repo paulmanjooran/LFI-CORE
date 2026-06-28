@@ -557,106 +557,108 @@ function sclang(btn,lang){
   if(spk){spk.innerHTML=_spkLabel(lang,'read');spk.classList.remove('playing');}
 }
 
-// ── SPEECH ENGINE ─────────────────────────────────────────────
-var _voicesReady=false;
-function _loadVoices(){var v=window.speechSynthesis?window.speechSynthesis.getVoices():[];if(v.length)_voicesReady=true;return v;}
-if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=function(){_loadVoices();};_loadVoices();}
+// ── SPEECH ENGINE ───────────────────────────────────────────────────────
+// Plays English as fallback when Hindi/Arabic voices not installed.
+// No blocking alerts. Toast notification only. Stop button always shows.
 
-// Strict voice lookup: exact locale OR same language prefix (hi-IN, hi-*, not just 'h*')
-function _getVoice(lang){
-  var voices=_loadVoices();
-  var code=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';
-  var pfx=lang==='ar'?'ar-':lang==='hi'?'hi-':'en-';
-  var v=voices.find(function(v){return v.lang===code;});
-  if(v)return v;
-  v=voices.find(function(v){return v.lang.startsWith(pfx);});
-  return v||null;
+// Preload voices (Chrome loads them async)
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged=function(){window.speechSynthesis.getVoices();};
+  window.speechSynthesis.getVoices();
 }
 
+// Find best TTS voice for a language code
+function _getVoice(lang){
+  var voices=window.speechSynthesis?window.speechSynthesis.getVoices():[];
+  if(!voices.length)return null;
+  var pfx=lang==="ar"?"ar":lang==="hi"?"hi":"en";
+  var exact=lang==="ar"?"ar-SA":lang==="hi"?"hi-IN":"en-US";
+  return voices.find(function(v){return v.lang===exact;})||
+         voices.find(function(v){return v.lang.toLowerCase().startsWith(pfx+"-");})||
+         voices.find(function(v){return v.lang.toLowerCase()===pfx;})||
+         null;
+}
+
+// Non-blocking toast notification (bottom-right, 4 seconds)
+function _toast(msg){
+  var d=document.createElement("div");
+  d.style.cssText="position:fixed;bottom:24px;right:24px;background:#4d555b;color:#fff;"+"padding:12px 18px;border-radius:8px;font-size:12px;z-index:9999;max-width:300px;"+"box-shadow:0 4px 16px rgba(0,0,0,.3);line-height:1.5;transition:opacity 0.4s";
+  d.textContent=msg;
+  document.body.appendChild(d);
+  setTimeout(function(){d.style.opacity="0";setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},500);},3500);
+}
+
+// Stop any active speech and reset its button
 function stopSpeech(){
   if(window.speechSynthesis)window.speechSynthesis.cancel();
   if(SPEAKING_BTN){
-    var cl=SPEAKING_BTN._spkLang||'en';
-    SPEAKING_BTN.innerHTML=_spkLabel(cl,'read');
-    SPEAKING_BTN.classList.remove('playing');
+    var cl=SPEAKING_BTN._spkLang||"en";
+    SPEAKING_BTN.innerHTML=_spkLabel(cl,"read");
+    SPEAKING_BTN.classList.remove("playing");
     SPEAKING_BTN=null;
   }
 }
 
+// speakCard: play / stop toggle
+// - Tries the card language voice first
+// - Falls back to English voice + English text if no Hindi/Arabic voice installed
+// - Stop button always shows in the card language (Stop / roken / iqaf)
+// - No blocking alerts — uses toast only
 function speakCard(btn){
-  // STOP if same button clicked while playing
   if(SPEAKING_BTN===btn){stopSpeech();return;}
   stopSpeech();
 
-  var card=btn.closest('.fc'),cont=card.querySelector('.fcc'),lang=cont.dataset.lang||'en';
-  var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
-  var c=gc(r,lang);
-  var text=[c.desc,c.find,c.learn].filter(function(s){return s&&s.trim();}).join(' \n ');
+  var card=btn.closest(".fc");
+  var cont=card.querySelector(".fcc");
+  var cardLang=cont.dataset.lang||"en";
+  var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,"<").replace(/&#39;/g,"'"));
 
+  if(!window.speechSynthesis)return;
+
+  // Try native voice for card language, fall back to English silently
+  var voice=_getVoice(cardLang);
+  var spkLang=cardLang;
+
+  if(cardLang!=="en"&&!voice){
+    spkLang="en";
+    voice=_getVoice("en");
+    _toast((cardLang==="hi"?"Hindi":"Arabic")+" voice not installed. Playing English audio.");
+  }
+
+  // Get text in the actual speak language
+  var c=gc(r,spkLang);
+  var text=[c.desc,c.find,c.learn].filter(function(s){return s&&s.trim();}).join(". ");
+
+  // Last resort: English text
   if(!text){
-    alert('No '+(lang==='hi'?'Hindi':lang==='ar'?'Arabic':'English')+' content to read for this record.');
-    return;
-  }
-  if(!window.speechSynthesis){alert('Speech synthesis not supported in this browser.');return;}
-
-  // ── Strict voice check ────────────────────────────────────
-  var voice=_getVoice(lang);
-  if(lang!=='en'&&!voice){
-    alert(
-      (lang==='hi'?'Hindi (&#2361;&#2367;&#2306;&#2342;&#2368;)':'Arabic (&#1593;&#1585;&#1576;&#1610;)')+
-      ' text-to-speech voice is NOT installed on this device.\n\n'+
-      'Without the matching voice, the browser reads\nUnicode characters as numbers (e.g. 2340 2375...).\n\n'+
-      'TO INSTALL:\n'+
-      '  Windows: Settings > Time & Language > Language\n'+
-      '           > Add Hindi / Arabic language\n'+
-      '  Android: Settings > General Mgmt > Language\n'+
-      '           > Text-to-Speech > Download voice\n'+
-      '  iOS:     Settings > Accessibility > Spoken Content\n'+
-      '           > Voices > Hindi / Arabic\n\n'+
-      'English audio works on ALL devices.'
-    );
-    return;
+    var ce=gc(r,"en");
+    text=[ce.desc,ce.find,ce.learn].filter(function(s){return s&&s.trim();}).join(". ");
+    spkLang="en"; voice=_getVoice("en");
   }
 
-  // ── Set button to STOP state ──────────────────────────────
-  btn._spkLang=lang;
+  if(!text)return;
+
+  // Set Stop state BEFORE speaking
+  btn._spkLang=cardLang;
   SPEAKING_BTN=btn;
-  btn.innerHTML=_spkLabel(lang,'stop');
-  btn.classList.add('playing');
+  btn.innerHTML=_spkLabel(cardLang,"stop");
+  btn.classList.add("playing");
 
   var u=new SpeechSynthesisUtterance(text);
-  u.lang=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';
+  u.lang=spkLang==="ar"?"ar-SA":spkLang==="hi"?"hi-IN":"en-US";
   u.rate=0.85;
   if(voice)u.voice=voice;
 
-  var startMs=Date.now();
-
   function resetBtn(){
     if(SPEAKING_BTN===btn){
-      btn.innerHTML=_spkLabel(lang,'read');
-      btn.classList.remove('playing');
+      btn.innerHTML=_spkLabel(cardLang,"read");
+      btn.classList.remove("playing");
       SPEAKING_BTN=null;
     }
   }
 
-  // 500ms guard: if speech ends in <500ms the voice silently failed
-  u.onend=function(){
-    var elapsed=Date.now()-startMs;
-    if(elapsed<500&&lang!=='en'){
-      window.speechSynthesis.cancel();
-      resetBtn();
-      alert(
-        'A '+(lang==='hi'?'Hindi':'Arabic')+' voice was detected but failed to read.\n\n'+
-        'The voice may be installed but needs voice data downloaded.\n'+
-        'Go to your device\'s Text-to-Speech settings and\n'+
-        'download the language data for '+(lang==='hi'?'Hindi':'Arabic')+'.\n\n'+
-        'English audio works on all devices.'
-      );
-    }else{
-      resetBtn();
-    }
-  };
-  u.onerror=function(){resetBtn();};
+  u.onend=resetBtn;
+  u.onerror=resetBtn;
   window.speechSynthesis.speak(u);
 }
 
