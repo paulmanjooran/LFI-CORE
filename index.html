@@ -377,79 +377,96 @@ function navTo(page,el){
   return false;
 }
 
-// ── DATA FETCH via google.script.run ─────────────────────────
-// Works ONLY when this HTML is served from Apps Script HtmlService.
-// If you see an error here, the dashboard HTML file was not added
-// to the Apps Script project — follow the setup steps below.
+// ── DATA FETCH — AUTO-DETECTS CONTEXT ────────────────────────
+// GitHub Pages: uses JSONP (<script> tag, bypasses CORS)
+//               requires user signed into altasnim.com in browser
+// Apps Script:  uses google.script.run (same-origin, always works)
+var API_BASE='https://script.google.com/a/macros/altasnim.com/s/AKfycbzJo2bSVd5SxH74-a7FElfbPfQMoulItUB-XXcK83Ocn6utv3uO3pzccKNmlSxX1yWOjg/exec';
+
 function refresh(){
   showL();
   document.getElementById('errBanner').style.display='none';
   document.getElementById('refBtn').classList.add('ld');
   document.getElementById('lu').textContent='';
 
-  // ── CHECK: is google.script.run available? ──────────────────
-  if(typeof google==='undefined'||typeof google.script==='undefined'||typeof google.script.run==='undefined'){
-    hideL();
-    document.getElementById('refBtn').classList.remove('ld');
-    showErr(
-      'Setup required: this dashboard must be opened via the Apps Script URL, '+
-      'not GitHub Pages or a local file.\n\n'+
-      'STEPS:\n'+
-      '1. In Apps Script editor → + (New file) → HTML → name it exactly: dashboard\n'+
-      '2. Paste dashboard.html content → Save\n'+
-      '3. Deploy → Manage Deployments → Edit → New version → Deploy\n'+
-      '4. Open the deployment URL directly.'
-    );
-    document.getElementById('lu').textContent='Setup required';
-    return;
+  // Auto-detect: Apps Script context vs GitHub Pages
+  if(typeof google!=='undefined'&&google.script&&google.script.run){
+    _refreshScriptRun();
+  } else {
+    _refreshJSONP();
   }
+}
 
-  // ── 30-second timeout ───────────────────────────────────────
-  var timeoutId=setTimeout(function(){
-    hideL();
-    document.getElementById('refBtn').classList.remove('ld');
-    showErr(
-      'Request timed out (30s). Possible causes:\n'+
-      '1. The getPublicDashData function is not in your Code.gs → paste Code.gs v5.1\n'+
-      '2. Apps Script authorization not granted → open Apps Script, run runFullSetup()\n'+
-      '3. Re-deploy: Manage Deployments → Edit → New version → Deploy\n'+
-      'Then click Refresh again.'
-    );
-    document.getElementById('lu').textContent='Timeout — see error above';
+// ── METHOD A: google.script.run (Apps Script HTML Service) ────
+function _refreshScriptRun(){
+  var tid=setTimeout(function(){
+    hideL();document.getElementById('refBtn').classList.remove('ld');
+    showErr('Timeout (30s). Run runFullSetup() from the spreadsheet menu, redeploy, then retry.');
+    document.getElementById('lu').textContent='Timeout';
   },30000);
+  google.script.run
+    .withSuccessHandler(function(data){
+      clearTimeout(tid);hideL();document.getElementById('refBtn').classList.remove('ld');
+      if(data&&data.error){showErr('Server error: '+data.error);return;}
+      processData(data);
+    })
+    .withFailureHandler(function(err){
+      clearTimeout(tid);hideL();document.getElementById('refBtn').classList.remove('ld');
+      showErr('Server error: '+String(err)+'. Run runFullSetup() from the spreadsheet, redeploy, retry.');
+      document.getElementById('lu').textContent='Error';
+    })
+    .getPublicDashData();
+}
 
-  try{
-    google.script.run
-      .withSuccessHandler(function(data){
-        clearTimeout(timeoutId);
-        hideL();
-        document.getElementById('refBtn').classList.remove('ld');
-        if(data&&data.error){
-          showErr('Server error: '+data.error+'\n\nRun runFullSetup() from the spreadsheet menu, then reload.');
-          document.getElementById('lu').textContent='Server error';
-          return;
-        }
-        processData(data);
-      })
-      .withFailureHandler(function(err){
-        clearTimeout(timeoutId);
-        hideL();
-        document.getElementById('refBtn').classList.remove('ld');
-        showErr(
-          'Server error: '+String(err)+'\n\n'+
-          'Fix: Open the spreadsheet → LFI Automation menu → Run Full Setup → '+
-          'then re-deploy and click Refresh.'
-        );
-        document.getElementById('lu').textContent='Server error — see above';
-      })
-      .getPublicDashData();
-  }catch(e){
-    clearTimeout(timeoutId);
-    hideL();
-    document.getElementById('refBtn').classList.remove('ld');
-    showErr('Script error: '+e.message+'\n\nEnsure the dashboard is opened via the Apps Script URL.');
-    document.getElementById('lu').textContent='Script error';
-  }
+// ── METHOD B: JSONP (GitHub Pages hosting) ────────────────────
+// Bypasses CORS via <script> tag injection.
+// REQUIREMENT: user must be signed into altasnim.com Google account
+// in the same browser session. If not, the 15s timeout fires.
+function _refreshJSONP(){
+  var cbName='_lfiCb'+Date.now();
+  var script=document.createElement('script');
+  var done=false;
+
+  var tid=setTimeout(function(){
+    if(done)return;
+    done=true;delete window[cbName];
+    if(script.parentNode)script.parentNode.removeChild(script);
+    hideL();document.getElementById('refBtn').classList.remove('ld');
+    showErr(
+      'Data load timed out (15s).\n\n'+
+      'This dashboard loads data via your Google sign-in.\n\n'+
+      'FIX: Sign into your altasnim.com Google account in this browser, then click Refresh.\n\n'+
+      'TEST: Open this URL in the same browser tab first:\n'+
+      API_BASE+'?action=api'+
+      '\n\nIf that shows JSON data, click Refresh here.'
+    );
+    document.getElementById('lu').textContent='Sign-in required — see error above';
+  },15000);
+
+  window[cbName]=function(data){
+    if(done)return;
+    done=true;clearTimeout(tid);
+    if(script.parentNode)script.parentNode.removeChild(script);
+    delete window[cbName];
+    hideL();document.getElementById('refBtn').classList.remove('ld');
+    if(data&&data.error){
+      showErr('Server error: '+data.error+'\n\nRun runFullSetup() from the spreadsheet menu, redeploy, retry.');
+      return;
+    }
+    processData(data);
+  };
+
+  script.onerror=function(){
+    if(done)return;
+    done=true;clearTimeout(tid);
+    delete window[cbName];
+    hideL();document.getElementById('refBtn').classList.remove('ld');
+    showErr('Network error loading data. Check internet connection and sign into altasnim.com.');
+    document.getElementById('lu').textContent='Network error';
+  };
+
+  script.src=API_BASE+'?action=api&callback='+cbName;
+  document.head.appendChild(script);
 }
 
 function processData(data){
