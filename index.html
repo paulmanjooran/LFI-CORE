@@ -105,6 +105,7 @@ nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .ba{background:#d4edda;color:#155724}
 .bp{background:#fff3cd;color:#856404}
 .br2{background:#f8d7da;color:#721c24}
+.bh{background:#c3e6cb;color:#155724;border:1px solid #a3d7b0}
 #loader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.78);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 #loader.vis{display:flex}
 .spin{width:40px;height:40px;border:4px solid #ddd;border-top-color:var(--bl);border-radius:50%;animation:sp .8s linear infinite}
@@ -120,6 +121,14 @@ html[dir="rtl"] #topbar,html[dir="rtl"] #fb,html[dir="rtl"] #drillBar,html[dir="
 html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
 html[dir="rtl"] .exp-menu{right:auto;left:0}
 #stog{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--dg);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:18px;cursor:pointer}
+.adm-btn{width:100%;padding:9px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;text-align:left;color:var(--dg);transition:background .15s}
+.adm-btn:hover{background:var(--bl);color:#fff;border-color:var(--bl)}
+.adm-btn:disabled{opacity:.5;cursor:not-allowed}
+.adm-btn-or{border-color:var(--or);color:var(--or)}
+.adm-btn-or:hover{background:var(--or);color:#fff}
+.adm-stat{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border-radius:8px;font-size:12px;min-width:150px}
+.adm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;transition:background .3s}
+.adm-val{font-weight:700;color:var(--dg);margin-left:auto}
 @media(max-width:900px){.crow{grid-template-columns:1fr}.fcg{grid-template-columns:1fr}}
 @media(max-width:700px){#sb{transform:translateX(-100%)}html[dir="rtl"] #sb{transform:translateX(100%)}#sb.open{transform:translateX(0)}#main{margin-left:0!important;margin-right:0!important}#stog{display:block}.kc{min-width:110px}}
 </style>
@@ -151,6 +160,10 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
        target="_blank" rel="noopener noreferrer"
        style="background:var(--or);color:#fff;border-left-color:transparent;margin:6px 8px 10px;border-radius:6px;justify-content:center;font-weight:700;flex-shrink:0">
       <span class="ni">&#128221;</span><span data-i18n="btn_submit">+ Submit New LFI</span>
+    </a>
+    <div class="sb-sec" style="margin-top:4px">System</div>
+    <a onclick="navTo('admin',this)" style="font-size:11px;color:rgba(255,255,255,.6)">
+      <span class="ni">&#9881;</span><span>Admin Controls</span>
     </a>
   </nav>
 </div>
@@ -203,6 +216,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         <option value="Reviewed & Approved" data-i18n="badge_appr">Approved</option>
         <option value="Pending Approval" data-i18n="badge_pend">Pending</option>
         <option value="Reviewed & Returned" data-i18n="badge_ret">Returned</option>
+        <option value="Historic Data Input">Historic Data Input</option>
       </select></div>
     <div class="fg"><label data-i18n="fil_disc">Discipline</label>
       <select id="fDisc" onchange="applyAll()"><option value="" data-i18n="fil_all_disc">All Disciplines</option></select></div>
@@ -260,6 +274,60 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
       </div>
       <div class="fcg" id="fcGrid"></div>
     </div>
+  </div>
+
+    <!-- ADMIN CONTROL PAGE -->
+    <div class="page" id="page-admin">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+
+        <!-- Connection Status -->
+        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);grid-column:1/-1">
+          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">System Status</div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px" id="adminStatus">
+            <div class="adm-stat" id="stat-api"><span class="adm-dot" style="background:#6c757d"></span><span>API</span><span class="adm-val">&#8212;</span></div>
+            <div class="adm-stat" id="stat-sheet"><span class="adm-dot" style="background:#6c757d"></span><span>Sheet Access</span><span class="adm-val">&#8212;</span></div>
+            <div class="adm-stat" id="stat-data"><span class="adm-dot" style="background:#6c757d"></span><span>Data Loaded</span><span class="adm-val">&#8212;</span></div>
+            <div class="adm-stat" id="stat-rows"><span class="adm-dot" style="background:#6c757d"></span><span>LFI Records</span><span class="adm-val">&#8212;</span></div>
+            <div class="adm-stat" id="stat-js"><span class="adm-dot" style="background:#6c757d"></span><span>Mode</span><span class="adm-val">&#8212;</span></div>
+          </div>
+        </div>
+
+        <!-- Primary Actions -->
+        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">Data Controls</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="adm-btn" onclick="admForceReload()">&#8635; Force Reload Data</button>
+            <button class="adm-btn" onclick="admClearLocalCache()">&#128465; Clear Local Cache</button>
+            <button class="adm-btn" onclick="admTestConnection()">&#127760; Test API Connection</button>
+            <button class="adm-btn" onclick="admTestSheetAccess()">&#128196; Test Sheet Access</button>
+          </div>
+        </div>
+
+        <!-- System Actions -->
+        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">System Actions</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="adm-btn adm-btn-or" onclick="admRunDiagnostics()">&#128300; Run Full Diagnostics</button>
+            <button class="adm-btn" onclick="admRetryPending()">&#8617; Retry Pending LFIs</button>
+            <button class="adm-btn" onclick="admClearScriptCache()">&#9881; Clear Script Cache</button>
+            <button class="adm-btn" onclick="admGetSystemLog()">&#128220; View System Log</button>
+            <button class="adm-btn" onclick="admExportDiag()">&#128229; Export Diagnostics</button>
+          </div>
+        </div>
+
+        <!-- Diagnostics Output -->
+        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);grid-column:1/-1">
+          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--bg);display:flex;justify-content:space-between">
+            <span>Output / Log</span>
+            <button onclick="document.getElementById('admOut').textContent=''" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px">&#128465; Clear</button>
+          </div>
+          <div id="admOut" style="font-family:monospace;font-size:11px;line-height:1.7;max-height:300px;overflow-y:auto;background:var(--bg);padding:10px;border-radius:6px;white-space:pre-wrap;color:#212529">Ready. Click any button above to run an admin action.
+</div>
+        </div>
+
+      </div>
+    </div><!-- /admin -->
+
   </div>
 </div>
 
@@ -352,6 +420,7 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function pct(v,n){return n>0?Math.round(v/n*100)+'%':'&#8212;';}
 function mkbadge(st){
   if(st==='Reviewed & Approved')return'<span class="badge ba">'+t('badge_appr')+'</span>';
+  if(st==='Historic Data Input')return'<span class="badge bh">Historic &#10003;</span>';
   if(st==='Reviewed & Returned')return'<span class="badge br2">'+t('badge_ret')+'</span>';
   return'<span class="badge bp">'+t('badge_pend')+'</span>';
 }
@@ -372,8 +441,10 @@ function navTo(page,el){
   var pg=document.getElementById('page-'+page);if(pg)pg.classList.add('active');
   document.querySelectorAll('nav a:not([href])').forEach(function(a){a.classList.remove('active');});
   if(el&&!el.getAttribute('href'))el.classList.add('active');
-  document.getElementById('ptitle').textContent=t(page==='lfi'?'pg_lfi':'pg_overview');
+  var titles={overview:'pg_overview',lfi:'pg_lfi',admin:'Admin Controls'};
+  document.getElementById('ptitle').textContent=titles[page]?t(titles[page])||titles[page]:'Dashboard';
   if(page==='lfi')renderFC();
+  if(page==='admin')_adminPageInit();
   if(window.innerWidth<=700)document.getElementById('sb').classList.remove('open');
   return false;
 }
@@ -465,7 +536,8 @@ function applyAll(){
   if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
 }
 function updateKPI(rows){
-  var n=rows.length,a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,
+  var n=rows.length,
+      a=rows.filter(function(r){return r.st==='Reviewed & Approved'||r.st==='Historic Data Input';}).length,
       p=rows.filter(function(r){return r.st==='Pending Approval';}).length,
       re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length,
       pp=rows.filter(function(r){return r.ppt;}).length;
@@ -486,10 +558,11 @@ function renderCharts(rows){
   var cc=cntBy(rows,'cat');var ck=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a];});
   mkChart('cCat','pie',ck,ck.map(function(k){return cc[k];}),PAL,false,function(v){drillDown('cat',v);});
   var a=rows.filter(function(r){return r.st==='Reviewed & Approved';}).length,
+      ah=rows.filter(function(r){return r.st==='Historic Data Input';}).length,
       p=rows.filter(function(r){return r.st==='Pending Approval';}).length,
       re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length;
-  mkChart('cSt','doughnut',[t('badge_appr'),t('badge_pend'),t('badge_ret')],[a,p,re],['#28a745','#ffc107','#dc3545'],false,
-    function(v){var m={};m[t('badge_appr')]='Reviewed & Approved';m[t('badge_pend')]='Pending Approval';m[t('badge_ret')]='Reviewed & Returned';if(m[v])drillDown('st',m[v]);});
+  mkChart('cSt','doughnut',[t('badge_appr'),'Historic',t('badge_pend'),t('badge_ret')],[a,ah,p,re],['#28a745','#5cb85c','#ffc107','#dc3545'],false,
+    function(v){var m={};m[t('badge_appr')]='Reviewed & Approved';m['Historic']='Historic Data Input';m[t('badge_pend')]='Pending Approval';m[t('badge_ret')]='Reviewed & Returned';if(m[v])drillDown('st',m[v]);});
   var dc=cntBy(rows,'div');var dk=Object.keys(dc).sort(function(a,b){return dc[b]-dc[a];});
   mkChart('cDiv','bar',dk,dk.map(function(k){return dc[k];}),dk.map(function(_,i){return PAL[i%PAL.length];}),true,function(v){drillDown('div',v);});
   var lc=cntBy(rows,'loc');var lk=Object.keys(lc).sort(function(a,b){return lc[b]-lc[a];});
@@ -622,7 +695,7 @@ function speakCard(btn){
   if(cardLang!=="en"&&!voice){
     spkLang="en";
     voice=_getVoice("en");
-    _toast((cardLang==="hi"?"Hindi":"Arabic")+" voice not installed. Playing English audio.");
+    // Silent fallback — no popup. Plays English audio automatically.
   }
 
   // Get text in the actual speak language
@@ -783,6 +856,189 @@ function exportPDF(){
     document.body.appendChild(pa);pa.click();document.body.removeChild(pa);
     setTimeout(function(){URL.revokeObjectURL(purl);},3000);
   }catch(e){alert('PDF export error:\n'+e.message);console.error('exportPDF:',e);}
+}
+
+// ── ADMIN CONTROL PANEL ─────────────────────────────────────
+var ADM_LOG=[];
+function admLog(msg,color){
+  var ts=new Date().toLocaleTimeString();
+  var line="["+ts+"] "+msg;
+  ADM_LOG.push(line);
+  var out=document.getElementById("admOut");
+  if(out){out.textContent+=line+"\n";out.scrollTop=out.scrollHeight;}
+}
+function admStat(id,ok,val){
+  var el=document.getElementById("stat-"+id);
+  if(!el)return;
+  var dot=el.querySelector(".adm-dot");
+  var v=el.querySelector(".adm-val");
+  if(dot)dot.style.background=ok===true?"#28a745":ok===false?"#dc3545":"#ffc107";
+  if(v)v.textContent=val||"";
+}
+
+function admForceReload(){
+  admLog("Force reload: clearing local data and fetching from API...");
+  RAW=null;CH={};
+  document.querySelectorAll(".page").forEach(function(p){if(p.classList.contains("active"))applyAll();});
+  refresh();
+  admLog("Refresh triggered.");
+}
+
+function admClearLocalCache(){
+  RAW=null;CH={};
+  // Clear all chart instances
+  Object.keys(CH).forEach(function(k){try{CH[k].destroy();}catch(e){}});
+  CH={};
+  // Reset KPI display
+  for(var i=0;i<5;i++){var ke=document.getElementById("k"+i);if(ke)ke.textContent="—";}
+  admLog("Local cache cleared. Data and charts reset.");
+  admStat("data",false,"Cleared");
+  admStat("rows",null,"0");
+}
+
+function admTestConnection(){
+  admLog("Testing API connection to Apps Script deployment...");
+  admStat("api",null,"Testing...");
+  var cb="admConn"+Date.now(),script=document.createElement("script"),done=false;
+  var tid=setTimeout(function(){
+    if(done)return;done=true;delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);
+    admLog("FAIL: Connection timed out (15s). Check sign-in and deployment URL.");
+    admStat("api",false,"Timeout");
+  },15000);
+  window[cb]=function(d){
+    if(done)return;done=true;clearTimeout(tid);delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);
+    if(d&&d.rawRows){
+      admLog("OK: API connected. "+d.rawRows.length+" records in response. Updated: "+d.ts);
+      admStat("api",true,"Connected");
+      admStat("rows",true,d.rawRows.length+" LFIs");
+    }else if(d&&d.error){
+      admLog("Server error: "+d.error);
+      admStat("api",false,"Error");
+    }else{
+      admLog("Unexpected response.");
+      admStat("api",null,"?");
+    }
+  };
+  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cb];admLog("FAIL: Script load error.");admStat("api",false,"Error");};
+  script.src=API_BASE+"?action=api&callback="+cb;
+  document.head.appendChild(script);
+}
+
+function admTestSheetAccess(){
+  admLog("Testing sheet access via Admin API...");
+  admStat("sheet",null,"Testing...");
+  _admCall("testAccess",function(d){
+    if(d.status==="OK"){
+      admLog("OK: "+d.message);
+      admStat("sheet",true,d.rows+" rows");
+    }else{
+      admLog("FAIL: "+d.message);
+      admStat("sheet",false,"Error");
+    }
+  });
+}
+
+function admRunDiagnostics(){
+  admLog("=== FULL DIAGNOSTICS ===");
+  // JS context
+  var mode=typeof google!=="undefined"&&google.script&&google.script.run?"Apps Script (google.script.run)":"GitHub Pages (JSONP)";
+  admLog("Mode: "+mode);
+  admStat("js",true,mode.split(" ")[0]);
+  // Local data
+  var rcount=RAW?RAW.length:0;
+  admLog("Local data: "+(RAW?"Loaded ("+rcount+" records)":"Not loaded"));
+  admStat("data",RAW!==null,RAW?rcount+" LFIs":"None");
+  admStat("rows",RAW&&rcount>0,rcount>0?rcount+" LFIs":"0");
+  // Libraries
+  admLog("ChartJS: "+(typeof Chart!=="undefined"?"OK":"MISSING"));
+  admLog("XLSX:    "+(typeof XLSX!=="undefined"?"OK":"MISSING"));
+  admLog("jsPDF:   "+(typeof window.jspdf!=="undefined"||typeof window.jsPDF!=="undefined"?"OK":"MISSING"));
+  admLog("Speech:  "+(window.speechSynthesis?"OK":"NOT SUPPORTED"));
+  if(window.speechSynthesis){
+    var voices=window.speechSynthesis.getVoices();
+    admLog("Voices:  "+voices.length+" installed");
+    admLog("Hindi:   "+(_getVoice("hi")?"FOUND: "+_getVoice("hi").name:"NOT INSTALLED"));
+    admLog("Arabic:  "+(_getVoice("ar")?"FOUND: "+_getVoice("ar").name:"NOT INSTALLED"));
+  }
+  // API test
+  admLog("Testing API connection...");
+  admTestConnection();
+  admLog("=== END (API test running async) ===");
+}
+
+function admRetryPending(){
+  admLog("Checking pending LFIs via Admin API...");
+  _admCall("retryPending",function(d){
+    if(d.status==="OK"){
+      admLog("Pending check: "+d.message);
+      if(d.pending>0){
+        admLog("ACTION NEEDED: "+d.pending+" pending LFI(s). Open the spreadsheet and run: LFI Automation > Process Active LFI Row for each row.");
+      }else{
+        admLog("All LFIs are processed. No pending items.");
+      }
+    }else{
+      admLog("Error: "+d.message);
+    }
+  });
+}
+
+function admClearScriptCache(){
+  admLog("Requesting script cache clear via Admin API...");
+  _admCall("clearCache",function(d){
+    admLog(d.status==="OK"?"OK: "+d.message:"Error: "+d.message);
+  });
+}
+
+function admGetSystemLog(){
+  admLog("Fetching System Log entries...");
+  _admCall("getLog",function(d){
+    if(d.status==="OK"&&d.logs){
+      admLog("--- System Log (last "+d.logs.length+" entries) ---");
+      d.logs.forEach(function(r){admLog("["+r.ts+"] "+r.fn+" | "+r.st+" | "+r.msg);});
+      admLog("--- End of Log ---");
+    }else{
+      admLog("Error fetching log: "+(d.message||"unknown"));
+    }
+  });
+}
+
+function admExportDiag(){
+  var text="ATNM LFI CORE — Admin Diagnostics\n";
+  text+="Exported: "+new Date().toString()+"\n";
+  text+="API_BASE: "+API_BASE+"\n";
+  text+="Local Records: "+(RAW?RAW.length:0)+"\n";
+  text+="Language: "+LANG+"\n\n";
+  text+="=== ADMIN LOG ===\n"+ADM_LOG.join("\n")+"\n";
+  var blob=new Blob([text],{type:"text/plain"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");a.href=url;a.download="ATNM_LFI_Diagnostics_"+new Date().toISOString().slice(0,10)+".txt";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},2000);
+  admLog("Diagnostics exported to text file.");
+}
+
+// Internal: admin JSONP call to Code.gs ?action=admin&cmd=CMD
+function _admCall(cmd,cb){
+  var cbN="admCb"+Date.now(),script=document.createElement("script"),done=false;
+  var tid=setTimeout(function(){
+    if(done)return;done=true;delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);
+    admLog("FAIL: Admin call timed out. Sign into altasnim.com and retry.");
+  },12000);
+  window[cbN]=function(d){if(done)return;done=true;clearTimeout(tid);delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);if(cb)cb(d);};
+  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbN];admLog("FAIL: Script load error for admin call.");};
+  script.src=API_BASE+"?action=admin&cmd="+encodeURIComponent(cmd)+"&callback="+cbN;
+  document.head.appendChild(script);
+}
+
+// Auto-run status check when admin page is opened
+function _adminPageInit(){
+  var mode=typeof google!=="undefined"&&google.script&&google.script.run?"Apps Script":"GitHub Pages (JSONP)";
+  admStat("js",true,mode);
+  admStat("data",RAW!==null,RAW?RAW.length+" LFIs":"Not loaded");
+  admStat("rows",RAW&&RAW.length>0,RAW?RAW.length+" records":"0");
+  admStat("api",null,"Not tested");
+  admStat("sheet",null,"Not tested");
+  admLog("Admin panel ready. Mode: "+mode+".");
 }
 
 document.addEventListener('DOMContentLoaded',function(){
