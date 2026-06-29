@@ -12,6 +12,7 @@
 :root{--dg:#4d555b;--bl:#21409a;--or:#f58220;--gr:#28a745;--am:#ffc107;--rd:#dc3545;--bg:#f0f2f5;--border:#e0e4ea;--muted:#6c757d;--sw:248px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:var(--bg);color:#212529;font-size:13px;display:flex;min-height:100vh}
+/* SIDEBAR */
 #sb{width:var(--sw);min-width:var(--sw);background:var(--dg);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
 .sb-brand{background:#2d3338;padding:12px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--or)}
 .sb-logo-img{height:46px;width:auto;object-fit:contain;flex-shrink:0;border-radius:4px}
@@ -25,8 +26,10 @@ nav a:hover{background:rgba(255,255,255,.08);color:#fff}
 nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or)}
 nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .sb-sec{padding:8px 14px 3px;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
+/* MAIN */
 #main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
 .grad{height:3px;background:linear-gradient(to right,var(--bl),var(--or) 60%,var(--gr))}
+/* TOPBAR */
 #topbar{background:#fff;padding:10px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 #ptitle{font-size:15px;font-weight:700;color:var(--dg);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ltgl{display:flex;gap:3px}
@@ -44,9 +47,12 @@ nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .bref:hover{background:var(--bl)}
 .bref.ld{opacity:.6;cursor:not-allowed}
 #lu{font-size:10px;color:var(--muted);white-space:nowrap}
+/* ERROR BANNER */
 #errBanner{background:#f8d7da;border-bottom:1px solid #f5c2c7;padding:10px 20px;display:none;align-items:flex-start;gap:10px;font-size:12px;color:#721c24}
+/* DRILL BAR */
 #drillBar{background:#e8f0fe;border-bottom:1px solid #c5d1f0;padding:7px 20px;display:none;align-items:center;gap:10px;font-size:12px}
 #drillBar.vis{display:flex}
+/* FILTER BAR */
 #fb{background:#fff;padding:10px 20px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
 .fg{display:flex;flex-direction:column;gap:3px}
 .fg label{font-size:10px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
@@ -57,8 +63,22 @@ nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .brst{background:var(--dg);color:#fff}.brst:hover{background:var(--bl)}
 .brf2{background:var(--or);color:#fff}.brf2:hover{background:#d46d16}
 #frc{font-size:11px;color:var(--muted);margin-left:auto;align-self:center;white-space:nowrap}
+/* VOICE BAR */
+.vsbar{background:#fff;border-radius:10px;padding:9px 14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;align-items:center;flex-wrap:wrap;gap:10px;border-left:4px solid var(--bl);font-size:12px}
+.vtag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--border)}
+.vtag.ok{background:#d4edda;color:#155724;border-color:#a3d7b0}
+.vtag.loading{background:#fff3cd;color:#856404;border-color:#ffc107}
+.vtag.fail{background:#f5f5f5;color:var(--muted);border-color:var(--border)}
+.vtag.muted{background:#f8f9fa;color:#6c757d;border-color:#dee2e6;cursor:pointer}
+.vtag.muted:hover{background:#e9ecef;color:#495057}
+.vbtn{padding:4px 10px;background:var(--bl);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.vbtn:hover{background:#1a337a}
+.vload-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;width:100px;flex-shrink:0}
+.vload-fill{height:100%;background:linear-gradient(to right,var(--bl),var(--or));border-radius:2px;transition:width .4s;width:0%}
+/* PAGES */
 #content{padding:16px 20px;flex:1}
 .page{display:none}.page.active{display:block}
+/* KPI */
 .krow{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
 .kc{flex:1;min-width:130px;border-radius:10px;padding:14px 12px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s}
 .kc:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.13)}
@@ -66,12 +86,14 @@ nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .kv{font-size:34px;font-weight:800;line-height:1;margin-bottom:4px}
 .kl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;opacity:.88;font-weight:600}
 .kp{font-size:10px;opacity:.7;margin-top:2px}
+/* CHARTS */
 .crow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .cc{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .ch{font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--bg);display:flex;align-items:center;justify-content:space-between}
 .dh{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
 .cv{position:relative;height:260px}
 .cvl{position:relative;height:310px}
+/* FLASHCARDS */
 .fcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .fc{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden}
 .fc:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
@@ -101,11 +123,13 @@ nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .fp.pnd{background:#fff3cd;color:#856404}
 .fpl{display:flex;gap:6px;margin-top:6px}
 .plnk{padding:4px 9px;border-radius:4px;font-size:11px;font-weight:600;text-decoration:none;background:var(--bl);color:#fff}
+/* BADGES */
 .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
 .ba{background:#d4edda;color:#155724}
 .bp{background:#fff3cd;color:#856404}
 .br2{background:#f8d7da;color:#721c24}
 .bh{background:#c3e6cb;color:#155724;border:1px solid #a3d7b0}
+/* ADMIN */
 #loader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.78);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 #loader.vis{display:flex}
 .spin{width:40px;height:40px;border:4px solid #ddd;border-top-color:var(--bl);border-radius:50%;animation:sp .8s linear infinite}
@@ -113,6 +137,14 @@ nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 #loader p{font-size:13px;color:var(--dg);font-weight:600}
 .empty{text-align:center;padding:40px;color:var(--muted);grid-column:1/-1}
 .empty p{font-size:14px;margin-top:8px}
+.adm-btn{width:100%;padding:9px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;text-align:left;color:var(--dg);transition:background .15s}
+.adm-btn:hover{background:var(--bl);color:#fff;border-color:var(--bl)}
+.adm-btn-or{border-color:var(--or);color:var(--or)}
+.adm-btn-or:hover{background:var(--or);color:#fff}
+.adm-stat{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border-radius:8px;font-size:12px;min-width:150px}
+.adm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;transition:background .3s}
+.adm-val{font-weight:700;color:var(--dg);margin-left:auto}
+/* RTL */
 html[dir="rtl"] #sb{left:auto;right:0}
 html[dir="rtl"] #main{margin-left:0;margin-right:var(--sw)}
 html[dir="rtl"] nav a{border-left:none;border-right:3px solid transparent}
@@ -120,69 +152,32 @@ html[dir="rtl"] nav a.active{border-right-color:var(--or);border-left:none}
 html[dir="rtl"] #topbar,html[dir="rtl"] #fb,html[dir="rtl"] #drillBar,html[dir="rtl"] #errBanner{flex-direction:row-reverse}
 html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
 html[dir="rtl"] .exp-menu{right:auto;left:0}
-.vsbar{background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;align-items:center;flex-wrap:wrap;gap:10px;border-left:4px solid var(--bl);font-size:12px}
-.vtag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--border)}
-.vtag.ok{background:#d4edda;color:#155724;border-color:#a3d7b0}
-.vtag.loading{background:#fff3cd;color:#856404;border-color:#ffc107}
-.vtag.fail{background:#f8d7da;color:#721c24;border-color:#f5c2c7}
-.vbtn{padding:4px 10px;background:var(--bl);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
-.vbtn:hover{background:#1a337a}
-.vload-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;width:120px;flex-shrink:0}
-.vload-fill{height:100%;background:linear-gradient(to right,var(--bl),var(--or));border-radius:2px;transition:width .4s;width:0%}
-#adminModal.vis{display:flex}
-#adminPwdInput:focus{border-color:var(--bl)}
 #stog{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--dg);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:18px;cursor:pointer}
-#adminModal.vis{display:flex}
-#adminPwdInput:focus{border-color:var(--bl)}
-
-.adm-btn{width:100%;padding:9px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;text-align:left;color:var(--dg);transition:background .15s}
-.adm-btn:hover{background:var(--bl);color:#fff;border-color:var(--bl)}
-.adm-btn:disabled{opacity:.5;cursor:not-allowed}
-.adm-btn-or{border-color:var(--or);color:var(--or)}
-.adm-btn-or:hover{background:var(--or);color:#fff}
-.adm-stat{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border-radius:8px;font-size:12px;min-width:150px}
-.adm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;transition:background .3s}
-.adm-val{font-weight:700;color:var(--dg);margin-left:auto}
 @media(max-width:900px){.crow{grid-template-columns:1fr}.fcg{grid-template-columns:1fr}}
 @media(max-width:700px){#sb{transform:translateX(-100%)}html[dir="rtl"] #sb{transform:translateX(100%)}#sb.open{transform:translateX(0)}#main{margin-left:0!important;margin-right:0!important}#stog{display:block}.kc{min-width:110px}}
 </style>
 </head>
+
 <body>
 <button id="stog" onclick="document.getElementById('sb').classList.toggle('open')">&#9776;</button>
-
-<!-- SIDEBAR -->
 <div id="sb">
   <div class="sb-brand">
-    <img src="logo.png" class="sb-logo-img" alt="ATNM"
-         onerror="this.style.display='none';document.getElementById('sbfb').style.display='flex'">
+    <img src="logo.png" class="sb-logo-img" alt="ATNM" onerror="this.style.display='none';document.getElementById('sbfb').style.display='flex'">
     <div class="sb-logo-fb" id="sbfb" style="display:none">ATNM</div>
-    <div class="sb-brand-text">
-      <strong>LFI CORE</strong>
-      <span>Control Ownership Review</span>
-      <span>&amp; Embedding</span>
-    </div>
+    <div class="sb-brand-text"><strong>LFI CORE</strong><span>Control Ownership Review</span><span>&amp; Embedding</span></div>
   </div>
   <nav>
-    <div class="sb-sec" data-i18n="sb_nav">Dashboard</div>
-    <a class="active" onclick="navTo('overview',this)">
-      <span class="ni">&#128200;</span><span data-i18n="sb_overview">Overview</span>
-    </a>
-    <a onclick="navTo('lfi',this)">
-      <span class="ni">&#128203;</span><span data-i18n="sb_lfi">LFI Register</span>
-    </a>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform?usp=dialog"
-       target="_blank" rel="noopener noreferrer"
+    <div class="sb-sec">Dashboard</div>
+    <a class="active" onclick="navTo('overview',this)"><span class="ni">&#128200;</span><span data-i18n="sb_overview">Overview</span></a>
+    <a onclick="navTo('lfi',this)"><span class="ni">&#128203;</span><span data-i18n="sb_lfi">LFI Register</span></a>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform?usp=dialog" target="_blank" rel="noopener noreferrer"
        style="background:var(--or);color:#fff;border-left-color:transparent;margin:6px 8px 10px;border-radius:6px;justify-content:center;font-weight:700;flex-shrink:0">
-      <span class="ni">&#128221;</span><span data-i18n="btn_submit">+ Submit New LFI</span>
+      <span class="ni">&#128221;</span><span>+ Submit New LFI</span>
     </a>
     <div class="sb-sec" style="margin-top:4px">System</div>
-    <a onclick="navTo('admin',this)" style="font-size:11px;color:rgba(255,255,255,.6)">
-      <span class="ni">&#9881;</span><span>Admin Controls</span>
-    </a>
+    <a onclick="navTo('admin',this)" style="font-size:11px;color:rgba(255,255,255,.6)"><span class="ni">&#9881;</span><span>Admin Controls</span></a>
   </nav>
 </div>
-
-<!-- MAIN -->
 <div id="main">
   <div class="grad"></div>
   <div id="topbar">
@@ -199,81 +194,58 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         <button onclick="exportPDF();closeAllExp()">&#128196; PDF Report</button>
       </div>
     </div>
-    <button class="bref" id="refBtn" onclick="refresh()" data-i18n="btn_refresh">&#8635; Refresh Data</button>
+    <button class="bref" id="refBtn" onclick="refresh()">&#8635; Refresh Data</button>
     <span id="lu"></span>
   </div>
-
   <div id="errBanner" style="display:none">
     <span style="font-size:18px;flex-shrink:0">&#9888;</span>
     <div style="flex:1;line-height:1.5;white-space:pre-wrap" id="errMsg"></div>
     <button style="background:none;border:none;font-size:18px;cursor:pointer;color:#721c24;flex-shrink:0" onclick="document.getElementById('errBanner').style.display='none'">&#215;</button>
   </div>
-
   <div id="drillBar">
-    <span data-i18n="drill_by">Filtered by:</span>
+    <span>Filtered by:</span>
     <span id="drillInfo" style="font-weight:600;color:var(--bl)"></span>
-    <button style="padding:3px 10px;background:var(--bl);color:#fff;border:none;border-radius:4px;font-size:11px;cursor:pointer" onclick="clearDrill()" data-i18n="drill_clear">&#10005; Clear</button>
+    <button style="padding:3px 10px;background:var(--bl);color:#fff;border:none;border-radius:4px;font-size:11px;cursor:pointer" onclick="clearDrill()">&#10005; Clear</button>
   </div>
-
   <div id="fb">
-    <div class="fg"><label data-i18n="fil_from">From Date</label><input type="date" id="fFrom" onchange="applyAll()"></div>
-    <div class="fg"><label data-i18n="fil_to">To Date</label><input type="date" id="fTo" onchange="applyAll()"></div>
-    <div class="fg"><label data-i18n="fil_cat">Category</label>
-      <select id="fCat" onchange="applyAll()"><option value="" data-i18n="fil_all_cat">All Categories</option></select></div>
-    <div class="fg"><label data-i18n="fil_div">Division</label>
-      <select id="fDiv" onchange="applyAll()"><option value="" data-i18n="fil_all_div">All Divisions</option></select></div>
-    <div class="fg"><label data-i18n="fil_cluster">Cluster</label>
-      <select id="fLoc" onchange="applyAll()"><option value="" data-i18n="fil_all_cluster">All Clusters</option></select></div>
-    <div class="fg"><label data-i18n="fil_status">Status</label>
+    <div class="fg"><label>From Date</label><input type="date" id="fFrom" onchange="applyAll()"></div>
+    <div class="fg"><label>To Date</label><input type="date" id="fTo" onchange="applyAll()"></div>
+    <div class="fg"><label>Division</label><select id="fDiv" onchange="applyAll()"><option value="">All Divisions</option></select></div>
+    <div class="fg"><label>Cluster</label><select id="fLoc" onchange="applyAll()"><option value="">All Clusters</option></select></div>
+    <div class="fg"><label>Status</label>
       <select id="fSt" onchange="applyAll()">
-        <option value="" data-i18n="fil_all_status">All Statuses</option>
-        <option value="Reviewed & Approved" data-i18n="badge_appr">Approved</option>
-        <option value="Pending Approval" data-i18n="badge_pend">Pending</option>
-        <option value="Reviewed & Returned" data-i18n="badge_ret">Returned</option>
-        <option value="Historic Data Input">Historic Data Input</option>
-      </select></div>
-    <div class="fg"><label data-i18n="fil_disc">Discipline</label>
-      <select id="fDisc" onchange="applyAll()"><option value="" data-i18n="fil_all_disc">All Disciplines</option></select></div>
-    <div class="fg fgs"><label data-i18n="fil_search">Search</label>
-      <input type="text" id="fQ" placeholder="ID, name, location, summary..." oninput="applyAll()"></div>
-    <button class="bf brst" onclick="resetF()" data-i18n="btn_reset">&#8635; Reset</button>
-    <button class="bf brf2" onclick="refresh()" data-i18n="btn_refresh_sm">&#8635; Refresh</button>
+        <option value="">All Statuses</option>
+        <option value="Reviewed &amp; Approved">Approved</option>
+        <option value="Historic Data Input">Historic</option>
+        <option value="Pending Approval">Pending</option>
+        <option value="Reviewed &amp; Returned">Returned</option>
+      </select>
+    </div>
+    <div class="fg"><label>Discipline</label><select id="fDisc" onchange="applyAll()"><option value="">All Disciplines</option></select></div>
+    <div class="fg fgs"><label>Search</label><input type="text" id="fQ" placeholder="ID, name, location, summary..." oninput="applyAll()"></div>
+    <button class="bf brst" onclick="resetF()">&#8635; Reset</button>
+    <button class="bf brf2" onclick="refresh()">&#8635; Refresh</button>
     <span id="frc"></span>
   </div>
-
   <div id="content">
-    <!-- OVERVIEW -->
     <div class="page active" id="page-overview">
       <div class="krow">
-        <div class="kc" style="background:#21409a;color:#fff" onclick="clearDrill()">
-          <div class="ki">&#128203;</div><div class="kv" id="k0">&#8212;</div>
-          <div class="kl" data-i18n="kpi_total">Total LFIs</div><div class="kp" id="kp0"></div></div>
-        <div class="kc" style="background:#28a745;color:#fff" onclick="drillDown('st','Reviewed & Approved')">
-          <div class="ki">&#10004;</div><div class="kv" id="k1">&#8212;</div>
-          <div class="kl" data-i18n="kpi_approved">Approved</div><div class="kp" id="kp1"></div></div>
-        <div class="kc" style="background:#ffc107;color:#212529" onclick="drillDown('st','Pending Approval')">
-          <div class="ki">&#9200;</div><div class="kv" id="k2">&#8212;</div>
-          <div class="kl" data-i18n="kpi_pending">Pending</div><div class="kp" id="kp2"></div></div>
-        <div class="kc" style="background:#dc3545;color:#fff" onclick="drillDown('st','Reviewed & Returned')">
-          <div class="ki">&#8617;</div><div class="kv" id="k3">&#8212;</div>
-          <div class="kl" data-i18n="kpi_returned">Returned</div><div class="kp" id="kp3"></div></div>
-        <div class="kc" style="background:#4d555b;color:#fff" onclick="drillDown('ppt',true)">
-          <div class="ki">&#128218;</div><div class="kv" id="k4">&#8212;</div>
-          <div class="kl" data-i18n="kpi_ppt">PPTs Created</div><div class="kp" id="kp4"></div></div>
+        <div class="kc" style="background:#21409a;color:#fff" onclick="clearDrill()"><div class="ki">&#128203;</div><div class="kv" id="k0">&#8212;</div><div class="kl">Total LFIs</div><div class="kp" id="kp0"></div></div>
+        <div class="kc" style="background:#28a745;color:#fff" onclick="drillDown('stGrp','approved')"><div class="ki">&#10004;</div><div class="kv" id="k1">&#8212;</div><div class="kl">Approved</div><div class="kp" id="kp1"></div></div>
+        <div class="kc" style="background:#ffc107;color:#212529" onclick="drillDown('st','Pending Approval')"><div class="ki">&#9200;</div><div class="kv" id="k2">&#8212;</div><div class="kl">Pending</div><div class="kp" id="kp2"></div></div>
+        <div class="kc" style="background:#dc3545;color:#fff" onclick="drillDown('st','Reviewed &amp; Returned')"><div class="ki">&#8617;</div><div class="kv" id="k3">&#8212;</div><div class="kl">Returned</div><div class="kp" id="kp3"></div></div>
+        <div class="kc" style="background:#4d555b;color:#fff" onclick="drillDown('ppt',true)"><div class="ki">&#128218;</div><div class="kv" id="k4">&#8212;</div><div class="kl">PPTs Created</div><div class="kp" id="kp4"></div></div>
       </div>
       <div class="crow">
-        <div class="cc"><div class="ch"><span data-i18n="ch_cat">By Incident Category</span><span class="dh" data-i18n="ch_drill">Click to drill down</span></div><div class="cv"><canvas id="cCat"></canvas></div></div>
-        <div class="cc"><div class="ch" data-i18n="ch_status">Approval Status</div><div class="cv"><canvas id="cSt"></canvas></div></div>
+        <div class="cc"><div class="ch"><span>By Incident Category</span><span class="dh">Click to drill down</span></div><div class="cv"><canvas id="cCat"></canvas></div></div>
+        <div class="cc"><div class="ch">Approval Status</div><div class="cv"><canvas id="cSt"></canvas></div></div>
       </div>
       <div class="crow">
-        <div class="cc"><div class="ch"><span data-i18n="ch_div">By ATNM Division</span><span class="dh" data-i18n="ch_drill">Click to drill down</span></div><div class="cvl"><canvas id="cDiv"></canvas></div></div>
-        <div class="cc"><div class="ch"><span data-i18n="ch_loc">By Cluster / Location</span><span class="dh" data-i18n="ch_drill">Click to drill down</span></div><div class="cvl"><canvas id="cLoc"></canvas></div></div>
+        <div class="cc"><div class="ch"><span>By ATNM Division</span><span class="dh">Click to drill down</span></div><div class="cvl"><canvas id="cDiv"></canvas></div></div>
+        <div class="cc"><div class="ch"><span>By Cluster / Location</span><span class="dh">Click to drill down</span></div><div class="cvl"><canvas id="cLoc"></canvas></div></div>
       </div>
     </div>
-
-    <!-- LFI REGISTER -->
     <div class="page" id="page-lfi">
-      <!-- Voice Status Bar: shows preload status of EN/Hindi/Arabic voices -->
       <div class="vsbar" id="voiceStatusBar">
         <span style="font-weight:700;color:var(--dg);flex-shrink:0">&#128266; Audio Voices:</span>
         <span class="vtag loading" id="vtEN">&#8987; EN</span>
@@ -281,10 +253,11 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         <span class="vtag loading" id="vtAR">&#8987; &#1593;</span>
         <div class="vload-bar"><div class="vload-fill" id="vloadFill"></div></div>
         <span id="vStatusMsg" style="color:var(--muted);font-size:11px;flex:1">Initialising voices...</span>
-        <button class="vbtn" onclick="forceLoadVoices()" title="Force-load Chrome cloud voices for all 3 languages">&#8635; Force Load Voices</button>
+        <button class="vbtn" onclick="forceLoadVoices()">&#8635; Force Load Voices</button>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-        <div style="font-size:12px;color:var(--muted)" data-i18n="lfi_hint">Click a card to expand. Use the Read Aloud button to listen.</div>
+        <div style="font-size:12px;color:var(--muted)">Sorted by incident date &#8212; newest first. Click a card to expand.</div>
+        <span style="font-size:10px;background:var(--bl);color:#fff;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap;flex-shrink:0">&#8595; Newest First</span>
         <div style="display:flex;gap:8px">
           <div class="btn-exp">
             <button class="bexp" onclick="toggleExp2(this)">&#128190; Export &#9660;</button>
@@ -293,18 +266,13 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
               <button onclick="exportPDF();closeAllExp()">&#128196; PDF Report</button>
             </div>
           </div>
-          <button class="bref" style="font-size:11px;padding:5px 12px" onclick="refresh()" data-i18n="btn_refresh_sm">&#8635; Refresh</button>
+          <button class="bref" style="font-size:11px;padding:5px 12px" onclick="refresh()">&#8635; Refresh</button>
         </div>
       </div>
       <div class="fcg" id="fcGrid"></div>
     </div>
-  </div>
-
-    <!-- ADMIN CONTROL PAGE -->
     <div class="page" id="page-admin">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-
-        <!-- Connection Status -->
         <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);grid-column:1/-1">
           <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">System Status</div>
           <div style="display:flex;flex-wrap:wrap;gap:10px" id="adminStatus">
@@ -315,8 +283,6 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
             <div class="adm-stat" id="stat-js"><span class="adm-dot" style="background:#6c757d"></span><span>Mode</span><span class="adm-val">&#8212;</span></div>
           </div>
         </div>
-
-        <!-- Primary Actions -->
         <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
           <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">Data Controls</div>
           <div style="display:flex;flex-direction:column;gap:8px">
@@ -326,8 +292,6 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
             <button class="adm-btn" onclick="admTestSheetAccess()">&#128196; Test Sheet Access</button>
           </div>
         </div>
-
-        <!-- System Actions -->
         <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
           <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">System Actions</div>
           <div style="display:flex;flex-direction:column;gap:8px">
@@ -335,26 +299,21 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
             <button class="adm-btn" onclick="admRetryPending()">&#8617; Retry Pending LFIs</button>
             <button class="adm-btn" onclick="admClearScriptCache()">&#9881; Clear Script Cache</button>
             <button class="adm-btn" onclick="admGetSystemLog()">&#128220; View System Log</button>
-            <button class="adm-btn" onclick="admExportDiag()">&#128229; Export Diagnostics</button>
           </div>
         </div>
-
-        <!-- Voice Management -->
-        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);grid-column:1/-1">
-          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">&#128266; Voice Engine Management</div>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px" id="admVoiceTags">
+        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">&#128266; Voice Management</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px" id="admVoiceTags">
             <span class="vtag loading" id="admVEN">&#8987; English</span>
             <span class="vtag loading" id="admVHI">&#8987; Hindi</span>
             <span class="vtag loading" id="admVAR">&#8987; Arabic</span>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <button class="adm-btn" onclick="forceLoadVoices();admRefreshVoiceStatus()" style="flex:1">&#8635; Force Load All Voices</button>
-            <button class="adm-btn" onclick="admTestAllVoices()" style="flex:1">&#128266; Test All Voices</button>
-            <button class="adm-btn" onclick="admListAllVoices()" style="flex:1">&#128203; List Installed Voices</button>
+          <div style="display:flex;gap:8px;flex-direction:column">
+            <button class="adm-btn" onclick="forceLoadVoices();admRefreshVoiceStatus()">&#8635; Force Load All Voices</button>
+            <button class="adm-btn" onclick="admTestAllVoices()">&#128266; Test All Voices</button>
+            <button class="adm-btn" onclick="admListAllVoices()">&#128203; List Installed Voices</button>
           </div>
         </div>
-
-        <!-- Diagnostics Output -->
         <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);grid-column:1/-1">
           <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--bg);display:flex;justify-content:space-between">
             <span>Output / Log</span>
@@ -363,118 +322,31 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
           <div id="admOut" style="font-family:monospace;font-size:11px;line-height:1.7;max-height:300px;overflow-y:auto;background:var(--bg);padding:10px;border-radius:6px;white-space:pre-wrap;color:#212529">Ready. Click any button above to run an admin action.
 </div>
         </div>
-
       </div>
-    </div><!-- /admin -->
-
+    </div>
   </div>
 </div>
-
-<div id="loader"><div class="spin"></div><p data-i18n="loading">Loading LFI data...</p></div>
+<div id="loader"><div class="spin"></div><p>Loading LFI data...</p></div>
 
 <script>
-// ============================================================
-// LFI CORE v5.1 — Control Ownership Review and Embedding
-// GitHub Pages edition — data via JSONP or google.script.run
-// ============================================================
-
-// ── API base URL (for JSONP / GitHub Pages mode) ─────────────
+// LFI CORE v5.2 — Control Ownership Review and Embedding
 var API_BASE='https://script.google.com/a/macros/altasnim.com/s/AKfycbzJo2bSVd5SxH74-a7FElfbPfQMoulItUB-XXcK83Ocn6utv3uO3pzccKNmlSxX1yWOjg/exec';
-
-// ── I18N ─────────────────────────────────────────────────────
-var I18N={
-  en:{sb_nav:'Dashboard',sb_overview:'Overview',sb_lfi:'LFI Register',btn_submit:'+ Submit New LFI',
-    pg_overview:'Overview Dashboard',pg_lfi:'LFI Register \u2014 Flashcards',
-    btn_refresh:'\u21BA Refresh Data',btn_refresh_sm:'\u21BA Refresh',btn_reset:'\u21BA Reset',
-    fil_from:'From Date',fil_to:'To Date',fil_cat:'Category',fil_div:'Division',fil_cluster:'Cluster',
-    fil_status:'Status',fil_disc:'Discipline',fil_search:'Search',
-    fil_all_cat:'All Categories',fil_all_div:'All Divisions',fil_all_cluster:'All Clusters',
-    fil_all_status:'All Statuses',fil_all_disc:'All Disciplines',
-    kpi_total:'Total LFIs',kpi_approved:'Approved',kpi_pending:'Pending',kpi_returned:'Returned',kpi_ppt:'PPTs Created',
-    ch_cat:'By Incident Category',ch_status:'Approval Status',ch_div:'By ATNM Division',ch_loc:'By Cluster / Location',ch_drill:'Click to drill down',
-    lfi_hint:'Click a card to expand. Use the Read Aloud button to listen.',
-    lfi_empty:'No records match the current filters.',lfi_load:'Click Refresh to load data.',
-    badge_appr:'Approved',badge_pend:'Pending',badge_ret:'Returned',
-    fc_ppt_ok:'PPT \u2713',fc_ppt_pend:'PPT Pending',fc_open_ppt:'Open PPT',
-    drill_by:'Filtered by:',drill_clear:'\u2715 Clear',loading:'Loading LFI data...',
-    not_translated:'Not yet translated',desc:'Description of Incident',
-    find:'Findings / Root Cause',learn:'Learnings from Incident',rec:'records'},
-  hi:{sb_nav:'\u0921\u0948\u0936\u092C\u094B\u0930\u094D\u0921',sb_overview:'\u0905\u0935\u0932\u094B\u0915\u0928',sb_lfi:'LFI \u0930\u091C\u093F\u0938\u094D\u091F\u0930',btn_submit:'+ \u0928\u092F\u093E LFI \u091C\u092E\u093E \u0915\u0930\u0947\u0902',
-    pg_overview:'\u0905\u0935\u0932\u094B\u0915\u0928 \u0921\u0948\u0936\u092C\u094B\u0930\u094D\u0921',pg_lfi:'LFI \u0930\u091C\u093F\u0938\u094D\u091F\u0930 \u2014 \u092B\u094D\u0932\u0948\u0936\u0915\u093E\u0930\u094D\u0921',
-    btn_refresh:'\u21BA \u0924\u093E\u091C\u093C\u093E \u0915\u0930\u0947\u0902',btn_refresh_sm:'\u21BA \u0924\u093E\u091C\u093C\u093E',btn_reset:'\u21BA \u0930\u0940\u0938\u0947\u091F',
-    fil_from:'\u0936\u0941\u0930\u0942 \u0924\u093F\u0925\u093F',fil_to:'\u0905\u0902\u0924 \u0924\u093F\u0925\u093F',fil_cat:'\u0936\u094D\u0930\u0947\u0923\u0940',fil_div:'\u0935\u093F\u092D\u093E\u0917',fil_cluster:'\u0915\u094D\u0932\u0938\u094D\u091F\u0930',
-    fil_status:'\u0938\u094D\u0925\u093F\u0924\u093F',fil_disc:'\u0905\u0928\u0941\u0936\u093E\u0938\u0928',fil_search:'\u0916\u094B\u091C',
-    fil_all_cat:'\u0938\u092D\u0940 \u0936\u094D\u0930\u0947\u0923\u093F\u092F\u093E\u0901',fil_all_div:'\u0938\u092D\u0940 \u0935\u093F\u092D\u093E\u0917',fil_all_cluster:'\u0938\u092D\u0940 \u0915\u094D\u0932\u0938\u094D\u091F\u0930',
-    fil_all_status:'\u0938\u092D\u0940 \u0938\u094D\u0925\u093F\u0924\u093F\u092F\u093E\u0901',fil_all_disc:'\u0938\u092D\u0940 \u0905\u0928\u0941\u0936\u093E\u0938\u0928',
-    kpi_total:'\u0915\u0941\u0932 LFIs',kpi_approved:'\u0905\u0928\u0941\u092E\u094B\u0926\u093F\u0924',kpi_pending:'\u0932\u0902\u092C\u093F\u0924',kpi_returned:'\u0935\u093E\u092A\u0938',kpi_ppt:'PPT \u092C\u0928\u093E\u090F',
-    ch_cat:'\u0918\u091F\u0928\u093E \u0936\u094D\u0930\u0947\u0923\u0940 \u0905\u0928\u0941\u0938\u093E\u0930',ch_status:'\u0905\u0928\u0941\u092E\u094B\u0926\u0928 \u0938\u094D\u0925\u093F\u0924\u093F',ch_div:'ATNM \u0935\u093F\u092D\u093E\u0917 \u0905\u0928\u0941\u0938\u093E\u0930',ch_loc:'\u0915\u094D\u0932\u0938\u094D\u091F\u0930 \u0905\u0928\u0941\u0938\u093E\u0930',ch_drill:'\u0921\u094D\u0930\u093F\u0932 \u0915\u0947 \u0932\u093F\u090F \u0915\u094D\u0932\u093F\u0915 \u0915\u0930\u0947\u0902',
-    lfi_hint:'\u0935\u093F\u0938\u094D\u0924\u093E\u0930 \u0915\u0947 \u0932\u093F\u090F \u0915\u094D\u0932\u093F\u0915 \u0915\u0930\u0947\u0902\u0964',lfi_empty:'\u0915\u094B\u0908 LFI \u0930\u093F\u0915\u0949\u0930\u094D\u0921 \u0928\u0939\u0940\u0902 \u092E\u093F\u0932\u093E\u0964',lfi_load:'\u0921\u0947\u091F\u093E \u0932\u094B\u0921 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093F\u090F \u0924\u093E\u091C\u093C\u093E \u0915\u0930\u0947\u0902\u0964',
-    badge_appr:'\u0905\u0928\u0941\u092E\u094B\u0926\u093F\u0924',badge_pend:'\u0932\u0902\u092C\u093F\u0924',badge_ret:'\u0935\u093E\u092A\u0938',
-    fc_ppt_ok:'PPT \u2713',fc_ppt_pend:'PPT \u0932\u0902\u092C\u093F\u0924',fc_open_ppt:'PPT \u0916\u094B\u0932\u0947\u0902',
-    drill_by:'\u092B\u093C\u093F\u0932\u094D\u091F\u0930:',drill_clear:'\u2715 \u0938\u093E\u092B',loading:'\u0921\u0947\u091F\u093E \u0932\u094B\u0921 \u0939\u094B \u0930\u0939\u093E \u0939\u0948...',
-    not_translated:'\u0905\u092D\u0940 \u0905\u0928\u0941\u0935\u093E\u062F \u0928\u0939\u0940\u0902 \u0939\u0941\u0906',
-    desc:'\u0918\u091F\u0928\u093E \u0915\u093E \u0935\u093F\u0935\u0930\u0923',find:'\u0928\u093F\u0937\u094D\u0915\u0930\u094D\u0937 / \u092E\u0942\u0932 \u0915\u093E\u0930\u0923',learn:'\u0907\u0938 \u0918\u091F\u0928\u093E \u0938\u0947 \u0938\u0940\u0916',rec:'\u0930\u093F\u0915\u0949\u0930\u094D\u0921'},
-  ar:{sb_nav:'\u0644\u0648\u062D\u0629 \u0627\u0644\u062A\u062D\u0643\u0645',sb_overview:'\u0646\u0638\u0631\u0629 \u0639\u0627\u0645\u0629',sb_lfi:'\u0633\u062C\u0644 LFI',btn_submit:'+ \u062A\u0642\u062F\u064A\u0645 LFI \u062C\u062F\u064A\u062F',
-    pg_overview:'\u0644\u0648\u062D\u0629 \u0627\u0644\u0645\u0631\u0627\u0642\u0628\u0629 \u0627\u0644\u0639\u0627\u0645\u0629',pg_lfi:'\u0633\u062C\u0644 LFI \u2014 \u0627\u0644\u0628\u0637\u0627\u0642\u0627\u062A',
-    btn_refresh:'\u21BA \u062A\u062D\u062F\u064A\u062B',btn_refresh_sm:'\u21BA \u062A\u062D\u062F\u064A\u062B',btn_reset:'\u21BA \u0625\u0639\u0627\u062F\u0629',
-    fil_from:'\u0645\u0646 \u062A\u0627\u0631\u064A\u062E',fil_to:'\u0625\u0644\u0649 \u062A\u0627\u0631\u064A\u062E',fil_cat:'\u0627\u0644\u0641\u0626\u0629',fil_div:'\u0627\u0644\u0642\u0633\u0645',fil_cluster:'\u0627\u0644\u0645\u062C\u0645\u0648\u0639\u0629',
-    fil_status:'\u0627\u0644\u062D\u0627\u0644\u0629',fil_disc:'\u0627\u0644\u062A\u062E\u0635\u0635',fil_search:'\u0628\u062D\u062B',
-    fil_all_cat:'\u062C\u0645\u064A\u0639 \u0627\u0644\u0641\u0626\u0627\u062A',fil_all_div:'\u062C\u0645\u064A\u0639 \u0627\u0644\u0623\u0642\u0633\u0627\u0645',fil_all_cluster:'\u062C\u0645\u064A\u0639 \u0627\u0644\u0645\u062C\u0645\u0648\u0639\u0627\u062A',
-    fil_all_status:'\u062C\u0645\u064A\u0639 \u0627\u0644\u062D\u0627\u0644\u0627\u062A',fil_all_disc:'\u062C\u0645\u064A\u0639 \u0627\u0644\u062A\u062E\u0635\u0635\u0627\u062A',
-    kpi_total:'\u0625\u062C\u0645\u0627\u0644\u064A LFIs',kpi_approved:'\u0645\u0639\u062A\u0645\u062F',kpi_pending:'\u0642\u064A\u062F \u0627\u0644\u0627\u0646\u062A\u0638\u0627\u0631',kpi_returned:'\u0645\u064F\u0639\u0627\u062F',kpi_ppt:'PPT \u0645\u0646\u0634\u0623',
-    ch_cat:'\u062D\u0633\u0628 \u0641\u0626\u0629 \u0627\u0644\u062D\u0627\u062F\u062B',ch_status:'\u062A\u0648\u0632\u064A\u0639 \u0627\u0644\u062D\u0627\u0644\u0629',ch_div:'\u062D\u0633\u0628 \u0642\u0633\u0645 ATNM',ch_loc:'\u062D\u0633\u0628 \u0627\u0644\u0645\u062C\u0645\u0648\u0639\u0629',ch_drill:'\u0627\u0646\u0642\u0631 \u0644\u0644\u062A\u0641\u0635\u064A\u0644',
-    lfi_hint:'\u0627\u0646\u0642\u0631 \u0644\u0644\u062A\u0648\u0633\u0639\u0629.',lfi_empty:'\u0644\u0627 \u062A\u0648\u062C\u062F \u0633\u062C\u0644\u0627\u062A.',lfi_load:'\u0627\u0646\u0642\u0631 \u062A\u062D\u062F\u064A\u062B \u0644\u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A.',
-    badge_appr:'\u0645\u0639\u062A\u0645\u062F',badge_pend:'\u0642\u064A\u062F \u0627\u0644\u0627\u0646\u062A\u0638\u0627\u0631',badge_ret:'\u0645\u064F\u0639\u0627\u062F',
-    fc_ppt_ok:'PPT \u2713',fc_ppt_pend:'PPT \u0645\u0639\u0644\u0642',fc_open_ppt:'\u0641\u062A\u062D PPT',
-    drill_by:'\u0645\u0641\u0644\u062A\u0631:',drill_clear:'\u2715 \u0645\u0633\u062D',loading:'\u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0645\u064A\u0644...',
-    not_translated:'\u0644\u0645 \u064A\u064F\u062A\u0631\u062C\u0645 \u0628\u0639\u062F',
-    desc:'\u0648\u0635\u0641 \u0627\u0644\u062D\u0627\u062F\u062B',find:'\u0627\u0644\u0646\u062A\u0627\u0626\u062C / \u0627\u0644\u0633\u0628\u0628',learn:'\u0627\u0644\u062F\u0631\u0648\u0633 \u0627\u0644\u0645\u0633\u062A\u0641\u0627\u062F\u0629',rec:'\u0633\u062C\u0644\u0627\u062A'}
-};
-
+var ADMIN_PWD_B64=btoa('ATNM@2026');
+var ADMIN_UNLOCKED=false,ADMIN_ATTEMPTS=0,ADMIN_MAX=3,ADMIN_LOCKED_UNTIL=0;
 var LANG='en',DRILL=null,RAW=null,CH={},CUR_PAGE='overview';
 var PAL=['#21409a','#f58220','#28a745','#dc3545','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#e83e8c'];
 var SPEAKING_BTN=null;
+// Voice state
+var VS={loading:true,ready:false,all:[],en:null,hi:null,ar:null,primed:false,polls:0,inIframe:(window.self!==window.top),gestureReceived:false};
 
-// ── ADMIN PASSWORD CONFIG ─────────────────────────────────
-// Password is stored as btoa (base64). To change the password:
-//   1. Open browser console
-//   2. Type: btoa("YourNewPassword")  
-//   3. Copy the result and paste it as ADMIN_PWD_B64 below
-// Default password: ATNM@2026
-var ADMIN_PWD_B64 = btoa("ATNM@2026");  // Change this to set your password
-var ADMIN_UNLOCKED = false;
-var ADMIN_ATTEMPTS = 0;
-var ADMIN_MAX_ATTEMPTS = 3;
-var ADMIN_LOCKED_UNTIL = 0;
-
-
-function t(k){return(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;}
-
-function translateUI(){
-  var dir=LANG==='ar'?'rtl':'ltr';
-  document.documentElement.setAttribute('dir',dir);
-  document.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.getAttribute('data-i18n'));});
-  document.getElementById('ptitle').textContent=t(CUR_PAGE==='lfi'?'pg_lfi':'pg_overview');
-  var fSt=document.getElementById('fSt');
-  if(fSt){fSt.options[0].textContent=t('fil_all_status');fSt.options[1].textContent=t('badge_appr');fSt.options[2].textContent=t('badge_pend');fSt.options[3].textContent=t('badge_ret');}
-  var mp={fCat:'fil_all_cat',fDiv:'fil_all_div',fLoc:'fil_all_cluster',fDisc:'fil_all_disc'};
-  Object.keys(mp).forEach(function(id){var el=document.getElementById(id);if(el&&el.options[0])el.options[0].textContent=t(mp[id]);});
-  if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
-}
-function setLang(lang,btn){
-  stopSpeech();
-  LANG=lang;
-  document.querySelectorAll('.lbt').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
-  translateUI();
-}
+// ── Utils ────────────────────────────────────────────────────
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function pct(v,n){return n>0?Math.round(v/n*100)+'%':'&#8212;';}
 function mkbadge(st){
-  if(st==='Reviewed & Approved')return'<span class="badge ba">'+t('badge_appr')+'</span>';
+  if(st==='Reviewed & Approved')return'<span class="badge ba">Approved</span>';
   if(st==='Historic Data Input')return'<span class="badge bh">Historic &#10003;</span>';
-  if(st==='Reviewed & Returned')return'<span class="badge br2">'+t('badge_ret')+'</span>';
-  return'<span class="badge bp">'+t('badge_pend')+'</span>';
+  if(st==='Reviewed & Returned')return'<span class="badge br2">Returned</span>';
+  return'<span class="badge bp">Pending</span>';
 }
 function pd(dt){if(!dt)return null;var m={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};var p=dt.split('-');if(p.length===3)return new Date(parseInt(p[2]),m[p[1]]||0,parseInt(p[0]));return new Date(dt);}
 function uniq(a){var s={},r=[];a.forEach(function(v){if(v&&!s[v]){s[v]=1;r.push(v);}});return r.sort();}
@@ -487,69 +359,42 @@ function toggleExp2(btn){document.getElementById('expMenu2').classList.toggle('o
 function closeAllExp(){document.getElementById('expMenu').classList.remove('open');var e2=document.getElementById('expMenu2');if(e2)e2.classList.remove('open');}
 document.addEventListener('click',function(e){if(!e.target.closest('.btn-exp'))closeAllExp();});
 
+// ── Navigation ───────────────────────────────────────────────
 function navTo(page,el){
   CUR_PAGE=page;
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   var pg=document.getElementById('page-'+page);if(pg)pg.classList.add('active');
   document.querySelectorAll('nav a:not([href])').forEach(function(a){a.classList.remove('active');});
   if(el&&!el.getAttribute('href'))el.classList.add('active');
-  var titles={overview:'pg_overview',lfi:'pg_lfi',admin:'Admin Controls'};
-  document.getElementById('ptitle').textContent=titles[page]?t(titles[page])||titles[page]:'Dashboard';
+  var T={overview:'Overview Dashboard',lfi:'LFI Register \u2014 Flashcards',admin:'Admin Controls'};
+  document.getElementById('ptitle').textContent=T[page]||'Dashboard';
   if(page==='lfi')renderFC();
   if(page==='admin'){
-    if(!ADMIN_UNLOCKED){
-      // Redirect back before showing modal
-      document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
-      admShowModal();
-      return false;
-    }
+    if(!ADMIN_UNLOCKED){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});admShowModal();return false;}
     _adminPageInit();
   }
-  // Lock admin when leaving the admin page
-  if(page!=='admin')admLockPanel();
+  if(page!=='admin')ADMIN_UNLOCKED=false;
   if(window.innerWidth<=700)document.getElementById('sb').classList.remove('open');
   return false;
 }
 
-// ── DATA FETCH: auto-detect context ──────────────────────────
-// Apps Script URL: uses google.script.run (no CORS)
-// GitHub Pages:    uses JSONP (requires altasnim.com sign-in)
+// ── Category Tab Filter ──────────────────────────────────────
+
+// ── Data fetch (auto-detect JSONP vs google.script.run) ──────
 function refresh(){
-  showL();
-  document.getElementById('errBanner').style.display='none';
-  document.getElementById('refBtn').classList.add('ld');
-  document.getElementById('lu').textContent='';
-  if(typeof google!=='undefined'&&google.script&&google.script.run){
-    _refreshGSR();
-  }else{
-    _refreshJSONP();
-  }
+  showL();document.getElementById('errBanner').style.display='none';
+  document.getElementById('refBtn').classList.add('ld');document.getElementById('lu').textContent='';
+  if(typeof google!=='undefined'&&google.script&&google.script.run){_refreshGSR();}else{_refreshJSONP();}
 }
 function _refreshGSR(){
-  var tid=setTimeout(function(){
-    hideL();document.getElementById('refBtn').classList.remove('ld');
-    showErr('Timeout (30s). Open the spreadsheet, run LFI Automation > SETUP: Run Full Setup, then redeploy and try again.');
-  },30000);
-  google.script.run
-    .withSuccessHandler(function(d){clearTimeout(tid);hideL();document.getElementById('refBtn').classList.remove('ld');if(d&&d.error){showErr('Server: '+d.error);return;}processData(d);})
-    .withFailureHandler(function(e){clearTimeout(tid);hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Server error: '+String(e));})
-    .getPublicDashData();
+  var tid=setTimeout(function(){hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Timeout (30s). Run runFullSetup() from the spreadsheet menu, redeploy, retry.');},30000);
+  google.script.run.withSuccessHandler(function(d){clearTimeout(tid);hideL();document.getElementById('refBtn').classList.remove('ld');if(d&&d.error){showErr('Server: '+d.error);return;}processData(d);}).withFailureHandler(function(e){clearTimeout(tid);hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Server error: '+String(e));}).getPublicDashData();
 }
 function _refreshJSONP(){
   var cb='_lfi'+Date.now(),script=document.createElement('script'),done=false;
-  var tid=setTimeout(function(){
-    if(done)return;done=true;delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);
-    hideL();document.getElementById('refBtn').classList.remove('ld');
-    showErr('Sign-in required (15s timeout).\n\nOpen this URL in this browser while signed into altasnim.com:\n'+API_BASE+'?action=api\n\nIf you see JSON data, click Refresh here.');
-    document.getElementById('lu').textContent='Sign-in required';
-  },15000);
-  window[cb]=function(d){
-    if(done)return;done=true;clearTimeout(tid);if(script.parentNode)script.parentNode.removeChild(script);delete window[cb];
-    hideL();document.getElementById('refBtn').classList.remove('ld');
-    if(d&&d.error){showErr('Server: '+d.error);return;}
-    processData(d);
-  };
-  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cb];hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Network error. Check connection and sign-in.');};
+  var tid=setTimeout(function(){if(done)return;done=true;delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Sign-in required (15s timeout).\n\nOpen this URL in this browser while signed into altasnim.com:\n'+API_BASE+'?action=api\n\nIf you see JSON data, click Refresh here.');document.getElementById('lu').textContent='Sign-in required';},15000);
+  window[cb]=function(d){if(done)return;done=true;clearTimeout(tid);if(script.parentNode)script.parentNode.removeChild(script);delete window[cb];hideL();document.getElementById('refBtn').classList.remove('ld');if(d&&d.error){showErr('Server: '+d.error);return;}processData(d);};
+  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cb];hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Network error loading data.');};
   script.src=API_BASE+'?action=api&callback='+cb;
   document.head.appendChild(script);
 }
@@ -558,24 +403,27 @@ function processData(d){
   document.getElementById('lu').textContent='Updated: '+(d.ts||'');
   initFilters();applyAll();
 }
+
+// ── Filters ──────────────────────────────────────────────────
 function initFilters(){
   if(!RAW)return;
-  fill('fCat',uniq(RAW.map(function(r){return r.cat;})));
   fill('fDiv',uniq(RAW.map(function(r){return r.div;})));
   fill('fLoc',uniq(RAW.map(function(r){return r.loc;})));
   fill('fDisc',uniq(RAW.map(function(r){return r.disc;})));
-  var mp={fCat:'fil_all_cat',fDiv:'fil_all_div',fLoc:'fil_all_cluster',fDisc:'fil_all_disc'};
-  Object.keys(mp).forEach(function(id){var el=document.getElementById(id);if(el&&el.options[0])el.options[0].textContent=t(mp[id]);});
 }
 function getF(){
   if(!RAW)return[];
   var rows=RAW;
-  if(DRILL){rows=rows.filter(function(r){if(DRILL.f==='ppt')return r.ppt===DRILL.v;if(DRILL.f==='st')return r.st===DRILL.v;return r[DRILL.f]===DRILL.v;});}
-  var cat=document.getElementById('fCat').value,div=document.getElementById('fDiv').value,
-      loc=document.getElementById('fLoc').value,st=document.getElementById('fSt').value,
-      disc=document.getElementById('fDisc').value,q=document.getElementById('fQ').value.toLowerCase().trim(),
+  if(DRILL){rows=rows.filter(function(r){
+    if(DRILL.f==='ppt')return r.ppt===DRILL.v;
+    if(DRILL.f==='st')return r.st===DRILL.v;
+    if(DRILL.f==='stGrp')return r.st==='Reviewed & Approved'||r.st==='Historic Data Input';
+    return r[DRILL.f]===DRILL.v;
+  });}
+  var div=document.getElementById('fDiv').value,loc=document.getElementById('fLoc').value,
+      st=document.getElementById('fSt').value,disc=document.getElementById('fDisc').value,
+      q=document.getElementById('fQ').value.toLowerCase().trim(),
       from=document.getElementById('fFrom').value,to=document.getElementById('fTo').value;
-  if(cat)rows=rows.filter(function(r){return r.cat===cat;});
   if(div)rows=rows.filter(function(r){return r.div===div;});
   if(loc)rows=rows.filter(function(r){return r.loc===loc;});
   if(st)rows=rows.filter(function(r){return r.st===st;});
@@ -585,18 +433,25 @@ function getF(){
   if(q)rows=rows.filter(function(r){return[r.id,r.cat,r.div,r.loc,r.by,r.disc,r.st,r.descEN,r.descHI,r.descAR].join(' ').toLowerCase().indexOf(q)!==-1;});
   return rows;
 }
-function resetF(){['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});['fCat','fDiv','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});clearDrill();}
+function resetF(){['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});['fDiv','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});clearDrill();}
 function drillDown(f,v){
   DRILL={f:f,v:v};document.getElementById('drillBar').classList.add('vis');
-  var label=f==='st'?(v==='Reviewed & Approved'?t('badge_appr'):v==='Reviewed & Returned'?t('badge_ret'):t('badge_pend')):f==='ppt'?t('kpi_ppt'):String(v);
-  document.getElementById('drillInfo').textContent=label;applyAll();
+  var label=f==='stGrp'?'Approved (all)':f==='ppt'?'PPTs Created':String(v);
+  document.getElementById('drillInfo').textContent=label;
+  applyAll();
 }
-function clearDrill(){DRILL=null;document.getElementById('drillBar').classList.remove('vis');applyAll();}
+function clearDrill(){
+  DRILL=null;document.getElementById('drillBar').classList.remove('vis');
+  applyAll();
+}
 function applyAll(){
-  var rows=getF();document.getElementById('frc').textContent=rows.length+' '+t('rec');
+  var rows=getF();
+  document.getElementById('frc').textContent=rows.length+' records';
   updateKPI(rows);try{renderCharts(rows);}catch(e){}
   if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
 }
+
+// ── KPI ──────────────────────────────────────────────────────
 function updateKPI(rows){
   var n=rows.length,
       a=rows.filter(function(r){return r.st==='Reviewed & Approved'||r.st==='Historic Data Input';}).length,
@@ -606,15 +461,15 @@ function updateKPI(rows){
   var vs=[n,a,p,re,pp];
   for(var i=0;i<5;i++){document.getElementById('k'+i).textContent=vs[i];document.getElementById('kp'+i).textContent=i>0&&n>0?pct(vs[i],n):'';}
 }
+
+// ── Charts ───────────────────────────────────────────────────
 function cntBy(rows,k){var c={};rows.forEach(function(r){var v=r[k]||'?';c[v]=(c[v]||0)+1;});return c;}
 function mkChart(id,type,labels,data,colors,horiz,fn){
   if(CH[id])CH[id].destroy();var ctx=document.getElementById(id);if(!ctx)return;
-  CH[id]=new Chart(ctx.getContext('2d'),{
-    type:type,data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:1,borderColor:'#fff',hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:horiz?'top':'right',labels:{font:{size:11},boxWidth:12,padding:8}}},
-      indexAxis:horiz?'y':'x',scales:horiz?{x:{beginAtZero:true,ticks:{font:{size:11}}},y:{ticks:{font:{size:11}}}}:{},
-      onClick:function(e,els){if(fn&&els.length)fn(labels[els[0].index]);}}});
+  CH[id]=new Chart(ctx.getContext('2d'),{type:type,data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:1,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:horiz?'top':'right',labels:{font:{size:11},boxWidth:12,padding:8}}},
+    indexAxis:horiz?'y':'x',scales:horiz?{x:{beginAtZero:true,ticks:{font:{size:11}}},y:{ticks:{font:{size:11}}}}:{},
+    onClick:function(e,els){if(fn&&els.length)fn(labels[els[0].index]);}}});
 }
 function renderCharts(rows){
   var cc=cntBy(rows,'cat');var ck=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a];});
@@ -623,22 +478,33 @@ function renderCharts(rows){
       ah=rows.filter(function(r){return r.st==='Historic Data Input';}).length,
       p=rows.filter(function(r){return r.st==='Pending Approval';}).length,
       re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length;
-  mkChart('cSt','doughnut',[t('badge_appr'),'Historic',t('badge_pend'),t('badge_ret')],[a,ah,p,re],['#28a745','#5cb85c','#ffc107','#dc3545'],false,
-    function(v){var m={};m[t('badge_appr')]='Reviewed & Approved';m['Historic']='Historic Data Input';m[t('badge_pend')]='Pending Approval';m[t('badge_ret')]='Reviewed & Returned';if(m[v])drillDown('st',m[v]);});
+  mkChart('cSt','doughnut',['Approved','Historic','Pending','Returned'],[a,ah,p,re],['#28a745','#5cb85c','#ffc107','#dc3545'],false,
+    function(v){var m={Approved:'Reviewed & Approved',Historic:'Historic Data Input',Pending:'Pending Approval',Returned:'Reviewed & Returned'};if(m[v])drillDown('st',m[v]);});
   var dc=cntBy(rows,'div');var dk=Object.keys(dc).sort(function(a,b){return dc[b]-dc[a];});
   mkChart('cDiv','bar',dk,dk.map(function(k){return dc[k];}),dk.map(function(_,i){return PAL[i%PAL.length];}),true,function(v){drillDown('div',v);});
   var lc=cntBy(rows,'loc');var lk=Object.keys(lc).sort(function(a,b){return lc[b]-lc[a];});
   mkChart('cLoc','bar',lk,lk.map(function(k){return lc[k];}),lk.map(function(_,i){return PAL[(i+3)%PAL.length];}),true,function(v){drillDown('loc',v);});
 }
-function gc(r,lang){return{desc:lang==='ar'?r.descAR:(lang==='hi'?r.descHI:r.descEN),find:lang==='ar'?r.findAR:(lang==='hi'?r.findHI:r.findEN),learn:lang==='ar'?r.learnAR:(lang==='hi'?r.learnHI:r.learnEN)};}
 
-// ── FLASHCARD RENDER ──────────────────────────────────────────
+// ── Flashcards ───────────────────────────────────────────────
+function gc(r,lang){return{desc:lang==='ar'?r.descAR:(lang==='hi'?r.descHI:r.descEN),find:lang==='ar'?r.findAR:(lang==='hi'?r.findHI:r.findEN),learn:lang==='ar'?r.learnAR:(lang==='hi'?r.learnHI:r.learnEN)};}
+function _spkLabel(lang,key){
+  var L={read:{en:'&#128266; Read Aloud',hi:'&#128266; &#2346;&#2397;&#2375;&#2306;',ar:'&#128266; &#1602;&#1585;&#1575;&#1569;&#1577;'},stop:{en:'&#9209; Stop',hi:'&#9209; &#2352;&#2379;&#2325;&#2375;&#2306;',ar:'&#9209; &#1573;&#1610;&#1602;&#1575;&#1601;'}};
+  return L[key][lang]||L[key].en;
+}
+
 function renderFC(){
   var rows=getF();var grid=document.getElementById('fcGrid');if(!grid)return;
-  if(!RAW){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>'+t('lfi_load')+'</p></div>';return;}
-  if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>'+t('lfi_empty')+'</p></div>';return;}
+  if(!RAW){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>Click Refresh to load data.</p></div>';return;}
+  if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>No LFI records match the current filters.</p></div>';return;}
+  // Sort by incident date: newest first
+  var sorted=rows.slice().sort(function(a,b){
+    var da=a.dateObj?a.dateObj.getTime():0;
+    var db=b.dateObj?b.dateObj.getTime():0;
+    return db-da;
+  });
   var html='';
-  rows.slice().reverse().forEach(function(r){
+  sorted.forEach(function(r){
     var lang=LANG,c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
     var enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');
     html+='<div class="fc">'+
@@ -655,769 +521,276 @@ function renderFC(){
           '<button class="spk" onclick="speakCard(this)">'+_spkLabel(lang,'read')+'</button>'+
         '</div>'+
         '<div class="fcc'+(dir==='rtl'?' rtl':'')+'" data-row=\''+enc+'\' data-lang="'+lang+'">'+
-          '<div class="fcs"><label>'+t('desc')+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
-          '<div class="fcs"><label>'+t('find')+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
-          '<div class="fcs"><label>'+t('learn')+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
+          '<div class="fcs"><label>Description of Incident</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
+          '<div class="fcs"><label>Findings / Root Cause</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
+          '<div class="fcs"><label>Learnings from Incident</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
         '</div>'+
         '<div class="fps"><span class="fp">'+esc(r.div)+'</span><span class="fp">'+esc(r.by)+'</span>'+
-          (r.ppt?'<span class="fp ok">'+t('fc_ppt_ok')+'</span>':'<span class="fp pnd">'+t('fc_ppt_pend')+'</span>')+
+          (r.ppt?'<span class="fp ok">PPT &#10003;</span>':'<span class="fp pnd">PPT Pending</span>')+
         '</div>'+
-        (r.pptLink?'<div class="fpl"><a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">'+t('fc_open_ppt')+'</a></div>':'')+
+        (r.pptLink?'<div class="fpl"><a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">&#128218; Open PPT</a></div>':'')+
       '</div></div>';
   });
   grid.innerHTML=html;
 }
-
-// Card-level labels — always in the card's own language, not global UI lang
-function _spkLabel(lang,key){
-  var L={
-    read:{en:'&#128266; Read Aloud',hi:'&#128266; &#2346;&#2397;&#2375;&#2306;',ar:'&#128266; &#1602;&#1585;&#1575;&#1569;&#1577;'},
-    stop:{en:'&#9209; Stop',hi:'&#9209; &#2352;&#2379;&#2325;&#2375;&#2306;',ar:'&#9209; &#1573;&#1610;&#1602;&#1575;&#1601;'}
-  };
-  return L[key][lang]||L[key].en;
-}
-
 function sclang(btn,lang){
   stopSpeech();
   var card=btn.closest('.fc'),cont=card.querySelector('.fcc');
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
   var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
   cont.className='fcc'+(dir==='rtl'?' rtl':'');cont.dataset.lang=lang;
-  cont.innerHTML='<div class="fcs"><label>'+t('desc')+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
-    '<div class="fcs"><label>'+t('find')+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>'+
-    '<div class="fcs"><label>'+t('learn')+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">'+t('not_translated')+'</em>')+'</p></div>';
+  cont.innerHTML='<div class="fcs"><label>Description of Incident</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
+    '<div class="fcs"><label>Findings / Root Cause</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
+    '<div class="fcs"><label>Learnings from Incident</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>';
   card.querySelectorAll('.lb').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   var spk=card.querySelector('.spk');
   if(spk){spk.innerHTML=_spkLabel(lang,'read');spk.classList.remove('playing');}
 }
 
-// ── SPEECH ENGINE ───────────────────────────────────────────────────────
-// Plays English as fallback when Hindi/Arabic voices not installed.
-// No blocking alerts. Toast notification only. Stop button always shows.
-
-// ── VOICE PRELOAD SYSTEM ─────────────────────────────────────
-// Chrome includes Google cloud voices (300+ languages).
-// They load ASYNCHRONOUSLY after page load via onvoiceschanged.
-// Strategy: (a) call getVoices() immediately + on every change,
-//           (b) prime cloud voices with silent utterances so
-//               Chrome fetches the language packages from cloud,
-//           (c) poll until list is stable,
-//           (d) show live status bar in LFI Register screen.
-
-var VS = {
-  loading: true,  ready: false,
-  all:     [],
-  en: null, hi: null, ar: null,
-  primed: false, polls: 0,
-  inIframe: (window.self !== window.top),  // true when embedded in Google Sites
-  gestureReceived: false
-};
-
+// ── Voice Preload System ─────────────────────────────────────
 function initVoices(){
-  if(!window.speechSynthesis){ _vsUI("not-supported"); return; }
-
-  window.speechSynthesis.onvoiceschanged = function(){ _vsUpdate(); _vsUI(); };
+  if(!window.speechSynthesis){_vsUI('not-supported');return;}
+  window.speechSynthesis.onvoiceschanged=function(){_vsUpdate();_vsUI();};
   _vsUpdate();
-
   if(VS.inIframe){
-    // ── IFRAME MODE (Google Sites embed) ─────────────────
-    // Chrome blocks speechSynthesis.speak() in iframes until
-    // a user gesture has occurred on this frame.
-    // We register a one-time click/touch handler to prime voices
-    // the moment the user first interacts with the page.
-    _vsUI("iframe-waiting");
-    var _onGesture = function(){
-      if(VS.gestureReceived) return;
-      VS.gestureReceived = true;
-      document.removeEventListener("click",   _onGesture);
-      document.removeEventListener("touchend", _onGesture);
-      document.removeEventListener("keydown",  _onGesture);
-      _primeAll();
-      _vsPoll();
+    _vsUI('iframe-waiting');
+    var _og=function(){
+      if(VS.gestureReceived)return;
+      VS.gestureReceived=true;
+      document.removeEventListener('click',_og);
+      document.removeEventListener('touchend',_og);
+      _primeAll();_vsPoll();
     };
-    document.addEventListener("click",    _onGesture);
-    document.addEventListener("touchend", _onGesture);
-    document.addEventListener("keydown",  _onGesture);
-    // Also poll in case voices appear without priming (local voices)
+    document.addEventListener('click',_og);document.addEventListener('touchend',_og);
     _vsPoll();
-  } else {
-    // ── DIRECT MODE (GitHub Pages opened directly) ────────
-    // No iframe restriction — prime immediately
-    _vsUI();
-    setTimeout(_primeAll, 300);
-    _vsPoll();
+  }else{
+    _vsUI();setTimeout(_primeAll,300);_vsPoll();
   }
 }
-
-// Silent utterance primer — triggers Chrome to fetch cloud voice
-function _primeLang(langCode, delay){
+function _primeLang(langCode,delay){
   setTimeout(function(){
-    if(!window.speechSynthesis) return;
-    try{
-      var u = new SpeechSynthesisUtterance(".");
-      u.lang = langCode; u.volume = 0; u.rate = 10;
-      u.onerror = function(){};
-      u.onend   = function(){ _vsUpdate(); _vsUI(); };
-      window.speechSynthesis.speak(u);
-      setTimeout(function(){ try{window.speechSynthesis.cancel();}catch(e){} }, 150);
-    }catch(e){}
-  }, delay);
+    if(!window.speechSynthesis)return;
+    try{var u=new SpeechSynthesisUtterance('.');u.lang=langCode;u.volume=0;u.rate=10;u.onerror=function(){};u.onend=function(){_vsUpdate();_vsUI();};window.speechSynthesis.speak(u);setTimeout(function(){try{window.speechSynthesis.cancel();}catch(e){}},150);}catch(e){}
+  },delay);
 }
-
 function _primeAll(){
-  if(VS.primed) return;
-  VS.primed = true;
-  _primeLang("en-US",    0); _primeLang("hi-IN",  500); _primeLang("ar-SA", 1000);
-  _primeLang("en-US", 2000); _primeLang("hi-IN", 2500); _primeLang("ar-SA", 3000);
+  if(VS.primed)return;VS.primed=true;
+  _primeLang('en-US',0);_primeLang('hi-IN',500);_primeLang('ar-SA',1000);
+  _primeLang('en-US',2000);_primeLang('hi-IN',2500);_primeLang('ar-SA',3000);
 }
-
-// Force Load button handler — user gesture ensures Chrome allows speech
-// This is the PRIMARY fix for Google Sites iframe context.
 function forceLoadVoices(){
-  VS.primed = false; VS.loading = true; VS.polls = 0;
-  VS.gestureReceived = true; // user clicked = gesture registered
-  _vsUI("forcing");
-  try{ window.speechSynthesis.cancel(); }catch(e){}
-  // Aggressive multi-pass: 6 rounds × 3 languages = 18 priming calls
-  // Arabic gets extra passes with alternate locale codes
+  VS.primed=false;VS.loading=true;VS.polls=0;VS.gestureReceived=true;
+  _vsUI('forcing');try{window.speechSynthesis.cancel();}catch(e){}
   [0,500,1100,1800,2600,3500].forEach(function(d){
-    _primeLang("en-US", d);
-    _primeLang("hi-IN", d+200);
-    _primeLang("ar-SA", d+400);  // Saudi Arabic (most common)
-    _primeLang("ar-EG", d+600);  // Egyptian Arabic (fallback)
-    _primeLang("ar",    d+800);  // Generic Arabic (fallback)
+    _primeLang('en-US',d);_primeLang('hi-IN',d+200);
+    _primeLang('ar-SA',d+400);_primeLang('ar-EG',d+600);_primeLang('ar',d+800);
   });
   _vsPoll();
-  if(typeof admLog === "function") admLog("Voice force-load triggered (iframe="+VS.inIframe+"). Priming EN/HI/AR...");
+  if(typeof admLog==='function')admLog('Voice force-load triggered (iframe='+VS.inIframe+'). Priming EN/HI/AR...');
 }
-
-// Poll until voice list is stable
-function _vsPoll(){
-  VS.polls++;
-  if(VS.polls > 40) return;
-  setTimeout(function(){
-    var prev = VS.all.length;
-    _vsUpdate(); _vsUI();
-    if(VS.loading || VS.all.length !== prev) _vsPoll();
-  }, 500);
+function _vsPoll(){VS.polls++;if(VS.polls>40)return;setTimeout(function(){var prev=VS.all.length;_vsUpdate();_vsUI();if(VS.loading||VS.all.length!==prev)_vsPoll();},500);}
+function _vsUpdate(){var voices=window.speechSynthesis.getVoices();VS.all=voices;VS.en=_vFind('en',voices);VS.hi=_vFind('hi',voices);VS.ar=_vFind('ar',voices);if(voices.length>0){VS.loading=false;VS.ready=true;}}
+function _vFind(lang,voices){
+  voices=voices||VS.all;if(!voices.length)return null;
+  var exact=lang==='ar'?'ar-SA':lang==='hi'?'hi-IN':'en-US';var pfx=lang+'-';
+  var arCodes=['ar-SA','ar-EG','ar-AE','ar-KW','ar-QA','ar-BH','ar-OM','ar-001','ar'];
+  var cloud=voices.filter(function(v){var ln=v.lang.toLowerCase();var match=v.lang===exact||ln===lang||ln.startsWith(pfx);var isCloud=v.name.indexOf('Google')!==-1||v.name.indexOf('Microsoft')!==-1;return match&&isCloud;});
+  if(cloud.length)return cloud[0];
+  if(lang==='ar'){for(var ai=0;ai<arCodes.length;ai++){var av=voices.find(function(v){return v.lang===arCodes[ai];});if(av)return av;}}
+  return voices.find(function(v){return v.lang===exact;})||voices.find(function(v){return v.lang.toLowerCase()===lang;})||voices.find(function(v){return v.lang.toLowerCase().startsWith(pfx);})||null;
 }
-
-function _vsUpdate(){
-  var voices = window.speechSynthesis.getVoices();
-  VS.all = voices;
-  VS.en  = _vFind("en", voices);
-  VS.hi  = _vFind("hi", voices);
-  VS.ar  = _vFind("ar", voices);
-  if(voices.length > 0){ VS.loading = false; VS.ready = true; }
-}
-
-// Prefer Google/Microsoft cloud voices, then any local match
-// Checks ar-SA, ar-EG, ar-001, "ar" + cloud-first priority
-function _vFind(lang, voices){
-  voices = voices || VS.all;
-  if(!voices.length) return null;
-  var exact = lang==="ar"?"ar-SA":lang==="hi"?"hi-IN":"en-US";
-  var pfx   = lang + "-";
-  // Cloud voices first (Google / Microsoft online TTS)
-  var cloud = voices.filter(function(v){
-    var ln = v.lang.toLowerCase();
-    var match = v.lang===exact || ln===lang || ln.startsWith(pfx);
-    var isCloud = v.name.indexOf("Google")!==-1||v.name.indexOf("Microsoft")!==-1;
-    return match && isCloud;
-  });
-  if(cloud.length) return cloud[0];
-  // Local OS voices
-  return voices.find(function(v){return v.lang===exact;})||
-         voices.find(function(v){return v.lang.toLowerCase()===lang;})||
-         voices.find(function(v){return v.lang.toLowerCase().startsWith(pfx);})||null;
-}
-
-// Backward compat
-function _getVoice(lang){ return _vFind(lang); }
-
-// Update voice status bar in LFI Register page
+function _getVoice(lang){return _vFind(lang);}
 function _vsUI(state){
-  function setTag(id, voice, label){
-    var el = document.getElementById(id);
-    if(!el) return;
-    if(VS.loading && !voice){ el.className="vtag loading"; el.innerHTML="⌛ "+label; }
-    else if(voice){ el.className="vtag ok"; el.title=voice.name; el.innerHTML="✅ "+label; }
-    else{ el.className="vtag fail"; el.innerHTML="❌ "+label; }
+  function setTag(id,voice,label){
+    var el=document.getElementById(id);if(!el)return;
+    if(VS.loading&&!voice){el.className='vtag loading';el.innerHTML='&#8987; '+label;}
+    else if(voice){el.className='vtag ok';el.title=voice.name;el.innerHTML='&#10003; '+label;}
+    else{el.className='vtag muted';el.title='Not installed — English audio plays as fallback. Click for setup guide.';el.innerHTML='&#128263; '+label;el.style.cursor='pointer';el.onclick=function(){showVoiceGuide(label);};}
   }
-  setTag("vtEN", VS.en, "EN");
-  setTag("vtHI", VS.hi, "हि");
-  setTag("vtAR", VS.ar, "ع");
-
-  var progress = (VS.en?33:0)+(VS.hi?34:0)+(VS.ar?33:0);
-  var fill = document.getElementById("vloadFill");
-  if(fill) fill.style.width = progress + "%";
-
-  var msg = document.getElementById("vStatusMsg");
+  setTag('vtEN',VS.en,'EN');setTag('vtHI',VS.hi,'&#2361;&#2367;');setTag('vtAR',VS.ar,'&#1593;');
+  var progress=(VS.en?33:0)+(VS.hi?34:0)+(VS.ar?33:0);
+  var fill=document.getElementById('vloadFill');if(fill)fill.style.width=progress+'%';
+  var msg=document.getElementById('vStatusMsg');
   if(msg){
-    if(state==="iframe-waiting"){
-      // Google Sites embed: need user gesture before priming
-      msg.innerHTML="⚠️ Embedded mode detected. "+
-        "<strong>Click the 'Force Load Voices' button</strong> to activate Arabic &amp; Hindi audio.";
-      msg.style.color="var(--or)";
-    }else if(state==="forcing"){
-      msg.textContent="Force-loading cloud voices... please wait (5–10s).";
-      msg.style.color="var(--or)";
-    }else if(state==="not-supported"){
-      msg.textContent="Speech synthesis not supported in this browser.";
-      msg.style.color="var(--rd)";
-    }else if(VS.loading && VS.inIframe && !VS.gestureReceived){
-      msg.innerHTML="⚠️ Embedded in Google Sites. "+
-        "Click <strong>Force Load Voices</strong> to activate Arabic &amp; Hindi.";
-      msg.style.color="var(--or)";
-    }else if(VS.loading){
-      msg.textContent="Loading cloud voices ("+VS.all.length+" found so far)...";
-      msg.style.color="var(--muted)";
-    }else if(VS.en && VS.hi && VS.ar){
-      msg.textContent="✓ All 3 voices ready — EN, Hindi, Arabic";
-      msg.style.color="#28a745";
-    }else{
-      var miss=[];
-      if(!VS.hi) miss.push("Hindi");
-      if(!VS.ar) miss.push("Arabic");
-      var iframeHint=VS.inIframe?" (Tip: click Force Load Voices first when embedded in Google Sites)":"";
-      msg.textContent=(miss.join(" & "))+" voice not found. Click Force Load."+iframeHint;
-      msg.style.color="#856404";
+    if(state==='iframe-waiting'){msg.innerHTML='&#9888;&#65039; Embedded mode. Click <strong>Force Load Voices</strong> to activate Arabic &amp; Hindi audio.';msg.style.color='var(--or)';}
+    else if(state==='forcing'){msg.textContent='Force-loading cloud voices... please wait (5\u201310s).';msg.style.color='var(--or)';}
+    else if(state==='not-supported'){msg.textContent='Speech synthesis not supported in this browser.';msg.style.color='var(--rd)';}
+    else if(VS.loading&&VS.inIframe&&!VS.gestureReceived){msg.innerHTML='&#9888;&#65039; Embedded in Google Sites. Click <strong>Force Load Voices</strong> to activate Arabic &amp; Hindi.';msg.style.color='var(--or)';}
+    else if(VS.loading){msg.textContent='Loading cloud voices ('+VS.all.length+' found)...';msg.style.color='var(--muted)';}
+    else if(VS.en&&VS.hi&&VS.ar){msg.textContent='\u2713 All 3 voices ready \u2014 EN, Hindi, Arabic';msg.style.color='#28a745';}
+    else{
+      var miss=[];if(!VS.hi)miss.push('Hindi');if(!VS.ar)miss.push('Arabic');
+      msg.innerHTML=(miss.join(' &amp; '))+
+        ' <span style="font-weight:400">(&#128263; muted — English audio plays as fallback)</span>. '+
+        '<a href="#" onclick="showVoiceGuide(null);return false;" style="color:var(--bl);font-size:10px">Setup guide</a>';
+      msg.style.color='var(--muted)';
     }
   }
-  if(typeof admRefreshVoiceStatus==="function") admRefreshVoiceStatus();
+  if(typeof admRefreshVoiceStatus==='function')admRefreshVoiceStatus();
+}
+// Show voice installation guide based on language
+function showVoiceGuide(lang){
+  var langName=lang==='&#1593;'||lang==='ar'||lang===null?'Arabic':'Hindi';
+  var both=lang===null;
+  var msg=
+    'HOW TO INSTALL '+(both?'ARABIC & HINDI':'langName.toUpperCase())+' VOICE\n'+
+    '(One-time setup — 5 minutes)\n\n'+
+    'WINDOWS 10/11:\n'+
+    '  1. Press Win + I → Time & Language → Language & Region\n'+
+    '  2. Click [Add a language]\n'+
+    (both?'  3. Search and add: Arabic (Saudi Arabia)\n  4. Search and add: Hindi\n':'  3. Search and add: '+(langName==='Arabic'?'Arabic (Saudi Arabia)':'Hindi')+'\n')+
+    '  5. Check ☑ Text-to-speech during install\n'+
+    '  6. Restart Chrome\n'+
+    '  7. Click Force Load Voices on the LFI dashboard\n\n'+
+    'ANDROID:\n'+
+    '  Settings → General Management → Language\n'+
+    '  → Text-to-Speech → Google TTS → Install voice data\n'+
+    '  → '+(both?'Arabic + Hindi':'langName')+'\n\n'+
+    'ALTERNATIVE (no install needed):\n'+
+    '  English audio plays automatically as fallback.\n'+
+    '  All content is readable in all 3 languages — audio in English.';
+  alert(msg);
 }
 
-// Admin: refresh voice tags
 function admRefreshVoiceStatus(){
-  function setAdmTag(id,voice,label){
-    var el=document.getElementById(id);
-    if(!el)return;
-    if(voice){ el.className="vtag ok"; el.innerHTML="✅ "+label+": "+voice.name.substring(0,30); }
-    else if(VS.loading){ el.className="vtag loading"; el.innerHTML="⌛ Loading "+label+"..."; }
-    else{ el.className="vtag fail"; el.innerHTML="❌ "+label+": Not found"; }
-  }
-  setAdmTag("admVEN",VS.en,"English");
-  setAdmTag("admVHI",VS.hi,"Hindi");
-  setAdmTag("admVAR",VS.ar,"Arabic");
+  function setAdmTag(id,voice,label){var el=document.getElementById(id);if(!el)return;if(voice){el.className='vtag ok';el.innerHTML='&#10003; '+label+': '+voice.name.substring(0,30);}else if(VS.loading){el.className='vtag loading';el.innerHTML='&#8987; Loading '+label+'...';}else{el.className='vtag muted';el.innerHTML='&#128263; '+label+' (EN fallback)';}}
+  setAdmTag('admVEN',VS.en,'English');setAdmTag('admVHI',VS.hi,'Hindi');setAdmTag('admVAR',VS.ar,'Arabic');
 }
 
-// Admin: test all voices with spoken sample
-function admTestAllVoices(){
-  _vsUpdate();
-  admLog("=== Voice Test ===");
-  admLog("Total voices: "+VS.all.length);
-  admLog("EN: "+(VS.en?VS.en.name+" ["+VS.en.lang+"]":"NOT FOUND"));
-  admLog("HI: "+(VS.hi?VS.hi.name+" ["+VS.hi.lang+"]":"NOT FOUND"));
-  admLog("AR: "+(VS.ar?VS.ar.name+" ["+VS.ar.lang+"]":"NOT FOUND"));
-  if(VS.en){
-    admLog("Playing EN → HI → AR test phrases...");
-    var u=new SpeechSynthesisUtterance("ATNM LFI Core audio test");
-    u.voice=VS.en; u.lang="en-US"; u.rate=1;
-    u.onend=function(){
-      if(VS.hi){
-        var u2=new SpeechSynthesisUtterance("नमस्ते");
-        u2.voice=VS.hi; u2.lang="hi-IN"; u2.rate=0.9;
-        u2.onend=function(){
-          if(VS.ar){
-            var u3=new SpeechSynthesisUtterance("مرحبا");
-            u3.voice=VS.ar; u3.lang="ar-SA"; u3.rate=0.9;
-            u3.onend=function(){ admLog("Voice test complete."); };
-            window.speechSynthesis.speak(u3);
-          }
-        };
-        window.speechSynthesis.speak(u2);
-      }
-    };
-    window.speechSynthesis.speak(u);
-  }else{
-    admLog("No voices. Click Force Load Voices first.");
-  }
-}
-
-// Admin: list all installed voices
-function admListAllVoices(){
-  _vsUpdate();
-  admLog("=== All Voices ("+VS.all.length+") ===");
-  VS.all.forEach(function(v,i){
-    admLog((i+1)+". "+v.name+" ["+v.lang+"] "+(v.localService?"local":"cloud")+(v.default?" (DEFAULT)":""));
-  });
-  if(!VS.all.length) admLog("None found. Click Force Load Voices.");
-}
-
-// Stop any speech + reset button
+// ── Speech Play/Stop ─────────────────────────────────────────
 function stopSpeech(){
-  if(window.speechSynthesis) window.speechSynthesis.cancel();
-  if(SPEAKING_BTN){
-    var cl=SPEAKING_BTN._spkLang||"en";
-    SPEAKING_BTN.innerHTML=_spkLabel(cl,"read");
-    SPEAKING_BTN.classList.remove("playing");
-    SPEAKING_BTN=null;
-  }
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  if(SPEAKING_BTN){var cl=SPEAKING_BTN._spkLang||'en';SPEAKING_BTN.innerHTML=_spkLabel(cl,'read');SPEAKING_BTN.classList.remove('playing');SPEAKING_BTN=null;}
 }
-
-// speakCard: uses preloaded VS.en/hi/ar — no detection delay at click time
 function speakCard(btn){
-  if(SPEAKING_BTN===btn){ stopSpeech(); return; }
+  if(SPEAKING_BTN===btn){stopSpeech();return;}
   stopSpeech();
-  var card=btn.closest(".fc"), cont=card.querySelector(".fcc");
-  var cardLang=cont.dataset.lang||"en";
-  var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,"<").replace(/&#39;/g,"'"));
-  if(!window.speechSynthesis) return;
-
-  // Use preloaded voice — instant, no detection latency
-  var voice  = cardLang==="hi"?VS.hi:cardLang==="ar"?VS.ar:VS.en;
-  var spkLng = cardLang;
-  if(cardLang!=="en" && !voice){ spkLng="en"; voice=VS.en; } // silent English fallback
-
-  var c    = gc(r, spkLng);
-  var text = [c.desc,c.find,c.learn].filter(function(s){return s&&s.trim();}).join(". ");
-  if(!text){
-    var ce=gc(r,"en");
-    text=[ce.desc,ce.find,ce.learn].filter(function(s){return s&&s.trim();}).join(". ");
-    spkLng="en"; voice=VS.en;
-  }
-  if(!text) return;
-
-  btn._spkLang=cardLang; SPEAKING_BTN=btn;
-  btn.innerHTML=_spkLabel(cardLang,"stop");
-  btn.classList.add("playing");
-
-  var u=new SpeechSynthesisUtterance(text);
-  u.lang  = spkLng==="ar"?"ar-SA":spkLng==="hi"?"hi-IN":"en-US";
-  u.rate  = 0.85;
-  if(voice) u.voice=voice;
-
-  function resetBtn(){
-    if(SPEAKING_BTN===btn){
-      btn.innerHTML=_spkLabel(cardLang,"read");
-      btn.classList.remove("playing");
-      SPEAKING_BTN=null;
-    }
-  }
-  u.onend=resetBtn; u.onerror=resetBtn;
-  window.speechSynthesis.speak(u);
+  var card=btn.closest('.fc'),cont=card.querySelector('.fcc'),cardLang=cont.dataset.lang||'en';
+  var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
+  if(!window.speechSynthesis)return;
+  var voice=cardLang==='hi'?VS.hi:cardLang==='ar'?VS.ar:VS.en;
+  var spkLng=cardLang;
+  if(cardLang!=='en'&&!voice){spkLng='en';voice=VS.en;}
+  var c=gc(r,spkLng);
+  var text=[c.desc,c.find,c.learn].filter(function(s){return s&&s.trim();}).join('. ');
+  if(!text){var ce=gc(r,'en');text=[ce.desc,ce.find,ce.learn].filter(function(s){return s&&s.trim();}).join('. ');spkLng='en';voice=VS.en;}
+  if(!text)return;
+  btn._spkLang=cardLang;SPEAKING_BTN=btn;btn.innerHTML=_spkLabel(cardLang,'stop');btn.classList.add('playing');
+  var u=new SpeechSynthesisUtterance(text);u.lang=spkLng==='ar'?'ar-SA':spkLng==='hi'?'hi-IN':'en-US';u.rate=0.85;if(voice)u.voice=voice;
+  function resetBtn(){if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}}
+  u.onend=resetBtn;u.onerror=resetBtn;window.speechSynthesis.speak(u);
 }
 
+// ── Admin voice tests ─────────────────────────────────────────
+function admTestAllVoices(){
+  _vsUpdate();admLog('=== Voice Test ===');admLog('Total: '+VS.all.length);
+  admLog('EN: '+(VS.en?VS.en.name+' ['+VS.en.lang+']':'NOT FOUND'));
+  admLog('HI: '+(VS.hi?VS.hi.name+' ['+VS.hi.lang+']':'NOT FOUND'));
+  admLog('AR: '+(VS.ar?VS.ar.name+' ['+VS.ar.lang+']':'NOT FOUND \u2014 English will play as fallback'));
+  if(VS.en){var u=new SpeechSynthesisUtterance('ATNM LFI Core audio test');u.voice=VS.en;u.lang='en-US';u.rate=1;window.speechSynthesis.speak(u);admLog('Playing EN test...');}
+}
+function admListAllVoices(){
+  _vsUpdate();admLog('=== All Installed Voices ('+VS.all.length+') ===');
+  VS.all.forEach(function(v,i){admLog((i+1)+'. '+v.name+' ['+v.lang+'] '+(v.localService?'local':'cloud')+(v.default?' (DEFAULT)':''));});
+  if(!VS.all.length)admLog('No voices found. Click Force Load Voices.');
+}
+
+// ── Excel Export (Blob download) ─────────────────────────────
 function exportExcel(){
-  if(typeof XLSX==='undefined'){alert('Excel library not loaded.\nCheck your internet connection and reload the page.');return;}
-  var rows=getF();
-  if(!rows.length){alert('No data to export.\nLoad data first then try again.');return;}
-  try{
-    var header=['LFI ID','Category','Division','Cluster','Discipline','Reported By',
-                'Date','Time','Status','PPT Created',
-                'Description (EN)','Findings (EN)','Learnings (EN)',
-                'Description (HI)','Findings (HI)','Learnings (HI)',
-                'Description (AR)','Findings (AR)','Learnings (AR)'];
-    var data=[header];
-    rows.forEach(function(r){
-      data.push([r.id||'',r.cat||'',r.div||'',r.loc||'',r.disc||'',r.by||'',
-                 r.dt||'',r.time||'',
-                 r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':'Pending',
-                 r.ppt?'Yes':'No',
-                 r.descEN||'',r.findEN||'',r.learnEN||'',
-                 r.descHI||'',r.findHI||'',r.learnHI||'',
-                 r.descAR||'',r.findAR||'',r.learnAR||'']);
-    });
-    var ws=XLSX.utils.aoa_to_sheet(data);
-    ws['!cols']=[{wch:36},{wch:22},{wch:14},{wch:14},{wch:14},{wch:20},{wch:14},{wch:10},{wch:12},{wch:6},
-                 {wch:55},{wch:55},{wch:55},{wch:50},{wch:50},{wch:50},{wch:50},{wch:50},{wch:50}];
-    var wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,'LFI Register',ws);
-    // Convert to binary string then ArrayBuffer
-    var bin=XLSX.write(wb,{bookType:'xlsx',type:'binary'});
-    var buf=new ArrayBuffer(bin.length);
-    var view=new Uint8Array(buf);
-    for(var i=0;i<bin.length;i++)view[i]=bin.charCodeAt(i)&0xFF;
-    var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url;a.download='ATNM_LFI_Register_'+new Date().toISOString().slice(0,10)+'.xlsx';
-    document.body.appendChild(a);a.click();
-    document.body.removeChild(a);
-    setTimeout(function(){URL.revokeObjectURL(url);},3000);
-  }catch(e){
-    alert('Excel export error:\n'+e.message);
-    console.error('exportExcel:',e);
-  }
-}
-
-// ── PDF EXPORT ────────────────────────────────────────────────
-function exportPDF(){
-  var jsPDFCls=window.jspdf?window.jspdf.jsPDF:window.jsPDF;
-  if(!jsPDFCls){alert('PDF library not loaded. Check internet connection and reload.');return;}
+  if(typeof XLSX==='undefined'){alert('Excel library not loaded. Check internet connection and reload.');return;}
   var rows=getF();if(!rows.length){alert('No data to export.');return;}
   try{
-    var doc=new jsPDFCls({orientation:'landscape',unit:'mm',format:'a4'});
-    var pw=297,ph=210;
-    function pgHdr(title){
-      doc.setFillColor(33,64,154);doc.rect(0,0,pw,16,'F');
-      doc.setFillColor(245,130,32);doc.rect(0,16,pw,2,'F');
-      doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('helvetica','bold');
-      doc.text('LFI CORE  |  '+title,12,11);
-      doc.setFontSize(7);doc.setFont('helvetica','normal');
-      doc.text('Exported: '+new Date().toLocaleDateString()+'   Records: '+rows.length,pw-12,11,{align:'right'});
-      doc.setTextColor(0,0,0);
-    }
-    function pgFtr(){
-      doc.setFontSize(6);doc.setTextColor(150,150,150);
-      doc.text('ATNM HSE - PDO ODC - LFI CORE (Control Ownership Review and Embedding)',12,ph-4);
-      doc.text('Page '+doc.getCurrentPageInfo().pageNumber,pw-12,ph-4,{align:'right'});
-      doc.setTextColor(0,0,0);
-    }
-    // Summary table
-    pgHdr('Incident Register - Summary');
-    doc.autoTable({
-      head:[['LFI ID','Category','Division','Cluster','Discipline','Date','Status','PPT']],
-      body:rows.map(function(r){return[r.id||'-',r.cat||'-',r.div||'-',r.loc||'-',r.disc||'-',r.dt||'-',
-        r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':'Pending',r.ppt?'Yes':'No'];}),
-      startY:21,styles:{fontSize:7.5,cellPadding:2,overflow:'linebreak',valign:'middle'},
-      headStyles:{fillColor:[77,85,91],textColor:[255,255,255],fontStyle:'bold'},
-      alternateRowStyles:{fillColor:[240,242,245]},
-      columnStyles:{0:{cellWidth:38},1:{cellWidth:30},2:{cellWidth:22},3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:22},6:{cellWidth:22},7:{cellWidth:14}},
-      margin:{left:12,right:12},didDrawPage:function(){pgFtr();}
-    });
-    // Detail cards
+    var h=['LFI ID','Category','Division','Cluster','Discipline','Reported By','Date','Time','Status','PPT','Desc(EN)','Findings(EN)','Learnings(EN)','Desc(HI)','Findings(HI)','Learnings(HI)','Desc(AR)','Findings(AR)','Learnings(AR)'];
+    var data=[h];
+    rows.forEach(function(r){data.push([r.id||'',r.cat||'',r.div||'',r.loc||'',r.disc||'',r.by||'',r.dt||'',r.time||'',r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':r.st==='Historic Data Input'?'Historic':'Pending',r.ppt?'Yes':'No',r.descEN||'',r.findEN||'',r.learnEN||'',r.descHI||'',r.findHI||'',r.learnHI||'',r.descAR||'',r.findAR||'',r.learnAR||'']);});
+    var ws=XLSX.utils.aoa_to_sheet(data);
+    ws['!cols']=[{wch:36},{wch:22},{wch:14},{wch:14},{wch:14},{wch:20},{wch:14},{wch:10},{wch:12},{wch:6},{wch:50},{wch:50},{wch:50},{wch:45},{wch:45},{wch:45},{wch:45},{wch:45},{wch:45}];
+    var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'LFI Register',ws);
+    var bin=XLSX.write(wb,{bookType:'xlsx',type:'binary'});
+    var buf=new ArrayBuffer(bin.length);var view=new Uint8Array(buf);for(var i=0;i<bin.length;i++)view[i]=bin.charCodeAt(i)&0xFF;
+    var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='ATNM_LFI_Register_'+new Date().toISOString().slice(0,10)+'.xlsx';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},3000);
+  }catch(e){alert('Excel error:\n'+e.message);}
+}
+
+// ── PDF Export ────────────────────────────────────────────────
+function exportPDF(){
+  var jsPDFCls=window.jspdf?window.jspdf.jsPDF:window.jsPDF;if(!jsPDFCls){alert('PDF library not loaded.');return;}
+  var rows=getF();if(!rows.length){alert('No data.');return;}
+  try{
+    var doc=new jsPDFCls({orientation:'landscape',unit:'mm',format:'a4'});var pw=297,ph=210;
+    function pgH(t){doc.setFillColor(33,64,154);doc.rect(0,0,pw,16,'F');doc.setFillColor(245,130,32);doc.rect(0,16,pw,2,'F');doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('LFI CORE | '+t,12,11);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text('Exported: '+new Date().toLocaleDateString()+'  Records: '+rows.length,pw-12,11,{align:'right'});doc.setTextColor(0,0,0);}
+    function pgF(){doc.setFontSize(6);doc.setTextColor(150,150,150);doc.text('ATNM HSE - PDO ODC - LFI CORE (Control Ownership Review and Embedding)',12,ph-4);doc.text('Page '+doc.getCurrentPageInfo().pageNumber,pw-12,ph-4,{align:'right'});doc.setTextColor(0,0,0);}
+    pgH('Incident Register - Summary');
+    doc.autoTable({head:[['LFI ID','Category','Division','Cluster','Discipline','Date','Status','PPT']],body:rows.map(function(r){return[r.id||'-',r.cat||'-',r.div||'-',r.loc||'-',r.disc||'-',r.dt||'-',r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':r.st==='Historic Data Input'?'Historic':'Pending',r.ppt?'Yes':'No'];}),startY:21,styles:{fontSize:7.5,cellPadding:2,overflow:'linebreak',valign:'middle'},headStyles:{fillColor:[77,85,91],textColor:[255,255,255],fontStyle:'bold'},alternateRowStyles:{fillColor:[240,242,245]},columnStyles:{0:{cellWidth:38},1:{cellWidth:30},2:{cellWidth:22},3:{cellWidth:22},4:{cellWidth:22},5:{cellWidth:22},6:{cellWidth:22},7:{cellWidth:14}},margin:{left:12,right:12},didDrawPage:function(){pgF();}});
     rows.forEach(function(r){
-      doc.addPage();pgHdr('Incident Detail');
-      var y=21,lm=12,rm=pw-12,cw=rm-lm;
-      doc.setFillColor(240,242,245);doc.rect(lm,y,cw,10,'F');
-      doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(33,64,154);
-      doc.text(r.id||'-',lm+2,y+7);
-      doc.setFont('helvetica','normal');doc.setTextColor(77,85,91);doc.setFontSize(7.5);
-      doc.text([r.cat,r.div,r.loc,r.dt].filter(Boolean).join('  |  '),lm+52,y+7);
-      var sl=r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':'Pending';
-      var sc=r.st==='Reviewed & Approved'?[40,167,69]:r.st==='Reviewed & Returned'?[220,53,69]:[255,193,7];
-      doc.setFillColor(sc[0],sc[1],sc[2]);doc.roundedRect(rm-28,y+1.5,26,7,2,2,'F');
-      doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
-      doc.text(sl,rm-15,y+7,{align:'center'});doc.setTextColor(0,0,0);y+=14;
+      doc.addPage();pgH('Incident Detail');var y=21,lm=12,rm=pw-12,cw=rm-lm;
+      doc.setFillColor(240,242,245);doc.rect(lm,y,cw,10,'F');doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(33,64,154);doc.text(r.id||'-',lm+2,y+7);doc.setFont('helvetica','normal');doc.setTextColor(77,85,91);doc.setFontSize(7.5);doc.text([r.cat,r.div,r.loc,r.dt].filter(Boolean).join('  |  '),lm+52,y+7);
+      var sl=r.st==='Reviewed & Approved'?'Approved':r.st==='Reviewed & Returned'?'Returned':r.st==='Historic Data Input'?'Historic':'Pending';var sc=r.st==='Reviewed & Approved'||r.st==='Historic Data Input'?[40,167,69]:r.st==='Reviewed & Returned'?[220,53,69]:[255,193,7];
+      doc.setFillColor(sc[0],sc[1],sc[2]);doc.roundedRect(rm-28,y+1.5,26,7,2,2,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(sl,rm-15,y+7,{align:'center'});doc.setTextColor(0,0,0);y+=14;
       var secs=[{l:'DESCRIPTION OF INCIDENT',tx:r.descEN||'-',cl:[77,85,91]},{l:'FINDINGS / ROOT CAUSE',tx:r.findEN||'-',cl:[33,64,154]},{l:'LEARNINGS FROM INCIDENT',tx:r.learnEN||'-',cl:[40,167,69]}];
-      secs.forEach(function(sec){
-        if(y>ph-30){doc.addPage();pgHdr('Incident Detail (cont.)');y=21;pgFtr();}
-        doc.setFillColor(sec.cl[0],sec.cl[1],sec.cl[2]);doc.rect(lm,y,cw,7,'F');
-        doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
-        doc.text(sec.l,lm+3,y+5);doc.setTextColor(0,0,0);y+=7;
-        doc.setFontSize(8);doc.setFont('helvetica','normal');
-        var lines=doc.splitTextToSize(sec.tx,cw-6);var th=lines.length*5+4;
-        doc.setFillColor(250,250,250);doc.rect(lm,y,cw,th,'F');
-        doc.setDrawColor(220,220,220);doc.rect(lm,y,cw,th,'S');
-        doc.text(lines,lm+3,y+5);y+=th+3;
-      });
-      doc.setFontSize(7);doc.setTextColor(140,140,140);
-      doc.text('Reported by: '+(r.by||'-')+'   Discipline: '+(r.disc||'-'),lm,y+4);
-      pgFtr();
+      secs.forEach(function(sec){if(y>ph-30){doc.addPage();pgH('Detail (cont.)');y=21;pgF();}doc.setFillColor(sec.cl[0],sec.cl[1],sec.cl[2]);doc.rect(lm,y,cw,7,'F');doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);doc.text(sec.l,lm+3,y+5);doc.setTextColor(0,0,0);y+=7;doc.setFontSize(8);doc.setFont('helvetica','normal');var lines=doc.splitTextToSize(sec.tx,cw-6);var th=lines.length*5+4;doc.setFillColor(250,250,250);doc.rect(lm,y,cw,th,'F');doc.setDrawColor(220,220,220);doc.rect(lm,y,cw,th,'S');doc.text(lines,lm+3,y+5);y+=th+3;});
+      doc.setFontSize(7);doc.setTextColor(140,140,140);doc.text('By: '+(r.by||'-')+'  Disc: '+(r.disc||'-'),lm,y+4);pgF();
     });
-    // Blob download for PDF too
-    var pdfBytes=doc.output('arraybuffer');
-    var pblob=new Blob([pdfBytes],{type:'application/pdf'});
-    var purl=URL.createObjectURL(pblob);
-    var pa=document.createElement('a');pa.href=purl;pa.download='ATNM_LFI_Register_'+new Date().toISOString().slice(0,10)+'.pdf';
-    document.body.appendChild(pa);pa.click();document.body.removeChild(pa);
-    setTimeout(function(){URL.revokeObjectURL(purl);},3000);
-  }catch(e){alert('PDF export error:\n'+e.message);console.error('exportPDF:',e);}
+    var pb=doc.output('arraybuffer');var pblob=new Blob([pb],{type:'application/pdf'});var purl=URL.createObjectURL(pblob);var pa=document.createElement('a');pa.href=purl;pa.download='ATNM_LFI_Register_'+new Date().toISOString().slice(0,10)+'.pdf';document.body.appendChild(pa);pa.click();document.body.removeChild(pa);setTimeout(function(){URL.revokeObjectURL(purl);},3000);
+  }catch(e){alert('PDF error:\n'+e.message);}
 }
 
-// ── ADMIN CONTROL PANEL ─────────────────────────────────────
+// ── Admin controls ────────────────────────────────────────────
 var ADM_LOG=[];
-function admLog(msg,color){
-  var ts=new Date().toLocaleTimeString();
-  var line="["+ts+"] "+msg;
-  ADM_LOG.push(line);
-  var out=document.getElementById("admOut");
-  if(out){out.textContent+=line+"\n";out.scrollTop=out.scrollHeight;}
-}
-function admStat(id,ok,val){
-  var el=document.getElementById("stat-"+id);
-  if(!el)return;
-  var dot=el.querySelector(".adm-dot");
-  var v=el.querySelector(".adm-val");
-  if(dot)dot.style.background=ok===true?"#28a745":ok===false?"#dc3545":"#ffc107";
-  if(v)v.textContent=val||"";
-}
+function admLog(msg){var ts=new Date().toLocaleTimeString();var line='['+ts+'] '+msg;ADM_LOG.push(line);var out=document.getElementById('admOut');if(out){out.textContent+=line+'\n';out.scrollTop=out.scrollHeight;}}
+function admStat(id,ok,val){var el=document.getElementById('stat-'+id);if(!el)return;var dot=el.querySelector('.adm-dot');var v=el.querySelector('.adm-val');if(dot)dot.style.background=ok===true?'#28a745':ok===false?'#dc3545':'#ffc107';if(v)v.textContent=val||'';}
+function admForceReload(){admLog('Force reload...');RAW=null;Object.keys(CH).forEach(function(k){try{CH[k].destroy();}catch(e){}});CH={};for(var i=0;i<5;i++){var ke=document.getElementById('k'+i);if(ke)ke.textContent='\u2014';}refresh();admLog('Refresh triggered.');}
+function admClearLocalCache(){RAW=null;Object.keys(CH).forEach(function(k){try{CH[k].destroy();}catch(e){}});CH={};for(var i=0;i<5;i++){var ke=document.getElementById('k'+i);if(ke)ke.textContent='\u2014';}admLog('Local cache cleared.');admStat('data',false,'Cleared');admStat('rows',null,'0');}
+function admTestConnection(){admLog('Testing API...');admStat('api',null,'Testing...');var cb='admConn'+Date.now(),script=document.createElement('script'),done=false;var tid=setTimeout(function(){if(done)return;done=true;delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);admLog('TIMEOUT: Check sign-in.');admStat('api',false,'Timeout');},15000);window[cb]=function(d){if(done)return;done=true;clearTimeout(tid);delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);if(d&&d.rawRows){admLog('OK: API connected. '+d.rawRows.length+' records.');admStat('api',true,'Connected');admStat('rows',true,d.rawRows.length+' LFIs');}else{admLog('Error: '+(d&&d.error?d.error:'unknown'));admStat('api',false,'Error');}};script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cb];admLog('FAIL: Script load error.');admStat('api',false,'Error');};script.src=API_BASE+'?action=api&callback='+cb;document.head.appendChild(script);}
+function admTestSheetAccess(){admLog('Testing sheet access...');admStat('sheet',null,'Testing...');_admCall('testAccess',function(d){if(d.status==='OK'){admLog('OK: '+d.message);admStat('sheet',true,d.rows+' rows');}else{admLog('FAIL: '+d.message);admStat('sheet',false,'Error');}});}
+function admRunDiagnostics(){admLog('=== FULL DIAGNOSTICS ===');var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admLog('Mode: '+mode);admStat('js',true,mode.split(' ')[0]);var rcount=RAW?RAW.length:0;admLog('Local data: '+(RAW?rcount+' records':'Not loaded'));admStat('data',RAW!==null,RAW?rcount+' LFIs':'None');admLog('ChartJS: '+(typeof Chart!=='undefined'?'OK':'MISSING'));admLog('XLSX: '+(typeof XLSX!=='undefined'?'OK':'MISSING'));admLog('jsPDF: '+(typeof window.jspdf!=='undefined'||typeof window.jsPDF!=='undefined'?'OK':'MISSING'));admLog('Speech: '+(window.speechSynthesis?'OK':'NOT SUPPORTED'));if(window.speechSynthesis){var voices=window.speechSynthesis.getVoices();admLog('Voices: '+voices.length+' installed');admLog('EN: '+(VS.en?'FOUND: '+VS.en.name:'NOT FOUND'));admLog('HI: '+(VS.hi?'FOUND: '+VS.hi.name:'NOT FOUND'));admLog('AR: '+(VS.ar?'FOUND: '+VS.ar.name:'NOT INSTALLED on this device \u2014 English fallback active'));}admTestConnection();admLog('=== END ===');}
+function admRetryPending(){admLog('Checking pending LFIs...');_admCall('retryPending',function(d){if(d.status==='OK'){admLog(d.message);if(d.pending>0)admLog('ACTION NEEDED: Open spreadsheet > LFI Automation > Process Active LFI Row');}else{admLog('Error: '+d.message);}});}
+function admClearScriptCache(){admLog('Clearing script cache...');_admCall('clearCache',function(d){admLog(d.status==='OK'?'OK: '+d.message:'Error: '+d.message);});}
+function admGetSystemLog(){admLog('Fetching System Log...');_admCall('getLog',function(d){if(d.status==='OK'&&d.logs){admLog('--- System Log (last '+d.logs.length+') ---');d.logs.forEach(function(r){admLog('['+r.ts+'] '+r.fn+' | '+r.st+' | '+r.msg);});admLog('--- End ---');}else{admLog('Error: '+(d.message||'unknown'));}});}
+function _admCall(cmd,cb){var cbN='admCb'+Date.now(),script=document.createElement('script'),done=false;var tid=setTimeout(function(){if(done)return;done=true;delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);admLog('TIMEOUT. Sign into altasnim.com and retry.');},12000);window[cbN]=function(d){if(done)return;done=true;clearTimeout(tid);delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);if(cb)cb(d);};script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbN];admLog('FAIL: Script load error.');};script.src=API_BASE+'?action=admin&cmd='+encodeURIComponent(cmd)+'&callback='+cbN;document.head.appendChild(script);}
+function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');}
 
-function admForceReload(){
-  admLog("Force reload: clearing local data and fetching from API...");
-  RAW=null;CH={};
-  document.querySelectorAll(".page").forEach(function(p){if(p.classList.contains("active"))applyAll();});
-  refresh();
-  admLog("Refresh triggered.");
-}
+// ── Admin Password ────────────────────────────────────────────
+function admShowModal(){var modal=document.getElementById('adminModal');if(!modal)return;if(Date.now()<ADMIN_LOCKED_UNTIL){var s=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);var lk=document.getElementById('adminLockMsg');if(lk){lk.style.display='block';lk.textContent='Locked. Try again in '+s+'s.';}}else{var e=document.getElementById('adminPwdErr');if(e)e.style.display='none';var lk2=document.getElementById('adminLockMsg');if(lk2)lk2.style.display='none';}modal.style.display='flex';setTimeout(function(){var inp=document.getElementById('adminPwdInput');if(inp){inp.value='';inp.focus();}},100);}
+function admCloseModal(){var modal=document.getElementById('adminModal');if(modal)modal.style.display='none';if(!ADMIN_UNLOCKED){var ov=document.querySelector('nav a.active');navTo('overview',ov);}}
+function admCheckPwd(){if(Date.now()<ADMIN_LOCKED_UNTIL){var s=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);admShowPwdErr('Locked. Try again in '+s+'s.');return;}var inp=document.getElementById('adminPwdInput');if(!inp)return;var entered=inp.value;if(!entered){admShowPwdErr('Please enter the password.');return;}if(btoa(entered)===ADMIN_PWD_B64){ADMIN_UNLOCKED=true;ADMIN_ATTEMPTS=0;var modal=document.getElementById('adminModal');if(modal)modal.style.display='none';document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});var pg=document.getElementById('page-admin');if(pg)pg.classList.add('active');document.getElementById('ptitle').textContent='Admin Controls';_adminPageInit();}else{ADMIN_ATTEMPTS++;var rem=ADMIN_MAX-ADMIN_ATTEMPTS;if(ADMIN_ATTEMPTS>=ADMIN_MAX){ADMIN_LOCKED_UNTIL=Date.now()+60000;ADMIN_ATTEMPTS=0;admShowPwdErr('Too many attempts. Locked 60 seconds.');}else{admShowPwdErr('Incorrect password. '+rem+' attempt'+(rem===1?'':'s')+' remaining.');}inp.value='';inp.focus();}}
+function admShowPwdErr(msg){var el=document.getElementById('adminPwdErr');if(!el)return;el.textContent=msg;el.style.display='block';var inp=document.getElementById('adminPwdInput');if(inp){inp.style.borderColor='var(--rd)';setTimeout(function(){inp.style.borderColor='var(--border)';},1500);}}
 
-function admClearLocalCache(){
-  RAW=null;CH={};
-  // Clear all chart instances
-  Object.keys(CH).forEach(function(k){try{CH[k].destroy();}catch(e){}});
-  CH={};
-  // Reset KPI display
-  for(var i=0;i<5;i++){var ke=document.getElementById("k"+i);if(ke)ke.textContent="—";}
-  admLog("Local cache cleared. Data and charts reset.");
-  admStat("data",false,"Cleared");
-  admStat("rows",null,"0");
-}
-
-function admTestConnection(){
-  admLog("Testing API connection to Apps Script deployment...");
-  admStat("api",null,"Testing...");
-  var cb="admConn"+Date.now(),script=document.createElement("script"),done=false;
-  var tid=setTimeout(function(){
-    if(done)return;done=true;delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);
-    admLog("FAIL: Connection timed out (15s). Check sign-in and deployment URL.");
-    admStat("api",false,"Timeout");
-  },15000);
-  window[cb]=function(d){
-    if(done)return;done=true;clearTimeout(tid);delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);
-    if(d&&d.rawRows){
-      admLog("OK: API connected. "+d.rawRows.length+" records in response. Updated: "+d.ts);
-      admStat("api",true,"Connected");
-      admStat("rows",true,d.rawRows.length+" LFIs");
-    }else if(d&&d.error){
-      admLog("Server error: "+d.error);
-      admStat("api",false,"Error");
-    }else{
-      admLog("Unexpected response.");
-      admStat("api",null,"?");
-    }
-  };
-  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cb];admLog("FAIL: Script load error.");admStat("api",false,"Error");};
-  script.src=API_BASE+"?action=api&callback="+cb;
-  document.head.appendChild(script);
-}
-
-function admTestSheetAccess(){
-  admLog("Testing sheet access via Admin API...");
-  admStat("sheet",null,"Testing...");
-  _admCall("testAccess",function(d){
-    if(d.status==="OK"){
-      admLog("OK: "+d.message);
-      admStat("sheet",true,d.rows+" rows");
-    }else{
-      admLog("FAIL: "+d.message);
-      admStat("sheet",false,"Error");
-    }
-  });
-}
-
-function admRunDiagnostics(){
-  admLog("=== FULL DIAGNOSTICS ===");
-  // JS context
-  var mode=typeof google!=="undefined"&&google.script&&google.script.run?"Apps Script (google.script.run)":"GitHub Pages (JSONP)";
-  admLog("Mode: "+mode);
-  admStat("js",true,mode.split(" ")[0]);
-  // Local data
-  var rcount=RAW?RAW.length:0;
-  admLog("Local data: "+(RAW?"Loaded ("+rcount+" records)":"Not loaded"));
-  admStat("data",RAW!==null,RAW?rcount+" LFIs":"None");
-  admStat("rows",RAW&&rcount>0,rcount>0?rcount+" LFIs":"0");
-  // Libraries
-  admLog("ChartJS: "+(typeof Chart!=="undefined"?"OK":"MISSING"));
-  admLog("XLSX:    "+(typeof XLSX!=="undefined"?"OK":"MISSING"));
-  admLog("jsPDF:   "+(typeof window.jspdf!=="undefined"||typeof window.jsPDF!=="undefined"?"OK":"MISSING"));
-  admLog("Speech:  "+(window.speechSynthesis?"OK":"NOT SUPPORTED"));
-  if(window.speechSynthesis){
-    var voices=window.speechSynthesis.getVoices();
-    admLog("Voices:  "+voices.length+" installed");
-    admLog("Hindi:   "+(_getVoice("hi")?"FOUND: "+_getVoice("hi").name:"NOT INSTALLED"));
-    admLog("Arabic:  "+(_getVoice("ar")?"FOUND: "+_getVoice("ar").name:"NOT INSTALLED"));
-  }
-  // API test
-  admLog("Testing API connection...");
-  admTestConnection();
-  admLog("=== END (API test running async) ===");
-}
-
-function admRetryPending(){
-  admLog("Checking pending LFIs via Admin API...");
-  _admCall("retryPending",function(d){
-    if(d.status==="OK"){
-      admLog("Pending check: "+d.message);
-      if(d.pending>0){
-        admLog("ACTION NEEDED: "+d.pending+" pending LFI(s). Open the spreadsheet and run: LFI Automation > Process Active LFI Row for each row.");
-      }else{
-        admLog("All LFIs are processed. No pending items.");
-      }
-    }else{
-      admLog("Error: "+d.message);
-    }
-  });
-}
-
-function admClearScriptCache(){
-  admLog("Requesting script cache clear via Admin API...");
-  _admCall("clearCache",function(d){
-    admLog(d.status==="OK"?"OK: "+d.message:"Error: "+d.message);
-  });
-}
-
-function admGetSystemLog(){
-  admLog("Fetching System Log entries...");
-  _admCall("getLog",function(d){
-    if(d.status==="OK"&&d.logs){
-      admLog("--- System Log (last "+d.logs.length+" entries) ---");
-      d.logs.forEach(function(r){admLog("["+r.ts+"] "+r.fn+" | "+r.st+" | "+r.msg);});
-      admLog("--- End of Log ---");
-    }else{
-      admLog("Error fetching log: "+(d.message||"unknown"));
-    }
-  });
-}
-
-function admExportDiag(){
-  var text="ATNM LFI CORE — Admin Diagnostics\n";
-  text+="Exported: "+new Date().toString()+"\n";
-  text+="API_BASE: "+API_BASE+"\n";
-  text+="Local Records: "+(RAW?RAW.length:0)+"\n";
-  text+="Language: "+LANG+"\n\n";
-  text+="=== ADMIN LOG ===\n"+ADM_LOG.join("\n")+"\n";
-  var blob=new Blob([text],{type:"text/plain"});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement("a");a.href=url;a.download="ATNM_LFI_Diagnostics_"+new Date().toISOString().slice(0,10)+".txt";
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(function(){URL.revokeObjectURL(url);},2000);
-  admLog("Diagnostics exported to text file.");
-}
-
-// Internal: admin JSONP call to Code.gs ?action=admin&cmd=CMD
-function _admCall(cmd,cb){
-  var cbN="admCb"+Date.now(),script=document.createElement("script"),done=false;
-  var tid=setTimeout(function(){
-    if(done)return;done=true;delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);
-    admLog("FAIL: Admin call timed out. Sign into altasnim.com and retry.");
-  },12000);
-  window[cbN]=function(d){if(done)return;done=true;clearTimeout(tid);delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);if(cb)cb(d);};
-  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbN];admLog("FAIL: Script load error for admin call.");};
-  script.src=API_BASE+"?action=admin&cmd="+encodeURIComponent(cmd)+"&callback="+cbN;
-  document.head.appendChild(script);
-}
-
-// Auto-run status check when admin page is opened
-function _adminPageInit(){
-  var mode=typeof google!=="undefined"&&google.script&&google.script.run?"Apps Script":"GitHub Pages (JSONP)";
-  admStat("js",true,mode);
-  admStat("data",RAW!==null,RAW?RAW.length+" LFIs":"Not loaded");
-  admStat("rows",RAW&&RAW.length>0,RAW?RAW.length+" records":"0");
-  admStat("api",null,"Not tested");
-  admStat("sheet",null,"Not tested");
-  admLog("Admin panel ready. Mode: "+mode+".");
-}
-
-// ── ADMIN PASSWORD FUNCTIONS ──────────────────────────────
-function admShowModal(){
-  var modal=document.getElementById("adminModal");
-  if(!modal)return;
-  // Check if locked out
-  if(Date.now()<ADMIN_LOCKED_UNTIL){
-    var secs=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);
-    var lockMsg=document.getElementById("adminLockMsg");
-    if(lockMsg){lockMsg.style.display="block";lockMsg.textContent="Too many failed attempts. Try again in "+secs+"s.";}
-  }else{
-    var errEl=document.getElementById("adminPwdErr");
-    if(errEl)errEl.style.display="none";
-    var lk=document.getElementById("adminLockMsg");
-    if(lk)lk.style.display="none";
-  }
-  modal.classList.add("vis");
-  modal.style.display="flex";
-  setTimeout(function(){
-    var inp=document.getElementById("adminPwdInput");
-    if(inp){inp.value="";inp.focus();}
-  },100);
-}
-
-function admCloseModal(){
-  var modal=document.getElementById("adminModal");
-  if(modal)modal.style.display="none";
-  // Go back to overview if admin was not unlocked
-  if(!ADMIN_UNLOCKED)navTo("overview",document.querySelector("nav a.active"));
-}
-
-function admCheckPwd(){
-  // Lockout check
-  if(Date.now()<ADMIN_LOCKED_UNTIL){
-    var secs=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);
-    admShowPwdErr("Account locked. Try again in "+secs+" seconds.");
-    return;
-  }
-  var inp=document.getElementById("adminPwdInput");
-  if(!inp)return;
-  var entered=inp.value;
-  if(!entered){admShowPwdErr("Please enter the password.");return;}
-  // Compare base64 encoded values
-  if(btoa(entered)===ADMIN_PWD_B64){
-    ADMIN_UNLOCKED=true;
-    ADMIN_ATTEMPTS=0;
-    var modal=document.getElementById("adminModal");
-    if(modal)modal.style.display="none";
-    // Show admin page
-    document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
-    var pg=document.getElementById("page-admin");
-    if(pg)pg.classList.add("active");
-    document.getElementById("ptitle").textContent="Admin Controls";
-    _adminPageInit();
-  }else{
-    ADMIN_ATTEMPTS++;
-    var remaining=ADMIN_MAX_ATTEMPTS-ADMIN_ATTEMPTS;
-    if(ADMIN_ATTEMPTS>=ADMIN_MAX_ATTEMPTS){
-      ADMIN_LOCKED_UNTIL=Date.now()+60000; // 60s lockout
-      ADMIN_ATTEMPTS=0;
-      admShowPwdErr("Too many failed attempts. Locked for 60 seconds.");
-    }else{
-      admShowPwdErr("Incorrect password. "+remaining+" attempt"+(remaining===1?"":"s")+" remaining.");
-    }
-    inp.value="";
-    inp.focus();
-  }
-}
-
-function admShowPwdErr(msg){
-  var el=document.getElementById("adminPwdErr");
-  if(!el)return;
-  el.textContent=msg;
-  el.style.display="block";
-  var inp=document.getElementById("adminPwdInput");
-  if(inp){inp.style.borderColor="var(--rd)";setTimeout(function(){inp.style.borderColor="var(--border)";},1500);}
-}
-
-// Lock admin when navigating away
-function admLockPanel(){
-  ADMIN_UNLOCKED=false;
-}
+// ── Init ─────────────────────────────────────────────────────
+function setLang(lang,btn){stopSpeech();LANG=lang;document.querySelectorAll('.lbt').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');if(document.getElementById('page-lfi').classList.contains('active'))renderFC();}
 
 document.addEventListener('DOMContentLoaded',function(){
-  translateUI();
   refresh();
-  initVoices(); // Start preloading EN/Hindi/Arabic voices immediately
+  initVoices();
 });
 </script>
+
+
 <!-- ADMIN PASSWORD MODAL -->
 <div id="adminModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
-  <div style="background:#fff;border-radius:12px;padding:0;width:360px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden">
-    <!-- Header -->
+  <div style="background:#fff;border-radius:12px;width:360px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden">
     <div style="background:var(--dg);padding:24px;text-align:center">
       <div style="font-size:32px;margin-bottom:8px">&#128274;</div>
       <div style="color:#fff;font-size:16px;font-weight:700">Admin Controls</div>
-      <div style="color:rgba(255,255,255,.65);font-size:11px;margin-top:4px">ATNM LFI CORE &mdash; Restricted Access</div>
+      <div style="color:rgba(255,255,255,.65);font-size:11px;margin-top:4px">ATNM LFI CORE &#8212; Restricted Access</div>
     </div>
-    <!-- Body -->
     <div style="padding:24px">
       <div style="font-size:12px;color:var(--muted);margin-bottom:16px;text-align:center">Enter the Admin Password to continue</div>
-      <input type="password" id="adminPwdInput"
-             placeholder="Enter password"
+      <input type="password" id="adminPwdInput" placeholder="Enter password"
              style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;box-sizing:border-box"
              onkeydown="if(event.key==='Enter')admCheckPwd()"
              oninput="document.getElementById('adminPwdErr').style.display='none'">
       <div id="adminPwdErr" style="display:none;background:#f8d7da;color:#721c24;padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:10px;text-align:center"></div>
-      <button onclick="admCheckPwd()"
-              style="width:100%;padding:11px;background:var(--bl);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">
+      <button onclick="admCheckPwd()" style="width:100%;padding:11px;background:var(--bl);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">
         &#128275; Unlock Admin Panel
       </button>
-      <button onclick="admCloseModal()"
-              style="width:100%;padding:9px;background:none;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">
-        Cancel
-      </button>
+      <button onclick="admCloseModal()" style="width:100%;padding:9px;background:none;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">Cancel</button>
       <div id="adminLockMsg" style="display:none;text-align:center;margin-top:10px;font-size:11px;color:var(--rd)"></div>
     </div>
   </div>
 </div>
-
 </body>
 </html>
