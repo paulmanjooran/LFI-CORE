@@ -606,7 +606,7 @@ function _vsUI(state){
     var el=document.getElementById(id);if(!el)return;
     if(VS.loading&&!voice){el.className='vtag loading';el.innerHTML='&#8987; '+label;}
     else if(voice){el.className='vtag ok';el.title=voice.name;el.innerHTML='&#10003; '+label;}
-    else{el.className='vtag muted';el.title='Not installed — English audio plays as fallback. Click for setup guide.';el.innerHTML='&#128263; '+label;el.style.cursor='pointer';el.onclick=function(){showVoiceGuide(label);};}
+    else{el.className='vtag muted';el.title='Not installed — English audio plays as fallback. Click for setup guide.';el.innerHTML='&#128263; '+label;el.style.cursor='pointer';el.onclick=function(){};}
   }
   setTag('vtEN',VS.en,'EN');setTag('vtHI',VS.hi,'&#2361;&#2367;');setTag('vtAR',VS.ar,'&#1593;');
   var progress=(VS.en?33:0)+(VS.hi?34:0)+(VS.ar?33:0);
@@ -623,34 +623,11 @@ function _vsUI(state){
       var miss=[];if(!VS.hi)miss.push('Hindi');if(!VS.ar)miss.push('Arabic');
       msg.innerHTML=(miss.join(' &amp; '))+
         ' <span style="font-weight:400">(&#128263; muted — English audio plays as fallback)</span>. '+
-        '<a href="#" onclick="showVoiceGuide(null);return false;" style="color:var(--bl);font-size:10px">Setup guide</a>';
+        '<a href="#" onclick="return false;" style="color:var(--bl);font-size:10px">Setup guide</a>';
       msg.style.color='var(--muted)';
     }
   }
   if(typeof admRefreshVoiceStatus==='function')admRefreshVoiceStatus();
-}
-// Show voice installation guide based on language
-function showVoiceGuide(lang){
-  var langName=lang==='&#1593;'||lang==='ar'||lang===null?'Arabic':'Hindi';
-  var both=lang===null;
-  var msg=
-    'HOW TO INSTALL '+(both?'ARABIC & HINDI':'langName.toUpperCase())+' VOICE\n'+
-    '(One-time setup — 5 minutes)\n\n'+
-    'WINDOWS 10/11:\n'+
-    '  1. Press Win + I → Time & Language → Language & Region\n'+
-    '  2. Click [Add a language]\n'+
-    (both?'  3. Search and add: Arabic (Saudi Arabia)\n  4. Search and add: Hindi\n':'  3. Search and add: '+(langName==='Arabic'?'Arabic (Saudi Arabia)':'Hindi')+'\n')+
-    '  5. Check ☑ Text-to-speech during install\n'+
-    '  6. Restart Chrome\n'+
-    '  7. Click Force Load Voices on the LFI dashboard\n\n'+
-    'ANDROID:\n'+
-    '  Settings → General Management → Language\n'+
-    '  → Text-to-Speech → Google TTS → Install voice data\n'+
-    '  → '+(both?'Arabic + Hindi':'langName')+'\n\n'+
-    'ALTERNATIVE (no install needed):\n'+
-    '  English audio plays automatically as fallback.\n'+
-    '  All content is readable in all 3 languages — audio in English.';
-  alert(msg);
 }
 
 function admRefreshVoiceStatus(){
