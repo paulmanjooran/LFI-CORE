@@ -110,6 +110,7 @@ nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .spk{padding:4px 10px;border:none;border-radius:4px;background:var(--or);color:#fff;font-size:11px;cursor:pointer;margin-left:auto;transition:background .15s}
 .spk:hover{background:#d46d16}
 .spk.playing{background:var(--rd);animation:spkpulse 1.2s ease-in-out infinite}
+.spk.loading{background:#856404;animation:spkpulse 1.2s ease-in-out infinite}
 @keyframes spkpulse{0%,100%{box-shadow:0 0 0 0 rgba(220,53,69,.4)}50%{box-shadow:0 0 0 5px rgba(220,53,69,0)}}
 .fcc{font-size:12px;line-height:1.6}
 .fcc.rtl{direction:rtl;text-align:right}
@@ -336,6 +337,7 @@ var ADMIN_UNLOCKED=false,ADMIN_ATTEMPTS=0,ADMIN_MAX=3,ADMIN_LOCKED_UNTIL=0;
 var LANG='en',DRILL=null,RAW=null,CH={},CUR_PAGE='overview';
 var PAL=['#21409a','#f58220','#28a745','#dc3545','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#e83e8c'];
 var SPEAKING_BTN=null;
+var CURRENT_AUDIO=null; // HTML Audio element for Cloud TTS playback
 // Voice state
 var VS={loading:true,ready:false,all:[],en:null,hi:null,ar:null,primed:false,polls:0,inIframe:(window.self!==window.top),gestureReceived:false};
 
@@ -489,8 +491,12 @@ function renderCharts(rows){
 // ── Flashcards ───────────────────────────────────────────────
 function gc(r,lang){return{desc:lang==='ar'?r.descAR:(lang==='hi'?r.descHI:r.descEN),find:lang==='ar'?r.findAR:(lang==='hi'?r.findHI:r.findEN),learn:lang==='ar'?r.learnAR:(lang==='hi'?r.learnHI:r.learnEN)};}
 function _spkLabel(lang,key){
-  var L={read:{en:'&#128266; Read Aloud',hi:'&#128266; &#2346;&#2397;&#2375;&#2306;',ar:'&#128266; &#1602;&#1585;&#1575;&#1569;&#1577;'},stop:{en:'&#9209; Stop',hi:'&#9209; &#2352;&#2379;&#2325;&#2375;&#2306;',ar:'&#9209; &#1573;&#1610;&#1602;&#1575;&#1601;'}};
-  return L[key][lang]||L[key].en;
+  var L={
+    read:   {en:'&#128266; Read Aloud',hi:'&#128266; &#2346;&#2397;&#2375;&#2306;',ar:'&#128266; &#1602;&#1585;&#1575;&#1569;&#1577;'},
+    stop:   {en:'&#9209; Stop',        hi:'&#9209; &#2352;&#2379;&#2325;&#2375;&#2306;',ar:'&#9209; &#1573;&#1610;&#1602;&#1575;&#1601;'},
+    loading:{en:'&#8987; Loading...',  hi:'&#8987; &#2354;&#2379;&#2337; ...',          ar:'&#8987; &#1578;&#1581;&#1605;&#1610;&#1604;...'}
+  };
+  return (L[key]&&(L[key][lang]||L[key].en))||'';
 }
 
 function renderFC(){
@@ -621,10 +627,11 @@ function _vsUI(state){
     else if(VS.en&&VS.hi&&VS.ar){msg.textContent='\u2713 All 3 voices ready \u2014 EN, Hindi, Arabic';msg.style.color='#28a745';}
     else{
       var miss=[];if(!VS.hi)miss.push('Hindi');if(!VS.ar)miss.push('Arabic');
-      msg.innerHTML=(miss.join(' &amp; '))+
-        ' <span style="font-weight:400">(&#128263; muted — English audio plays as fallback)</span>. '+
-        '<a href="#" onclick="return false;" style="color:var(--bl);font-size:10px">Setup guide</a>';
-      msg.style.color='var(--muted)';
+      msg.innerHTML=(miss.join(' &amp; '))+' browser voice not installed. '+
+        '<strong style="color:#155724">&#9729; Google Cloud TTS active</strong> '+
+        '&#8212; audio loads from cloud (~2&#8211;3s).'+
+        ' <span style="font-size:10px;color:var(--muted)">Requires altasnim.com sign-in.</span>';
+      msg.style.color='#155724'
     }
   }
   if(typeof admRefreshVoiceStatus==='function')admRefreshVoiceStatus();
@@ -638,25 +645,75 @@ function admRefreshVoiceStatus(){
 // ── Speech Play/Stop ─────────────────────────────────────────
 function stopSpeech(){
   if(window.speechSynthesis)window.speechSynthesis.cancel();
-  if(SPEAKING_BTN){var cl=SPEAKING_BTN._spkLang||'en';SPEAKING_BTN.innerHTML=_spkLabel(cl,'read');SPEAKING_BTN.classList.remove('playing');SPEAKING_BTN=null;}
+  if(CURRENT_AUDIO){try{CURRENT_AUDIO.pause();CURRENT_AUDIO.currentTime=0;}catch(e){}CURRENT_AUDIO=null;}
+  if(SPEAKING_BTN){
+    var cl=SPEAKING_BTN._spkLang||'en';
+    SPEAKING_BTN.innerHTML=_spkLabel(cl,'read');
+    SPEAKING_BTN.classList.remove('playing');
+    SPEAKING_BTN.classList.remove('loading');
+    SPEAKING_BTN=null;
+  }
 }
+// Smart routing: English=browser TTS, Hindi/Arabic=Cloud TTS (if no browser voice)
 function speakCard(btn){
   if(SPEAKING_BTN===btn){stopSpeech();return;}
   stopSpeech();
-  var card=btn.closest('.fc'),cont=card.querySelector('.fcc'),cardLang=cont.dataset.lang||'en';
+  var card=btn.closest('.fc'),cont=card.querySelector('.fcc');
+  var cardLang=cont.dataset.lang||'en';
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
-  if(!window.speechSynthesis)return;
   var voice=cardLang==='hi'?VS.hi:cardLang==='ar'?VS.ar:VS.en;
-  var spkLng=cardLang;
-  if(cardLang!=='en'&&!voice){spkLng='en';voice=VS.en;}
-  var c=gc(r,spkLng);
+  var useCloud=(cardLang!=='en'&&!voice);
+  var c=gc(r,cardLang);
   var text=[c.desc,c.find,c.learn].filter(function(s){return s&&s.trim();}).join('. ');
-  if(!text){var ce=gc(r,'en');text=[ce.desc,ce.find,ce.learn].filter(function(s){return s&&s.trim();}).join('. ');spkLng='en';voice=VS.en;}
+  if(!text){
+    var ce=gc(r,'en');
+    text=[ce.desc,ce.find,ce.learn].filter(function(s){return s&&s.trim();}).join('. ');
+    useCloud=false;cardLang='en';voice=VS.en;
+  }
   if(!text)return;
-  btn._spkLang=cardLang;SPEAKING_BTN=btn;btn.innerHTML=_spkLabel(cardLang,'stop');btn.classList.add('playing');
-  var u=new SpeechSynthesisUtterance(text);u.lang=spkLng==='ar'?'ar-SA':spkLng==='hi'?'hi-IN':'en-US';u.rate=0.85;if(voice)u.voice=voice;
-  function resetBtn(){if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}}
-  u.onend=resetBtn;u.onerror=resetBtn;window.speechSynthesis.speak(u);
+  btn._spkLang=cardLang;SPEAKING_BTN=btn;
+  if(useCloud){
+    btn.innerHTML=_spkLabel(cardLang,'loading');btn.classList.add('loading');
+    _cloudTTS(btn,text,cardLang);
+  }else{
+    btn.innerHTML=_spkLabel(cardLang,'stop');btn.classList.add('playing');
+    var u=new SpeechSynthesisUtterance(text);
+    u.lang=cardLang==='ar'?'ar-SA':cardLang==='hi'?'hi-IN':'en-US';
+    u.rate=0.85;if(voice)u.voice=voice;
+    function rb(){if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}}
+    u.onend=rb;u.onerror=rb;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+// _cloudTTS: calls Apps Script TTS endpoint, plays returned MP3
+// No OS install needed. Works in Google Sites iframe. Works on all devices.
+function _cloudTTS(btn,text,cardLang){
+  var ttsLangs={en:'en-US',hi:'hi-IN',ar:'ar-XA'};
+  var langCode=ttsLangs[cardLang]||'ar-XA';
+  var cbName='tts'+Date.now(),script=document.createElement('script'),done=false;
+  var tid=setTimeout(function(){
+    if(done)return;done=true;delete window[cbName];
+    if(script.parentNode)script.parentNode.removeChild(script);
+    if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('loading');SPEAKING_BTN=null;}
+  },12000);
+  window[cbName]=function(data){
+    if(done)return;done=true;clearTimeout(tid);delete window[cbName];
+    if(script.parentNode)script.parentNode.removeChild(script);
+    if(data&&data.audio&&SPEAKING_BTN===btn){
+      var audio=new Audio('data:audio/mp3;base64,'+data.audio);
+      CURRENT_AUDIO=audio;
+      btn.innerHTML=_spkLabel(cardLang,'stop');btn.classList.remove('loading');btn.classList.add('playing');
+      audio.onended=function(){CURRENT_AUDIO=null;if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}};
+      audio.onerror=function(){CURRENT_AUDIO=null;if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}};
+      audio.play().catch(function(){CURRENT_AUDIO=null;if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}});
+    }else if(SPEAKING_BTN===btn){
+      btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('loading');SPEAKING_BTN=null;
+    }
+  };
+  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbName];if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('loading');SPEAKING_BTN=null;}};
+  script.src=API_BASE+'?action=tts&lang='+encodeURIComponent(langCode)+'&text='+encodeURIComponent(text.substring(0,800))+'&callback='+cbName;
+  document.head.appendChild(script);
 }
 
 // ── Admin voice tests ─────────────────────────────────────────
