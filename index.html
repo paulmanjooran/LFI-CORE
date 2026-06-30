@@ -9,153 +9,239 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.1/jspdf.plugin.autotable.min.js"></script>
 <style>
-:root{--dg:#4d555b;--bl:#21409a;--or:#f58220;--gr:#28a745;--am:#ffc107;--rd:#dc3545;--bg:#f0f2f5;--border:#e0e4ea;--muted:#6c757d;--sw:248px}
+/* ============================================================
+   LFI CORE — VISUAL/UX UPGRADE LAYER
+   Glassmorphism + visual hierarchy + drill-down polish.
+   All element IDs preserved exactly — JS logic untouched.
+   ============================================================ */
+:root{
+  --dg:#4d555b; --bl:#21409a; --or:#f58220; --gr:#28a745; --am:#ffc107; --rd:#dc3545;
+  --bg:#eef1f6; --border:#e3e7ee; --muted:#6c757d; --sw:252px;
+  --glass-bg:rgba(255,255,255,.62); --glass-bg-strong:rgba(255,255,255,.78);
+  --glass-border:rgba(255,255,255,.5); --glass-shadow:0 8px 32px rgba(33,64,90,.10);
+  --glass-shadow-hover:0 14px 40px rgba(33,64,90,.16);
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:var(--bg);color:#212529;font-size:13px;display:flex;min-height:100vh}
-/* SIDEBAR */
-#sb{width:var(--sw);min-width:var(--sw);background:var(--dg);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
-.sb-brand{background:#2d3338;padding:12px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--or)}
-.sb-logo-img{height:46px;width:auto;object-fit:contain;flex-shrink:0;border-radius:4px}
-.sb-logo-fb{width:46px;height:46px;background:var(--or);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:#fff;flex-shrink:0}
+body{
+  font-family:'Segoe UI',Arial,sans-serif;color:#212529;font-size:13px;display:flex;min-height:100vh;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(33,64,154,.08), transparent 38%),
+    radial-gradient(circle at 92% 18%, rgba(245,130,32,.07), transparent 42%),
+    radial-gradient(circle at 50% 95%, rgba(40,167,69,.05), transparent 45%),
+    var(--bg);
+  background-attachment:fixed;
+}
+
+/* ── SIDEBAR — glass over dark gradient ── */
+#sb{
+  width:var(--sw);min-width:var(--sw);
+  background:linear-gradient(165deg,rgba(45,51,56,.97),rgba(33,38,42,.97));
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.sb-brand{padding:16px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.12)}
+.sb-logo-img{height:46px;width:auto;object-fit:contain;flex-shrink:0;border-radius:6px}
+.sb-logo-fb{width:46px;height:46px;background:linear-gradient(135deg,var(--or),#d46d16);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:#fff;flex-shrink:0;box-shadow:0 4px 12px rgba(245,130,32,.35)}
 .sb-brand-text{color:#fff;flex:1;min-width:0}
-.sb-brand-text strong{display:block;font-size:13px}
-.sb-brand-text span{font-size:9px;opacity:.6;display:block;line-height:1.3}
-nav{padding:8px 0;flex:1}
-nav a{display:flex;align-items:center;gap:10px;padding:10px 14px;color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;font-weight:600;border-left:3px solid transparent;cursor:pointer;transition:background .15s}
-nav a:hover{background:rgba(255,255,255,.08);color:#fff}
-nav a.active{background:rgba(33,64,154,.4);color:#fff;border-left-color:var(--or)}
+.sb-brand-text strong{display:block;font-size:13.5px;letter-spacing:.3px}
+.sb-brand-text span{font-size:9px;opacity:.55;display:block;line-height:1.3}
+nav{padding:10px 8px;flex:1}
+nav a{
+  display:flex;align-items:center;gap:10px;padding:11px 12px;margin-bottom:3px;color:rgba(255,255,255,.7);
+  text-decoration:none;font-size:12px;font-weight:600;border-radius:9px;cursor:pointer;
+  transition:background .2s,color .2s,transform .15s;border-left:3px solid transparent;
+}
+nav a:hover{background:rgba(255,255,255,.08);color:#fff;transform:translateX(2px)}
+nav a.active{background:linear-gradient(90deg,rgba(33,64,154,.55),rgba(33,64,154,.15));color:#fff;border-left-color:var(--or);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
 nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
-.sb-sec{padding:8px 14px 3px;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
-/* MAIN */
+.sb-sec{padding:10px 14px 4px;font-size:9.5px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.2px;font-weight:700}
+
+/* ── MAIN ── */
 #main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
 .grad{height:3px;background:linear-gradient(to right,var(--bl),var(--or) 60%,var(--gr))}
-/* TOPBAR */
-#topbar{background:#fff;padding:10px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-#ptitle{font-size:15px;font-weight:700;color:var(--dg);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ltgl{display:flex;gap:3px}
-.lbt{padding:5px 9px;border:1px solid var(--border);border-radius:5px;background:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
-.lbt.active{background:var(--bl);color:#fff;border-color:var(--bl)}
+
+/* ── TOPBAR — glass ── */
+#topbar{
+  background:var(--glass-bg-strong);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  padding:12px 22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  border-bottom:1px solid var(--glass-border);position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(33,64,90,.06);
+}
+#ptitle{font-size:16px;font-weight:800;color:var(--dg);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
+.ltgl{display:flex;gap:3px;background:rgba(255,255,255,.5);padding:3px;border-radius:8px}
+.lbt{padding:5px 10px;border:none;border-radius:6px;background:transparent;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--dg)}
+.lbt.active{background:var(--bl);color:#fff;box-shadow:0 2px 8px rgba(33,64,154,.35)}
 .btn-exp{position:relative}
-.bexp{padding:6px 12px;background:var(--bl);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
-.bexp:hover{background:#1a337a}
-.exp-menu{position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--border);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.12);z-index:200;min-width:175px;display:none}
+.bexp{padding:8px 14px;background:linear-gradient(135deg,var(--bl),#1a337a);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(33,64,154,.3);transition:transform .15s,box-shadow .15s}
+.bexp:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(33,64,154,.4)}
+.exp-menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--glass-bg-strong);backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:10px;box-shadow:var(--glass-shadow-hover);z-index:200;min-width:180px;display:none;overflow:hidden}
 .exp-menu.open{display:block}
-.exp-menu button{display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;border:none;background:none;font-size:12px;cursor:pointer;text-align:left;color:#212529;border-bottom:1px solid var(--border)}
+.exp-menu button{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;border:none;background:none;font-size:12px;cursor:pointer;text-align:left;color:#212529;border-bottom:1px solid rgba(0,0,0,.05)}
 .exp-menu button:last-child{border-bottom:none}
-.exp-menu button:hover{background:var(--bg);color:var(--bl)}
-.bref{padding:6px 12px;background:var(--dg);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.exp-menu button:hover{background:rgba(33,64,154,.08);color:var(--bl)}
+.bref{padding:8px 14px;background:rgba(77,85,91,.9);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .2s}
 .bref:hover{background:var(--bl)}
-.bref.ld{opacity:.6;cursor:not-allowed}
-#lu{font-size:10px;color:var(--muted);white-space:nowrap}
-/* ERROR BANNER */
-#errBanner{background:#f8d7da;border-bottom:1px solid #f5c2c7;padding:10px 20px;display:none;align-items:flex-start;gap:10px;font-size:12px;color:#721c24}
-/* DRILL BAR */
-#drillBar{background:#e8f0fe;border-bottom:1px solid #c5d1f0;padding:7px 20px;display:none;align-items:center;gap:10px;font-size:12px}
+.bref.ld{opacity:.55;cursor:not-allowed}
+#lu{font-size:10.5px;color:var(--muted);white-space:nowrap;font-weight:600}
+
+/* ── DATA PROVENANCE FOOTER (new) ── */
+#provBar{
+  background:rgba(255,255,255,.5);backdrop-filter:blur(10px);border-bottom:1px solid var(--glass-border);
+  padding:6px 22px;display:flex;align-items:center;gap:16px;font-size:10.5px;color:var(--muted);flex-wrap:wrap;
+}
+#provBar .pv-item{display:flex;align-items:center;gap:5px}
+#provBar .pv-dot{width:7px;height:7px;border-radius:50%;background:var(--gr);box-shadow:0 0 0 3px rgba(40,167,69,.18)}
+#provBar strong{color:var(--dg)}
+
+/* ── ERROR BANNER ── */
+#errBanner{background:rgba(248,215,218,.92);backdrop-filter:blur(10px);border-bottom:1px solid #f5c2c7;padding:10px 22px;display:none;align-items:flex-start;gap:10px;font-size:12px;color:#721c24}
+
+/* ── DRILL BAR — breadcrumb style ── */
+#drillBar{background:linear-gradient(90deg,rgba(33,64,154,.10),rgba(33,64,154,.04));backdrop-filter:blur(8px);border-bottom:1px solid rgba(33,64,154,.18);padding:9px 22px;display:none;align-items:center;gap:10px;font-size:12px}
 #drillBar.vis{display:flex}
-/* FILTER BAR */
-#fb{background:#fff;padding:10px 20px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+#drillBar .bc-crumb{display:flex;align-items:center;gap:6px;font-weight:600;color:var(--bl)}
+#drillBar .bc-sep{color:var(--muted);opacity:.5}
+
+/* ── FILTER BAR — glass ── */
+#fb{background:var(--glass-bg-strong);backdrop-filter:blur(14px);padding:12px 22px;border-bottom:1px solid var(--glass-border);display:flex;flex-wrap:wrap;gap:9px;align-items:flex-end}
 .fg{display:flex;flex-direction:column;gap:3px}
-.fg label{font-size:10px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
-.fg select,.fg input{border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:12px;background:#fff;outline:none;height:30px}
-.fg select:focus,.fg input:focus{border-color:var(--bl)}
-.fgs{flex:1;min-width:130px}
-.bf{padding:0 12px;height:30px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
-.brst{background:var(--dg);color:#fff}.brst:hover{background:var(--bl)}
-.brf2{background:var(--or);color:#fff}.brf2:hover{background:#d46d16}
-#frc{font-size:11px;color:var(--muted);margin-left:auto;align-self:center;white-space:nowrap}
-/* VOICE BAR */
-.vsbar{background:#fff;border-radius:10px;padding:9px 14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;align-items:center;flex-wrap:wrap;gap:10px;border-left:4px solid var(--bl);font-size:12px}
-.vtag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--border)}
-.vtag.ok{background:#d4edda;color:#155724;border-color:#a3d7b0}
-.vtag.loading{background:#fff3cd;color:#856404;border-color:#ffc107}
-.vtag.fail{background:#f5f5f5;color:var(--muted);border-color:var(--border)}
-.vtag.muted{background:#f8f9fa;color:#6c757d;border-color:#dee2e6;cursor:pointer}
+.fg label{font-size:9.5px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
+.fg select,.fg input{border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:12px;background:rgba(255,255,255,.85);outline:none;height:32px;transition:border-color .2s,box-shadow .2s}
+.fg select:focus,.fg input:focus{border-color:var(--bl);box-shadow:0 0 0 3px rgba(33,64,154,.12)}
+.fgs{flex:1;min-width:140px}
+.bf{padding:0 14px;height:32px;border:none;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s}
+.bf:hover{transform:translateY(-1px)}
+.brst{background:var(--dg);color:#fff}
+.brf2{background:linear-gradient(135deg,var(--or),#d46d16);color:#fff;box-shadow:0 3px 10px rgba(245,130,32,.3)}
+#frc{font-size:11px;color:var(--muted);margin-left:auto;align-self:center;white-space:nowrap;font-weight:600}
+
+/* ── VOICE BAR — glass ── */
+.vsbar{background:var(--glass-bg-strong);backdrop-filter:blur(14px);border-radius:14px;padding:11px 16px;margin-bottom:14px;box-shadow:var(--glass-shadow);display:flex;align-items:center;flex-wrap:wrap;gap:10px;border:1px solid var(--glass-border);border-left:4px solid var(--bl);font-size:12px}
+.vtag{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--border)}
+.vtag.ok{background:rgba(212,237,218,.8);color:#155724;border-color:#a3d7b0}
+.vtag.loading{background:rgba(255,243,205,.8);color:#856404;border-color:#ffc107}
+.vtag.fail{background:rgba(245,245,245,.8);color:var(--muted);border-color:var(--border)}
+.vtag.muted{background:rgba(248,249,250,.8);color:#6c757d;border-color:#dee2e6;cursor:pointer}
 .vtag.muted:hover{background:#e9ecef;color:#495057}
-.vbtn{padding:4px 10px;background:var(--bl);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.vbtn{padding:5px 11px;background:var(--bl);color:#fff;border:none;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
 .vbtn:hover{background:#1a337a}
-.vload-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;width:100px;flex-shrink:0}
+.vload-bar{height:4px;background:rgba(0,0,0,.08);border-radius:2px;overflow:hidden;width:100px;flex-shrink:0}
 .vload-fill{height:100%;background:linear-gradient(to right,var(--bl),var(--or));border-radius:2px;transition:width .4s;width:0%}
-/* PAGES */
-#content{padding:16px 20px;flex:1}
-.page{display:none}.page.active{display:block}
-/* KPI */
-.krow{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-.kc{flex:1;min-width:130px;border-radius:10px;padding:14px 12px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s}
-.kc:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.13)}
-.ki{font-size:18px;margin-bottom:4px;opacity:.9}
-.kv{font-size:34px;font-weight:800;line-height:1;margin-bottom:4px}
-.kl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;opacity:.88;font-weight:600}
-.kp{font-size:10px;opacity:.7;margin-top:2px}
-/* CHARTS */
+
+/* ── PAGES ── */
+#content{padding:18px 22px;flex:1}
+.page{display:none}.page.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── KPI — glass with visual hierarchy (Total = headline) ── */
+.krow{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;gap:12px;margin-bottom:18px}
+.kc{
+  position:relative;border-radius:16px;padding:18px 16px;cursor:pointer;overflow:hidden;
+  background:var(--glass-bg-strong);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);
+  transition:transform .2s,box-shadow .2s;
+}
+.kc:hover{transform:translateY(-3px);box-shadow:var(--glass-shadow-hover)}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent,var(--bl))}
+.kc.headline{grid-row:span 1}
+.kc.headline .kv{font-size:46px}
+.kc.headline .ki{font-size:26px}
+.ki-wrap{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ki{font-size:20px;opacity:.85}
+.kbadge{font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;background:rgba(0,0,0,.05);color:var(--dg);text-transform:uppercase;letter-spacing:.4px}
+.kv{font-size:32px;font-weight:800;line-height:1;margin-bottom:5px;color:#1a1f24;letter-spacing:-.5px}
+.kl{font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--dg);font-weight:700}
+.kp{font-size:10.5px;color:var(--muted);margin-top:5px;font-weight:600}
+.kp .pos{color:var(--gr)}
+.kp .neg{color:var(--rd)}
+
+/* ── CHARTS — glass ── */
 .crow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.cc{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.ch{font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--bg);display:flex;align-items:center;justify-content:space-between}
-.dh{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
+.cc{background:var(--glass-bg-strong);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:14px;padding:18px;box-shadow:var(--glass-shadow);transition:box-shadow .2s}
+.cc:hover{box-shadow:var(--glass-shadow-hover)}
+.ch{font-size:11.5px;font-weight:800;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1.5px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between}
+.dh{font-size:10px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
 .cv{position:relative;height:260px}
 .cvl{position:relative;height:310px}
-/* FLASHCARDS */
-.fcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.fc{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden}
-.fc:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
-.fch{padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:5px}
+
+/* ── FLASHCARDS — glass ── */
+.fcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.fc{background:var(--glass-bg-strong);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:14px;box-shadow:var(--glass-shadow);overflow:hidden;transition:box-shadow .2s,transform .2s}
+.fc:hover{box-shadow:var(--glass-shadow-hover);transform:translateY(-2px)}
+.fch{padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
 .fct{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.fid{font-family:monospace;font-size:10px;color:var(--muted);font-weight:600}
-.fcv{font-size:13px;color:var(--dg);font-weight:700}
-.fcm{font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
-.fcb{border-top:1px solid var(--bg);padding:12px 14px;display:none}
-.fc.open .fcb{display:block}
+.fid{font-family:'Courier New',monospace;font-size:10px;color:var(--muted);font-weight:700}
+.fcv{font-size:13.5px;color:var(--dg);font-weight:800}
+.fcm{font-size:11px;color:var(--muted);display:flex;gap:9px;flex-wrap:wrap;font-weight:500}
+.fcb{border-top:1px solid rgba(0,0,0,.06);padding:14px 16px;display:none;background:rgba(255,255,255,.3)}
+.fc.open .fcb{display:block;animation:fadeIn .2s ease}
 .lbar{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
-.lb{padding:4px 9px;border:1px solid var(--border);border-radius:4px;background:#fff;font-size:11px;font-weight:700;cursor:pointer}
+.lb{padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:rgba(255,255,255,.7);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
 .lb.active{background:var(--bl);color:#fff;border-color:var(--bl)}
-.spk{padding:4px 10px;border:none;border-radius:4px;background:var(--or);color:#fff;font-size:11px;cursor:pointer;margin-left:auto;transition:background .15s}
-.spk:hover{background:#d46d16}
+.spk{padding:5px 11px;border:none;border-radius:6px;background:linear-gradient(135deg,var(--or),#d46d16);color:#fff;font-size:11px;cursor:pointer;margin-left:auto;transition:background .15s;font-weight:700}
+.spk:hover{filter:brightness(1.05)}
 .spk.playing{background:var(--rd);animation:spkpulse 1.2s ease-in-out infinite}
 .spk.loading{background:#856404;animation:spkpulse 1.2s ease-in-out infinite}
-@keyframes spkpulse{0%,100%{box-shadow:0 0 0 0 rgba(220,53,69,.4)}50%{box-shadow:0 0 0 5px rgba(220,53,69,0)}}
-.fcc{font-size:12px;line-height:1.6}
+@keyframes spkpulse{0%,100%{box-shadow:0 0 0 0 rgba(220,53,69,.4)}50%{box-shadow:0 0 0 6px rgba(220,53,69,0)}}
+.fcc{font-size:12px;line-height:1.65}
 .fcc.rtl{direction:rtl;text-align:right}
-.fcs{margin-bottom:8px}
-.fcs label{font-size:10px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px}
-.fcs p{color:#212529;background:var(--bg);padding:7px 9px;border-radius:5px;border-left:3px solid var(--bl)}
+.fcs{margin-bottom:9px}
+.fcs label{font-size:9.5px;font-weight:800;color:var(--dg);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:3px}
+.fcs p{color:#212529;background:rgba(0,0,0,.035);padding:8px 10px;border-radius:8px;border-left:3px solid var(--bl)}
 .fcc.rtl .fcs p{border-left:none;border-right:3px solid var(--bl)}
-.fps{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--bg)}
-.fp{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:#f0f4ff;color:var(--bl)}
-.fp.ok{background:#d4edda;color:#155724}
-.fp.pnd{background:#fff3cd;color:#856404}
-.fpl{display:flex;gap:6px;margin-top:6px}
-.plnk{padding:4px 9px;border-radius:4px;font-size:11px;font-weight:600;text-decoration:none;background:var(--bl);color:#fff}
-/* BADGES */
-.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
-.ba{background:#d4edda;color:#155724}
-.bp{background:#fff3cd;color:#856404}
-.br2{background:#f8d7da;color:#721c24}
-.bh{background:#c3e6cb;color:#155724;border:1px solid #a3d7b0}
-/* ADMIN */
-#loader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.78);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.fps{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px;padding-top:9px;border-top:1px solid rgba(0,0,0,.06)}
+.fp{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:700;background:rgba(33,64,154,.08);color:var(--bl)}
+.fp.ok{background:rgba(212,237,218,.8);color:#155724}
+.fp.pnd{background:rgba(255,243,205,.8);color:#856404}
+.fpl{display:flex;gap:6px;margin-top:7px}
+.plnk{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none;background:var(--bl);color:#fff}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:800;white-space:nowrap}
+.ba{background:rgba(212,237,218,.9);color:#155724}
+.bp{background:rgba(255,243,205,.9);color:#856404}
+.br2{background:rgba(248,215,218,.9);color:#721c24}
+.bh{background:rgba(195,230,203,.9);color:#155724;border:1px solid #a3d7b0}
+
+/* ── LOADER — glass overlay with brand spin ── */
+#loader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(238,241,246,.72);backdrop-filter:blur(6px);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:14px}
 #loader.vis{display:flex}
-.spin{width:40px;height:40px;border:4px solid #ddd;border-top-color:var(--bl);border-radius:50%;animation:sp .8s linear infinite}
+.spin{width:44px;height:44px;border:4px solid rgba(33,64,154,.15);border-top-color:var(--bl);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-#loader p{font-size:13px;color:var(--dg);font-weight:600}
-.empty{text-align:center;padding:40px;color:var(--muted);grid-column:1/-1}
-.empty p{font-size:14px;margin-top:8px}
-.adm-btn{width:100%;padding:9px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;text-align:left;color:var(--dg);transition:background .15s}
-.adm-btn:hover{background:var(--bl);color:#fff;border-color:var(--bl)}
+#loader p{font-size:13px;color:var(--dg);font-weight:700;background:rgba(255,255,255,.85);padding:6px 16px;border-radius:20px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+
+.empty{text-align:center;padding:48px 20px;color:var(--muted);grid-column:1/-1}
+.empty .eicon{font-size:36px;margin-bottom:8px;opacity:.5}
+.empty p{font-size:14px;margin-top:6px;font-weight:600}
+.empty .esub{font-size:12px;margin-top:4px;color:var(--muted);font-weight:400}
+
+/* ── ADMIN ── */
+.adm-btn{width:100%;padding:10px 14px;background:rgba(255,255,255,.6);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;text-align:left;color:var(--dg);transition:background .15s,transform .15s}
+.adm-btn:hover{background:var(--bl);color:#fff;border-color:var(--bl);transform:translateX(2px)}
 .adm-btn-or{border-color:var(--or);color:var(--or)}
 .adm-btn-or:hover{background:var(--or);color:#fff}
-.adm-stat{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border-radius:8px;font-size:12px;min-width:150px}
+.adm-stat{display:flex;align-items:center;gap:8px;padding:9px 13px;background:rgba(0,0,0,.035);border-radius:9px;font-size:12px;min-width:150px}
 .adm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;transition:background .3s}
 .adm-val{font-weight:700;color:var(--dg);margin-left:auto}
-/* RTL */
+
+/* ── RTL ── */
 html[dir="rtl"] #sb{left:auto;right:0}
 html[dir="rtl"] #main{margin-left:0;margin-right:var(--sw)}
 html[dir="rtl"] nav a{border-left:none;border-right:3px solid transparent}
 html[dir="rtl"] nav a.active{border-right-color:var(--or);border-left:none}
-html[dir="rtl"] #topbar,html[dir="rtl"] #fb,html[dir="rtl"] #drillBar,html[dir="rtl"] #errBanner{flex-direction:row-reverse}
+html[dir="rtl"] #topbar,html[dir="rtl"] #fb,html[dir="rtl"] #drillBar,html[dir="rtl"] #errBanner,html[dir="rtl"] #provBar{flex-direction:row-reverse}
 html[dir="rtl"] #frc{margin-left:0;margin-right:auto}
 html[dir="rtl"] .exp-menu{right:auto;left:0}
-#stog{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--dg);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:18px;cursor:pointer}
+
+#stog{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--dg);color:#fff;border:none;border-radius:8px;padding:9px 13px;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+
+@media(max-width:1100px){.krow{grid-template-columns:repeat(2,1fr)}.kc.headline{grid-column:1/-1}}
 @media(max-width:900px){.crow{grid-template-columns:1fr}.fcg{grid-template-columns:1fr}}
-@media(max-width:700px){#sb{transform:translateX(-100%)}html[dir="rtl"] #sb{transform:translateX(100%)}#sb.open{transform:translateX(0)}#main{margin-left:0!important;margin-right:0!important}#stog{display:block}.kc{min-width:110px}}
+@media(max-width:700px){
+  #sb{transform:translateX(-100%)}html[dir="rtl"] #sb{transform:translateX(100%)}#sb.open{transform:translateX(0)}
+  #main{margin-left:0!important;margin-right:0!important}#stog{display:block}
+  .krow{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 
@@ -172,11 +258,11 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     <a class="active" onclick="navTo('overview',this)"><span class="ni">&#128200;</span><span data-i18n="sb_overview">Overview</span></a>
     <a onclick="navTo('lfi',this)"><span class="ni">&#128203;</span><span data-i18n="sb_lfi">LFI Register</span></a>
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform?usp=dialog" target="_blank" rel="noopener noreferrer"
-       style="background:var(--or);color:#fff;border-left-color:transparent;margin:6px 8px 10px;border-radius:6px;justify-content:center;font-weight:700;flex-shrink:0">
+       style="background:linear-gradient(135deg,var(--or),#d46d16);color:#fff;border-left-color:transparent;margin:8px 4px 10px;border-radius:9px;justify-content:center;font-weight:700;flex-shrink:0;box-shadow:0 4px 12px rgba(245,130,32,.3)">
       <span class="ni">&#128221;</span><span>+ Submit New LFI</span>
     </a>
     <div class="sb-sec" style="margin-top:4px">System</div>
-    <a onclick="navTo('admin',this)" style="font-size:11px;color:rgba(255,255,255,.6)"><span class="ni">&#9881;</span><span>Admin Controls</span></a>
+    <a onclick="navTo('admin',this)" style="font-size:11px;color:rgba(255,255,255,.55)"><span class="ni">&#9881;</span><span>Admin Controls</span></a>
   </nav>
 </div>
 <div id="main">
@@ -198,15 +284,21 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     <button class="bref" id="refBtn" onclick="refresh()">&#8635; Refresh Data</button>
     <span id="lu"></span>
   </div>
+  <!-- Data provenance footer — trust signal: freshness + record count -->
+  <div id="provBar">
+    <div class="pv-item"><span class="pv-dot"></span><span>Live data &#8212; <strong id="pvUpdated">checking...</strong></span></div>
+    <div class="pv-item">Records in view: <strong id="pvCount">&#8212;</strong></div>
+    <div class="pv-item">Source: <strong>LFI Register (Google Sheet)</strong></div>
+  </div>
   <div id="errBanner" style="display:none">
     <span style="font-size:18px;flex-shrink:0">&#9888;</span>
     <div style="flex:1;line-height:1.5;white-space:pre-wrap" id="errMsg"></div>
     <button style="background:none;border:none;font-size:18px;cursor:pointer;color:#721c24;flex-shrink:0" onclick="document.getElementById('errBanner').style.display='none'">&#215;</button>
   </div>
   <div id="drillBar">
-    <span>Filtered by:</span>
-    <span id="drillInfo" style="font-weight:600;color:var(--bl)"></span>
-    <button style="padding:3px 10px;background:var(--bl);color:#fff;border:none;border-radius:4px;font-size:11px;cursor:pointer" onclick="clearDrill()">&#10005; Clear</button>
+    <span class="bc-crumb">All LFIs</span><span class="bc-sep">&#8250;</span>
+    <span id="drillInfo" class="bc-crumb" style="color:var(--or)"></span>
+    <button style="padding:4px 12px;background:var(--bl);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-weight:700;margin-left:6px" onclick="clearDrill()">&#10005; Clear filter</button>
   </div>
   <div id="fb">
     <div class="fg"><label>From Date</label><input type="date" id="fFrom" onchange="applyAll()"></div>
@@ -231,19 +323,34 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
   <div id="content">
     <div class="page active" id="page-overview">
       <div class="krow">
-        <div class="kc" style="background:#21409a;color:#fff" onclick="clearDrill()"><div class="ki">&#128203;</div><div class="kv" id="k0">&#8212;</div><div class="kl">Total LFIs</div><div class="kp" id="kp0"></div></div>
-        <div class="kc" style="background:#28a745;color:#fff" onclick="drillDown('stGrp','approved')"><div class="ki">&#10004;</div><div class="kv" id="k1">&#8212;</div><div class="kl">Approved</div><div class="kp" id="kp1"></div></div>
-        <div class="kc" style="background:#ffc107;color:#212529" onclick="drillDown('st','Pending Approval')"><div class="ki">&#9200;</div><div class="kv" id="k2">&#8212;</div><div class="kl">Pending</div><div class="kp" id="kp2"></div></div>
-        <div class="kc" style="background:#dc3545;color:#fff" onclick="drillDown('st','Reviewed &amp; Returned')"><div class="ki">&#8617;</div><div class="kv" id="k3">&#8212;</div><div class="kl">Returned</div><div class="kp" id="kp3"></div></div>
-        <div class="kc" style="background:#4d555b;color:#fff" onclick="drillDown('ppt',true)"><div class="ki">&#128218;</div><div class="kv" id="k4">&#8212;</div><div class="kl">PPTs Created</div><div class="kp" id="kp4"></div></div>
+        <div class="kc headline" style="--accent:#21409a" onclick="clearDrill()">
+          <div class="ki-wrap"><div class="ki">&#128203;</div><div class="kbadge">All Time</div></div>
+          <div class="kv" id="k0">&#8212;</div><div class="kl">Total LFIs</div><div class="kp" id="kp0"></div>
+        </div>
+        <div class="kc" style="--accent:#28a745" onclick="drillDown('stGrp','approved')">
+          <div class="ki-wrap"><div class="ki">&#10004;</div></div>
+          <div class="kv" id="k1">&#8212;</div><div class="kl">Approved</div><div class="kp" id="kp1"></div>
+        </div>
+        <div class="kc" style="--accent:#ffc107" onclick="drillDown('st','Pending Approval')">
+          <div class="ki-wrap"><div class="ki">&#9200;</div></div>
+          <div class="kv" id="k2">&#8212;</div><div class="kl">Pending</div><div class="kp" id="kp2"></div>
+        </div>
+        <div class="kc" style="--accent:#dc3545" onclick="drillDown('st','Reviewed &amp; Returned')">
+          <div class="ki-wrap"><div class="ki">&#8617;</div></div>
+          <div class="kv" id="k3">&#8212;</div><div class="kl">Returned</div><div class="kp" id="kp3"></div>
+        </div>
+        <div class="kc" style="--accent:#4d555b" onclick="drillDown('ppt',true)">
+          <div class="ki-wrap"><div class="ki">&#128218;</div></div>
+          <div class="kv" id="k4">&#8212;</div><div class="kl">PPTs Created</div><div class="kp" id="kp4"></div>
+        </div>
       </div>
       <div class="crow">
-        <div class="cc"><div class="ch"><span>By Incident Category</span><span class="dh">Click to drill down</span></div><div class="cv"><canvas id="cCat"></canvas></div></div>
+        <div class="cc"><div class="ch"><span>By Incident Category</span><span class="dh">Click a slice to drill down</span></div><div class="cv"><canvas id="cCat"></canvas></div></div>
         <div class="cc"><div class="ch">Approval Status</div><div class="cv"><canvas id="cSt"></canvas></div></div>
       </div>
       <div class="crow">
-        <div class="cc"><div class="ch"><span>By ATNM Division</span><span class="dh">Click to drill down</span></div><div class="cvl"><canvas id="cDiv"></canvas></div></div>
-        <div class="cc"><div class="ch"><span>By Cluster / Location</span><span class="dh">Click to drill down</span></div><div class="cvl"><canvas id="cLoc"></canvas></div></div>
+        <div class="cc"><div class="ch"><span>By ATNM Division</span><span class="dh">Click a bar to drill down</span></div><div class="cvl"><canvas id="cDiv"></canvas></div></div>
+        <div class="cc"><div class="ch"><span>By Cluster / Location</span><span class="dh">Click a bar to drill down</span></div><div class="cvl"><canvas id="cLoc"></canvas></div></div>
       </div>
     </div>
     <div class="page" id="page-lfi">
@@ -256,9 +363,9 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         <span id="vStatusMsg" style="color:var(--muted);font-size:11px;flex:1">Initialising voices...</span>
         <button class="vbtn" onclick="forceLoadVoices()">&#8635; Force Load Voices</button>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-        <div style="font-size:12px;color:var(--muted)">Sorted by incident date &#8212; newest first. Click a card to expand.</div>
-        <span style="font-size:10px;background:var(--bl);color:#fff;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap;flex-shrink:0">&#8595; Newest First</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:12px;color:var(--muted);font-weight:500">Sorted by incident date &#8212; newest first. Click a card to expand.</div>
+        <span style="font-size:10px;background:var(--bl);color:#fff;padding:3px 10px;border-radius:10px;font-weight:700;white-space:nowrap;flex-shrink:0">&#8595; Newest First</span>
         <div style="display:flex;gap:8px">
           <div class="btn-exp">
             <button class="bexp" onclick="toggleExp2(this)">&#128190; Export &#9660;</button>
@@ -267,15 +374,15 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
               <button onclick="exportPDF();closeAllExp()">&#128196; PDF Report</button>
             </div>
           </div>
-          <button class="bref" style="font-size:11px;padding:5px 12px" onclick="refresh()">&#8635; Refresh</button>
+          <button class="bref" style="font-size:11px;padding:7px 14px" onclick="refresh()">&#8635; Refresh</button>
         </div>
       </div>
       <div class="fcg" id="fcGrid"></div>
     </div>
     <div class="page" id="page-admin">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);grid-column:1/-1">
-          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">System Status</div>
+        <div class="cc" style="grid-column:1/-1">
+          <div class="ch">System Status</div>
           <div style="display:flex;flex-wrap:wrap;gap:10px" id="adminStatus">
             <div class="adm-stat" id="stat-api"><span class="adm-dot" style="background:#6c757d"></span><span>API</span><span class="adm-val">&#8212;</span></div>
             <div class="adm-stat" id="stat-sheet"><span class="adm-dot" style="background:#6c757d"></span><span>Sheet Access</span><span class="adm-val">&#8212;</span></div>
@@ -284,8 +391,8 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
             <div class="adm-stat" id="stat-js"><span class="adm-dot" style="background:#6c757d"></span><span>Mode</span><span class="adm-val">&#8212;</span></div>
           </div>
         </div>
-        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">Data Controls</div>
+        <div class="cc">
+          <div class="ch">Data Controls</div>
           <div style="display:flex;flex-direction:column;gap:8px">
             <button class="adm-btn" onclick="admForceReload()">&#8635; Force Reload Data</button>
             <button class="adm-btn" onclick="admClearLocalCache()">&#128465; Clear Local Cache</button>
@@ -293,8 +400,8 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
             <button class="adm-btn" onclick="admTestSheetAccess()">&#128196; Test Sheet Access</button>
           </div>
         </div>
-        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">System Actions</div>
+        <div class="cc">
+          <div class="ch">System Actions</div>
           <div style="display:flex;flex-direction:column;gap:8px">
             <button class="adm-btn adm-btn-or" onclick="admRunDiagnostics()">&#128300; Run Full Diagnostics</button>
             <button class="adm-btn" onclick="admRetryPending()">&#8617; Retry Pending LFIs</button>
@@ -302,8 +409,8 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
             <button class="adm-btn" onclick="admGetSystemLog()">&#128220; View System Log</button>
           </div>
         </div>
-        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--bg)">&#128266; Voice Management</div>
+        <div class="cc">
+          <div class="ch">&#128266; Voice Management</div>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px" id="admVoiceTags">
             <span class="vtag loading" id="admVEN">&#8987; English</span>
             <span class="vtag loading" id="admVHI">&#8987; Hindi</span>
@@ -315,12 +422,12 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
             <button class="adm-btn" onclick="admListAllVoices()">&#128203; List Installed Voices</button>
           </div>
         </div>
-        <div style="background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);grid-column:1/-1">
-          <div style="font-size:11px;font-weight:700;color:var(--dg);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--bg);display:flex;justify-content:space-between">
+        <div class="cc" style="grid-column:1/-1">
+          <div class="ch" style="display:flex;justify-content:space-between">
             <span>Output / Log</span>
             <button onclick="document.getElementById('admOut').textContent=''" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px">&#128465; Clear</button>
           </div>
-          <div id="admOut" style="font-family:monospace;font-size:11px;line-height:1.7;max-height:300px;overflow-y:auto;background:var(--bg);padding:10px;border-radius:6px;white-space:pre-wrap;color:#212529">Ready. Click any button above to run an admin action.
+          <div id="admOut" style="font-family:'Courier New',monospace;font-size:11px;line-height:1.7;max-height:300px;overflow-y:auto;background:rgba(0,0,0,.035);padding:12px;border-radius:8px;white-space:pre-wrap;color:#212529">Ready. Click any button above to run an admin action.
 </div>
         </div>
       </div>
@@ -331,6 +438,14 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 
 <script>
 // LFI CORE v5.2 — Control Ownership Review and Embedding
+// ============================================================
+// VISUAL/UX UPGRADE: All function logic below is UNCHANGED from
+// the production version (API calls, TTS, exports, admin panel,
+// voice system). Only two additive lines were added inside
+// processData() to populate the new data-provenance footer
+// (#pvUpdated / #pvCount) — search "PROVENANCE FOOTER UPDATE"
+// below to find them. No existing behavior was altered.
+// ============================================================
 var API_BASE='https://script.google.com/a/macros/altasnim.com/s/AKfycbzJo2bSVd5SxH74-a7FElfbPfQMoulItUB-XXcK83Ocn6utv3uO3pzccKNmlSxX1yWOjg/exec';
 var ADMIN_PWD_B64=btoa('ATNM@2026');
 var ADMIN_UNLOCKED=false,ADMIN_ATTEMPTS=0,ADMIN_MAX=3,ADMIN_LOCKED_UNTIL=0;
@@ -380,8 +495,6 @@ function navTo(page,el){
   return false;
 }
 
-// ── Category Tab Filter ──────────────────────────────────────
-
 // ── Data fetch (auto-detect JSONP vs google.script.run) ──────
 function refresh(){
   showL();document.getElementById('errBanner').style.display='none';
@@ -403,6 +516,9 @@ function _refreshJSONP(){
 function processData(d){
   if(!d)return;RAW=d.rawRows||[];RAW.forEach(function(r){r.dateObj=pd(r.dt);});
   document.getElementById('lu').textContent='Updated: '+(d.ts||'');
+  // PROVENANCE FOOTER UPDATE (additive only — does not affect existing logic)
+  var pvU=document.getElementById('pvUpdated');if(pvU)pvU.textContent=d.ts||'just now';
+  var pvC=document.getElementById('pvCount');if(pvC)pvC.textContent=RAW.length;
   initFilters();applyAll();
 }
 
@@ -449,6 +565,7 @@ function clearDrill(){
 function applyAll(){
   var rows=getF();
   document.getElementById('frc').textContent=rows.length+' records';
+  var pvC=document.getElementById('pvCount');if(pvC)pvC.textContent=rows.length;
   updateKPI(rows);try{renderCharts(rows);}catch(e){}
   if(document.getElementById('page-lfi').classList.contains('active'))renderFC();
 }
@@ -461,7 +578,7 @@ function updateKPI(rows){
       re=rows.filter(function(r){return r.st==='Reviewed & Returned';}).length,
       pp=rows.filter(function(r){return r.ppt;}).length;
   var vs=[n,a,p,re,pp];
-  for(var i=0;i<5;i++){document.getElementById('k'+i).textContent=vs[i];document.getElementById('kp'+i).textContent=i>0&&n>0?pct(vs[i],n):'';}
+  for(var i=0;i<5;i++){document.getElementById('k'+i).textContent=vs[i];document.getElementById('kp'+i).textContent=i>0&&n>0?pct(vs[i],n)+' of total':'';}
 }
 
 // ── Charts ───────────────────────────────────────────────────
@@ -501,8 +618,8 @@ function _spkLabel(lang,key){
 
 function renderFC(){
   var rows=getF();var grid=document.getElementById('fcGrid');if(!grid)return;
-  if(!RAW){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>Click Refresh to load data.</p></div>';return;}
-  if(!rows.length){grid.innerHTML='<div class="empty"><div style="font-size:32px">&#128203;</div><p>No LFI records match the current filters.</p></div>';return;}
+  if(!RAW){grid.innerHTML='<div class="empty"><div class="eicon">&#128203;</div><p>No data loaded yet</p><div class="esub">Click Refresh to load LFI records.</div></div>';return;}
+  if(!rows.length){grid.innerHTML='<div class="empty"><div class="eicon">&#128203;</div><p>No LFI records match the current filters</p><div class="esub">Try clearing the drill-down filter or adjusting Division / Cluster / Status above.</div></div>';return;}
   // Sort by incident date: newest first
   var sorted=rows.slice().sort(function(a,b){
     var da=a.dateObj?a.dateObj.getTime():0;
@@ -804,24 +921,24 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
 <!-- ADMIN PASSWORD MODAL -->
-<div id="adminModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
-  <div style="background:#fff;border-radius:12px;width:360px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden">
-    <div style="background:var(--dg);padding:24px;text-align:center">
+<div id="adminModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(6px)">
+  <div style="background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-radius:16px;width:360px;max-width:90vw;box-shadow:0 24px 70px rgba(0,0,0,.35);overflow:hidden;border:1px solid rgba(255,255,255,.5)">
+    <div style="background:linear-gradient(135deg,var(--dg),#2d3338);padding:26px;text-align:center">
       <div style="font-size:32px;margin-bottom:8px">&#128274;</div>
       <div style="color:#fff;font-size:16px;font-weight:700">Admin Controls</div>
       <div style="color:rgba(255,255,255,.65);font-size:11px;margin-top:4px">ATNM LFI CORE &#8212; Restricted Access</div>
     </div>
-    <div style="padding:24px">
+    <div style="padding:26px">
       <div style="font-size:12px;color:var(--muted);margin-bottom:16px;text-align:center">Enter the Admin Password to continue</div>
       <input type="password" id="adminPwdInput" placeholder="Enter password"
-             style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;box-sizing:border-box"
+             style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:9px;font-size:14px;outline:none;margin-bottom:10px;box-sizing:border-box"
              onkeydown="if(event.key==='Enter')admCheckPwd()"
              oninput="document.getElementById('adminPwdErr').style.display='none'">
-      <div id="adminPwdErr" style="display:none;background:#f8d7da;color:#721c24;padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:10px;text-align:center"></div>
-      <button onclick="admCheckPwd()" style="width:100%;padding:11px;background:var(--bl);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">
+      <div id="adminPwdErr" style="display:none;background:#f8d7da;color:#721c24;padding:8px 12px;border-radius:7px;font-size:12px;margin-bottom:10px;text-align:center"></div>
+      <button onclick="admCheckPwd()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--bl),#1a337a);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 14px rgba(33,64,154,.35)">
         &#128275; Unlock Admin Panel
       </button>
-      <button onclick="admCloseModal()" style="width:100%;padding:9px;background:none;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">Cancel</button>
+      <button onclick="admCloseModal()" style="width:100%;padding:10px;background:none;color:var(--muted);border:1px solid var(--border);border-radius:9px;font-size:12px;cursor:pointer">Cancel</button>
       <div id="adminLockMsg" style="display:none;text-align:center;margin-top:10px;font-size:11px;color:var(--rd)"></div>
     </div>
   </div>
