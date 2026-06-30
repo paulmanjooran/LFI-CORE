@@ -58,18 +58,19 @@ nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .sb-sec{padding:10px 14px 4px;font-size:9.5px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.2px;font-weight:700}
 
 /* ── MAIN ── */
-#main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
+#main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0;padding-top:2px}
 .grad{height:3px;background:linear-gradient(to right,var(--bl),var(--or) 60%,var(--gr))}
 
 /* ── TOPBAR — glass ── */
 #topbar{
   background:var(--glass-bg-strong);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   padding:12px 22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  border-bottom:1px solid var(--glass-border);position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(33,64,90,.06);
+  border-bottom:1px solid var(--glass-border);position:sticky;top:0;z-index:500;box-shadow:0 2px 12px rgba(33,64,90,.06);
+  isolation:isolate;
 }
 #ptitle{font-size:16px;font-weight:800;color:var(--dg);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
-.ltgl{display:flex;gap:3px;background:rgba(255,255,255,.5);padding:3px;border-radius:8px}
-.lbt{padding:5px 10px;border:none;border-radius:6px;background:transparent;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--dg)}
+.ltgl{display:flex;gap:3px;background:rgba(255,255,255,.5);padding:3px;border-radius:8px;position:relative;z-index:1000;isolation:isolate}
+.lbt{padding:5px 10px;border:none;border-radius:6px;background:transparent;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--dg);position:relative;z-index:1001;pointer-events:auto}
 .lbt.active{background:var(--bl);color:#fff;box-shadow:0 2px 8px rgba(33,64,154,.35)}
 .btn-exp{position:relative}
 .bexp{padding:8px 14px;background:linear-gradient(135deg,var(--bl),#1a337a);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(33,64,154,.3);transition:transform .15s,box-shadow .15s}
@@ -163,6 +164,16 @@ nav a .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .dh{font-size:10px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
 .cv{position:relative;height:260px}
 .cvl{position:relative;height:310px}
+
+/* ── PPT THUMBNAIL (new) — shown above flashcard header ── */
+.fc-thumb-wrap{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,rgba(33,64,154,.06),rgba(245,130,32,.06));overflow:hidden}
+.fc-thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+.fc:hover .fc-thumb-wrap img{transform:scale(1.04)}
+.fc-thumb-badge{position:absolute;top:8px;right:8px;background:rgba(33,64,154,.85);color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:.4px;backdrop-filter:blur(4px)}
+.fc-thumb-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted)}
+.fc-thumb-placeholder .tpi{font-size:26px;opacity:.4}
+.fc-thumb-placeholder span{font-size:10px;font-weight:600;opacity:.6;text-transform:uppercase;letter-spacing:.5px}
+html[dir="rtl"] .fc-thumb-badge{right:auto;left:8px}
 
 /* ── FLASHCARDS — glass ── */
 .fcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
@@ -630,7 +641,11 @@ function renderFC(){
   sorted.forEach(function(r){
     var lang=LANG,c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
     var enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');
+    var thumbHtml = r.thumb
+      ? '<div class="fc-thumb-wrap"><img src="'+esc(r.thumb)+'" alt="PPT preview for '+esc(r.id)+'" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=&quot;fc-thumb-placeholder&quot;><div class=&quot;tpi&quot;>&#128218;</div><span>Preview unavailable</span></div>\'"><div class="fc-thumb-badge">&#128218; PPT</div></div>'
+      : '<div class="fc-thumb-wrap"><div class="fc-thumb-placeholder"><div class="tpi">&#128203;</div><span>'+(r.ppt?'Preview pending':'No PPT yet')+'</span></div></div>';
     html+='<div class="fc">'+
+      thumbHtml+
       '<div class="fch" onclick="stopSpeech();this.closest(\'.fc\').classList.toggle(\'open\')">'+
         '<div class="fct"><span class="fid">'+esc(r.id)+'</span>'+mkbadge(r.st)+'<span style="font-size:12px;color:var(--muted)">&#9660;</span></div>'+
         '<div class="fcv">'+esc(r.cat)+'</div>'+
