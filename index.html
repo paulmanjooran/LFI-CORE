@@ -275,9 +275,11 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 .ppt-modal-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
 .ppt-modal-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(4,8,20,.8);color:rgba(255,255,255,.7);font-size:12px;pointer-events:none;z-index:5}
 .spin-w{width:28px;height:28px;border:3px solid rgba(255,255,255,.15);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
-.ppt-nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:6;box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 4px 16px rgba(0,0,0,.3)}
+.ppt-nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:8;box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 4px 16px rgba(0,0,0,.3)}
 .ppt-nav-btn:hover{background:rgba(255,255,255,.22);transform:translateY(-50%) scale(1.08)}
 .ppt-nav-prev{left:12px}.ppt-nav-next{right:12px}
+.ppt-modal-frame-wrap{cursor:grab}
+.ppt-modal-frame-wrap:active{cursor:grabbing}
 .ppt-modal-footer{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(0,0,0,.2);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
 .ppt-slide-dots{display:flex;gap:6px;align-items:center}
 .ppt-sd{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .25s}
@@ -1030,6 +1032,9 @@ function openPptModal(pptLink,lfiId){
   PPT_STATE.link=pptLink;PPT_STATE.slide=1;PPT_STATE.slideIds=[];PPT_STATE.slideUrls=[];
   var modal=document.getElementById('pptModal');
   modal.classList.add('vis');document.body.style.overflow='hidden';
+  // Focus the modal so keyboard events go to its own listener (not document)
+  // This works even when an iframe fallback is shown (iframe keyboard focus is isolated)
+  setTimeout(function(){modal.focus();},60);
   document.getElementById('pptModalTitle').textContent=(lfiId||'LFI Alert')+' \u2014 Slide Navigator';
   document.getElementById('pptModalOpenBtn').href=pptLink;
   _pptResetUI();_pptShowLoading(true);
@@ -1134,11 +1139,57 @@ function closePptModal(){
   _pptResetUI();document.body.style.overflow='';
 }
 document.addEventListener('click',function(e){if(e.target.id==='pptModal')closePptModal();});
-document.addEventListener('keydown',function(e){
-  if(!document.getElementById('pptModal').classList.contains('vis'))return;
-  if(e.key==='ArrowRight'||e.key==='ArrowDown')_pptGoSlide(PPT_STATE.slide+1);
-  if(e.key==='ArrowLeft'||e.key==='ArrowUp')_pptGoSlide(PPT_STATE.slide-1);
-});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closePptModal();});
+
+// ── PPT Navigation: keyboard, touch swipe, mouse drag ─────────
+// Strategy: focus the modal itself (not document) so keyboard events
+// are captured even when an iframe fallback has stolen document focus.
+(function(){
+  var modal=document.getElementById('pptModal');
+  var swipeStartX=0,swipeStartY=0,swipeActive=false;
+
+  // KEYBOARD — fires on the modal element directly (not document)
+  // so it works regardless of whether an iframe has keyboard focus.
+  modal.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();_pptGoSlide(PPT_STATE.slide+1);}
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();_pptGoSlide(PPT_STATE.slide-1);}
+    if(e.key==='Escape'){closePptModal();}
+  });
+
+  // TOUCH SWIPE — left swipe = next slide, right swipe = prev slide
+  modal.addEventListener('touchstart',function(e){
+    if(e.target.closest('.ppt-nav-btn,.ppt-modal-header,.ppt-modal-footer'))return;
+    swipeStartX=e.touches[0].clientX;
+    swipeStartY=e.touches[0].clientY;
+    swipeActive=true;
+  },{passive:true});
+  modal.addEventListener('touchend',function(e){
+    if(!swipeActive)return;swipeActive=false;
+    var dx=e.changedTouches[0].clientX-swipeStartX;
+    var dy=e.changedTouches[0].clientY-swipeStartY;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>44){
+      // Horizontal swipe dominates: left=next, right=prev
+      if(dx<0)_pptGoSlide(PPT_STATE.slide+1);
+      else _pptGoSlide(PPT_STATE.slide-1);
+    }
+  },{passive:true});
+
+  // MOUSE DRAG — same logic for desktop
+  modal.addEventListener('mousedown',function(e){
+    if(e.target.closest('.ppt-nav-btn,.ppt-modal-header,.ppt-modal-footer'))return;
+    swipeStartX=e.clientX;swipeActive=true;
+    e.preventDefault(); // prevent img drag ghost
+  });
+  modal.addEventListener('mouseup',function(e){
+    if(!swipeActive)return;swipeActive=false;
+    var dx=e.clientX-swipeStartX;
+    if(Math.abs(dx)>60){
+      if(dx<0)_pptGoSlide(PPT_STATE.slide+1);
+      else _pptGoSlide(PPT_STATE.slide-1);
+    }
+  });
+  modal.addEventListener('mouseleave',function(){swipeActive=false;});
+})();
 
 // ── LFI VIDEO PLAYER ─────────────────────────────────────────
 var VM={record:null,lang:'en',scenes:[],audios:[],sceneIdx:0,playing:false,paused:false,currentAudio:null,_rafId:null,_fallbackTimer:null};
@@ -2512,7 +2563,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </svg>
 
 <!-- PPT SLIDE NAVIGATOR MODAL — glassmorphic with slide-by-slide navigation -->
-<div id="pptModal">
+<div id="pptModal" tabindex="-1" style="outline:none">
   <div class="ppt-modal-box">
     <div class="ppt-modal-header">
       <span style="font-size:16px;flex-shrink:0">&#128218;</span>
@@ -2533,10 +2584,10 @@ document.addEventListener('DOMContentLoaded',function(){
       </div>
       <button class="ppt-nav-btn ppt-nav-prev" id="pptNavPrev" onclick="pptGoSlide(PPT_STATE.slide-1,null)">&#10094;</button>
       <!-- Image shown for real slide navigation (via export/png with actual pageId) -->
-      <img id="pptSlideImg" alt="LFI Slide" loading="eager"
-           style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#0a0a12;display:none;opacity:0">
-      <!-- Iframe fallback — used only if slide ID fetch fails (sign-in issue etc.) -->
-      <iframe id="pptFrame" allowfullscreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:none;opacity:0;display:none"></iframe>
+      <img id="pptSlideImg" alt="LFI Slide" draggable="false" loading="eager"
+           style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#0a0a12;display:none;opacity:0;z-index:1;-webkit-user-drag:none;user-select:none">
+      <!-- Iframe fallback — used only if slide ID fetch fails -->
+      <iframe id="pptFrame" allowfullscreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:none;opacity:0;display:none;z-index:1"></iframe>
       <button class="ppt-nav-btn ppt-nav-next" id="pptNavNext" onclick="pptGoSlide(PPT_STATE.slide+1,null)">&#10095;</button>
     </div>
     <div class="ppt-modal-footer">
