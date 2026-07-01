@@ -246,33 +246,72 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 
 #stog{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--dg);color:#fff;border:none;border-radius:8px;padding:9px 13px;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2)}
 
-/* ── PPT PREVIEW MODAL ── */
-#pptModal{display:none;position:fixed;inset:0;z-index:3000;align-items:center;justify-content:center;background:rgba(15,20,30,.65);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:20px}
-#pptModal.vis{display:flex;animation:fadeIn .2s ease}
+/* ── PPT SLIDE NAVIGATOR — LIQUID GLASS ── */
+#pptModal{display:none;position:fixed;inset:0;z-index:3000;align-items:center;justify-content:center;background:rgba(4,8,20,.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:16px}
+#pptModal.vis{display:flex;animation:fadeIn .22s ease}
 .ppt-modal-box{
-  position:relative;width:min(92vw,1100px);background:rgba(255,255,255,.14);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border:1px solid rgba(255,255,255,.28);border-radius:20px;
-  box-shadow:0 32px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.25);
-  overflow:hidden;display:flex;flex-direction:column;
+  position:relative;width:min(94vw,1120px);
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(60px) saturate(200%) brightness(1.08);
+  -webkit-backdrop-filter:blur(60px) saturate(200%) brightness(1.08);
+  border-radius:20px;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 1px 0 0 rgba(255,255,255,.35) inset,0 -1px 0 0 rgba(0,0,0,.18) inset,1px 0 0 0 rgba(255,255,255,.12) inset,-1px 0 0 0 rgba(255,255,255,.12) inset,0 0 0 1px rgba(0,0,0,.25),0 40px 120px rgba(0,0,0,.6),0 0 80px rgba(33,64,154,.12);
+  border:1px solid rgba(255,255,255,.14);
 }
-.ppt-modal-header{
-  display:flex;align-items:center;gap:12px;padding:14px 18px;
-  background:rgba(33,64,154,.55);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.12);
-  flex-shrink:0;
-}
-.ppt-modal-title{color:#fff;font-size:13px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.2px}
-.ppt-modal-actions{display:flex;gap:8px;flex-shrink:0}
-.ppt-modal-btn{padding:6px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
-.ppt-modal-btn.open{background:var(--or);color:#fff;border-color:var(--or)}
-.ppt-modal-btn.open:hover{background:#d46d16;border-color:#d46d16}
-.ppt-modal-btn.close{background:rgba(255,255,255,.15);color:#fff}
-.ppt-modal-btn.close:hover{background:rgba(255,255,255,.28)}
-.ppt-modal-frame-wrap{position:relative;width:100%;padding-top:56.25%;background:rgba(0,0,0,.3)}
+.ppt-modal-box::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);border-radius:50%;z-index:10;pointer-events:none}
+.ppt-modal-box::after{content:'';position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(180deg,rgba(255,255,255,.07),transparent);pointer-events:none;z-index:10}
+.ppt-modal-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(33,64,154,.35);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;position:relative;z-index:11}
+.ppt-modal-title{color:#fff;font-size:12px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ppt-slide-lang-tabs{display:flex;gap:2px;background:rgba(0,0,0,.2);border-radius:8px;padding:2px;flex-shrink:0}
+.ppt-slt{padding:4px 10px;border:none;border-radius:6px;background:transparent;color:rgba(255,255,255,.55);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ppt-slt.active{background:rgba(255,255,255,.18);color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.2) inset}
+.ppt-modal-actions{display:flex;gap:6px;flex-shrink:0}
+.ppt-modal-btn{padding:5px 11px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;border:1px solid rgba(255,255,255,.2)}
+.ppt-modal-btn.open{background:rgba(245,130,32,.8);color:#fff;border-color:rgba(245,130,32,.9)}
+.ppt-modal-btn.open:hover{background:rgba(245,130,32,1)}
+.ppt-modal-btn.close{background:rgba(255,255,255,.1);color:#fff}
+.ppt-modal-btn.close:hover{background:rgba(220,53,69,.5)}
+.ppt-modal-frame-wrap{position:relative;width:100%;padding-top:56.25%;background:rgba(0,0,0,.5)}
 .ppt-modal-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-.ppt-modal-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:rgba(255,255,255,.75);font-size:12px;font-weight:600;pointer-events:none}
-.ppt-modal-loading .spin-w{width:32px;height:32px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
-.ppt-modal-footer{padding:10px 18px;text-align:center;font-size:10px;color:rgba(255,255,255,.45);border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.ppt-modal-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(4,8,20,.8);color:rgba(255,255,255,.7);font-size:12px;pointer-events:none;z-index:5}
+.spin-w{width:28px;height:28px;border:3px solid rgba(255,255,255,.15);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
+.ppt-nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:6;box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 4px 16px rgba(0,0,0,.3)}
+.ppt-nav-btn:hover{background:rgba(255,255,255,.22);transform:translateY(-50%) scale(1.08)}
+.ppt-nav-prev{left:12px}.ppt-nav-next{right:12px}
+.ppt-modal-footer{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(0,0,0,.2);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.ppt-slide-dots{display:flex;gap:6px;align-items:center}
+.ppt-sd{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .25s}
+.ppt-sd.active{background:var(--or);width:18px;border-radius:4px}
+
+/* ══ LIQUID GLASS — CVE CINEMATIC VIDEO MODAL ══ */
+#cveModal{display:none;position:fixed;inset:0;z-index:4000;align-items:center;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(20px)}
+#cveModal.vis{display:flex;animation:fadeIn .3s ease}
+.cve-box{
+  width:min(98vw,1200px);display:flex;flex-direction:column;position:relative;border-radius:22px;overflow:hidden;
+  background:rgba(255,255,255,.04);
+  backdrop-filter:blur(80px) saturate(220%) brightness(1.06);
+  -webkit-backdrop-filter:blur(80px) saturate(220%) brightness(1.06);
+  box-shadow:0 1.5px 0 0 rgba(255,255,255,.4) inset,0 -1px 0 0 rgba(0,0,0,.2) inset,1.5px 0 0 0 rgba(255,255,255,.14) inset,-1.5px 0 0 0 rgba(255,255,255,.14) inset,0 0 0 1px rgba(0,0,0,.3),0 50px 140px rgba(0,0,0,.75);
+  border:1px solid rgba(255,255,255,.1);
+  animation:liquidShimmer 6s ease-in-out infinite;
+}
+@keyframes liquidShimmer{
+  0%,100%{box-shadow:0 1.5px 0 0 rgba(255,255,255,.4) inset,0 -1px 0 0 rgba(0,0,0,.2) inset,1.5px 0 0 0 rgba(255,255,255,.14) inset,-1.5px 0 0 0 rgba(255,255,255,.14) inset,0 0 0 1px rgba(0,0,0,.3),0 50px 140px rgba(0,0,0,.75),0 0 80px rgba(33,64,154,.08)}
+  50%{box-shadow:0 1.5px 0 0 rgba(255,255,255,.55) inset,0 -1px 0 0 rgba(0,0,0,.15) inset,1.5px 0 0 0 rgba(255,255,255,.22) inset,-1.5px 0 0 0 rgba(255,255,255,.1) inset,0 0 0 1px rgba(0,0,0,.3),0 50px 140px rgba(0,0,0,.75),0 0 80px rgba(245,130,32,.06)}
+}
+.cve-box::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);border-radius:50%;z-index:20;pointer-events:none}
+.cve-box::after{content:'';position:absolute;top:0;left:0;right:0;height:80px;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent);pointer-events:none;z-index:0}
+
+/* ── UNIFIED HUB CARD ── */
+#page-lfi .fcg{grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:20px}
+.fc-action-row{display:flex;gap:0;border-top:1px solid rgba(0,0,0,.06);border-bottom:1px solid rgba(0,0,0,.06);flex-shrink:0}
+.fc-act-btn{flex:1;padding:10px 8px;border:none;background:transparent;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;color:var(--dg)}
+.fc-act-btn:first-child{border-right:1px solid rgba(0,0,0,.06)}
+.fc-act-btn.ppt-act{color:var(--bl)}.fc-act-btn.ppt-act:hover{background:rgba(33,64,154,.08)}
+.fc-act-btn.vid-act{color:#1a7a30}.fc-act-btn.vid-act:hover{background:rgba(40,167,69,.08)}
+.fc-act-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:600px){.ppt-slide-lang-tabs{display:none}.ppt-nav-btn{width:36px;height:36px;font-size:14px}}
+
 /* ── LFI VIDEO PLAYER MODAL ── */
 #videoModal{display:none;position:fixed;inset:0;z-index:3100;align-items:center;justify-content:center;background:rgba(4,8,18,.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:16px}
 #videoModal.vis{display:flex;animation:fadeIn .25s ease}
@@ -524,8 +563,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
   <nav>
     <div class="sb-sec" data-i18n="sb_sec_dash">Dashboard</div>
     <a class="active" onclick="navTo('overview',this)"><span class="ni">&#128200;</span><span data-i18n="sb_overview">Overview</span></a>
-    <a onclick="navTo('lfi',this)"><span class="ni">&#128203;</span><span data-i18n="sb_lfi">LFI Register</span></a>
-    <a onclick="navTo('videos',this)" style="position:relative"><span class="ni">&#127909;</span><span>LFI Video Library</span><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--or);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:8px" id="sbVidCount"></span></a>
+    <a onclick="navTo('lfi',this)" style="position:relative"><span class="ni">&#127909;</span><span>LFI Hub</span><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(245,130,32,.25);color:var(--or);font-size:9px;font-weight:800;padding:1px 7px;border-radius:8px;border:1px solid rgba(245,130,32,.4)" id="sbVidCount"></span></a>
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform?usp=dialog" target="_blank" rel="noopener noreferrer"
        style="background:linear-gradient(135deg,var(--or),#d46d16);color:#fff;border-left-color:transparent;margin:8px 4px 10px;border-radius:9px;justify-content:center;font-weight:700;flex-shrink:0;box-shadow:0 4px 12px rgba(245,130,32,.3)">
       <span class="ni">&#128221;</span><span data-i18n="sb_submit">+ Submit New LFI</span>
@@ -912,36 +950,39 @@ function renderFC(){
   var rows=getF();var grid=document.getElementById('fcGrid');if(!grid)return;
   if(!RAW){grid.innerHTML='<div class="empty"><div class="eicon">&#128203;</div><p>'+t('fc_empty_nodata')+'</p><div class="esub">'+t('fc_empty_nodata_sub')+'</div></div>';return;}
   if(!rows.length){grid.innerHTML='<div class="empty"><div class="eicon">&#128203;</div><p>'+t('fc_empty_filter')+'</p><div class="esub">'+t('fc_empty_filter_sub')+'</div></div>';return;}
-  // Sort by incident date: newest first
   var sorted=rows.slice().sort(function(a,b){
-    var da=a.dateObj?a.dateObj.getTime():0;
-    var db=b.dateObj?b.dateObj.getTime():0;
-    return db-da;
+    var da=a.dateObj?a.dateObj.getTime():0,db=b.dateObj?b.dateObj.getTime():0;return db-da;
   });
-
-  // Build a lookup table keyed by index — avoids ALL quoting/escaping
-  // issues with URLs in onclick attributes (& ? = chars break inline HTML)
   window._FC_PPT=[];
-
   var html='';
   sorted.forEach(function(r,idx){
     var lang=LANG,c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
     var enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');
     window._FC_PPT.push({link:r.pptLink||'',id:r.id||''});
+    var hasPpt=!!(r.pptLink),hasThumb=!!(r.thumb),hasDesc=!!(r.descEN||r.descHI||r.descAR);
+    var accent=catColor(r.cat||'');
 
-    var hasPpt=!!(r.pptLink);
-    var thumbHtml = r.thumb
+    // THUMBNAIL — clickable for PPT
+    var thumbHtml = hasThumb
       ? '<div class="fc-thumb-wrap" style="cursor:'+(hasPpt?'pointer':'default')+'" '
           +(hasPpt?'onclick="event.stopPropagation();_fcOpenPpt('+idx+')"':'')
-          +' title="'+(hasPpt?t('ppt_preview'):'')+'">'
-          +'<img src="'+esc(r.thumb)+'" alt="PPT preview" loading="lazy" '
-          +'onerror="this.parentElement.innerHTML=\'<div class=&quot;fc-thumb-placeholder&quot;><div class=&quot;tpi&quot;>&#128218;</div><span>Preview unavailable</span></div>\'">'
-          +(hasPpt?'<div class="fc-thumb-badge">&#9654; '+t('ppt_preview')+'</div>':'')
+          +' title="'+(hasPpt?'View slides':'')+'"><img src="'+esc(r.thumb)+'" alt="" loading="lazy" '
+          +'onerror="this.parentElement.innerHTML=\'<div class=&quot;fc-thumb-placeholder&quot; style=&quot;background:linear-gradient(145deg,'+accent+',#080c14)&quot;><div class=&quot;tpi&quot;>&#128203;</div></div>\'">'
+          +(hasPpt?'<div class="fc-thumb-badge">&#128218; Slides EN &middot; &#2361;&#2367; &middot; &#1593;</div>':'')
           +'</div>'
-      : '<div class="fc-thumb-wrap"><div class="fc-thumb-placeholder"><div class="tpi">&#128203;</div><span>'+(r.ppt?'Preview pending':t('ppt_pending'))+'</span></div></div>';
+      : '<div class="fc-thumb-wrap" style="background:linear-gradient(145deg,'+accent+',#080c14);cursor:'+(hasPpt?'pointer':'default')+'" '
+          +(hasPpt?'onclick="event.stopPropagation();_fcOpenPpt('+idx+')"':'')+'>'
+          +'<div class="fc-thumb-placeholder"><div class="tpi">&#128203;</div><span>'+(r.ppt?'Preview pending':t('ppt_pending'))+'</span></div></div>';
 
-    html+='<div class="fc">'+
+    // ACTION ROW — two main CTAs
+    var actionRow='<div class="fc-action-row">'
+      +'<button class="fc-act-btn ppt-act" onclick="_fcOpenPpt('+idx+')"'+(hasPpt?'':' disabled')+'>&#128218; '+t('ppt_preview')+'</button>'
+      +'<button class="fc-act-btn vid-act" onclick="openCveModal('+idx+')"'+(hasDesc?'':' disabled')+'>&#127909; LFI Video</button>'
+      +'</div>';
+
+    html+='<div class="fc" style="border-top:3px solid '+accent+'">'+
       thumbHtml+
+      actionRow+
       '<div class="fch" onclick="stopSpeech();this.closest(\'.fc\').classList.toggle(\'open\')">'+
         '<div class="fct"><span class="fid">'+esc(r.id)+'</span>'+mkbadge(r.st)+'<span style="font-size:12px;color:var(--muted)">&#9660;</span></div>'+
         '<div class="fcv">'+esc(r.cat)+'</div>'+
@@ -962,26 +1003,69 @@ function renderFC(){
         '<div class="fps"><span class="fp">'+esc(r.div)+'</span><span class="fp">'+esc(r.by)+'</span>'+
           (r.ppt?'<span class="fp ok">'+t('ppt_done')+'</span>':'<span class="fp pnd">'+t('ppt_pending')+'</span>')+
         '</div>'+
-        (function(){
-          var hasDesc=!!(r.descEN||r.descHI||r.descAR);
-          var fplBtns='';
-          if(hasPpt&&r.thumb) fplBtns+='<button onclick="_fcOpenPpt('+idx+')" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;background:var(--bl);color:#fff;border:none;cursor:pointer">&#9654; '+t('ppt_preview')+'</button>';
-          if(hasPpt) fplBtns+='<a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">&#128218; '+t('ppt_open')+'</a>';
-          if(hasDesc) fplBtns+='<button class="fc-vid-btn" onclick="openCveModal('+idx+')">&#127909; LFI Video</button>';
-          return fplBtns?'<div class="fpl">'+fplBtns+'</div>':'';
-        })()+
       '</div></div>';
   });
   grid.innerHTML=html;
 }
 
-// Thin wrapper called from onclick — retrieves URL from lookup table, no
-// URL string ever appears in an HTML attribute, so no escaping issue.
+// ── PPT SLIDE NAVIGATOR ───────────────────────────────────────
+var PPT_STATE={fileId:'',lfiId:'',link:'',slide:1,totalSlides:3};
+var SLIDE_LABELS=['English','हिंदी','عربي'];
+
 function _fcOpenPpt(idx){
   var entry=window._FC_PPT&&window._FC_PPT[idx];
   if(!entry||!entry.link)return;
   openPptModal(entry.link,entry.id);
 }
+
+function openPptModal(pptLink,lfiId){
+  var fid=pptFileId(pptLink);
+  if(!fid){window.open(pptLink,'_blank');return;}
+  PPT_STATE.fileId=fid;PPT_STATE.lfiId=lfiId||'';PPT_STATE.link=pptLink;PPT_STATE.slide=1;
+  var modal=document.getElementById('pptModal');
+  modal.classList.add('vis');document.body.style.overflow='hidden';
+  document.getElementById('pptModalTitle').textContent=(lfiId||'LFI Alert')+' \u2014 Slide Navigator';
+  document.getElementById('pptModalOpenBtn').href=pptLink;
+  pptGoSlide(1,document.querySelector('.ppt-slt'));
+}
+
+function pptGoSlide(n,tabBtn){
+  n=Math.max(1,Math.min(PPT_STATE.totalSlides,n));PPT_STATE.slide=n;
+  // Update tab buttons
+  document.querySelectorAll('.ppt-slt').forEach(function(b,i){b.classList.toggle('active',i===n-1);});
+  // Update dots
+  document.querySelectorAll('.ppt-sd').forEach(function(d,i){d.classList.toggle('active',i===n-1);});
+  // Slide label
+  var lblEl=document.getElementById('pptSlideLabel');
+  if(lblEl)lblEl.textContent='Slide '+n+' of '+PPT_STATE.totalSlides+' \u2014 '+SLIDE_LABELS[n-1];
+  // Prev/next arrow visibility
+  var prev=document.getElementById('pptNavPrev'),next=document.getElementById('pptNavNext');
+  if(prev)prev.style.opacity=n>1?'1':'0.3';
+  if(next)next.style.opacity=n<PPT_STATE.totalSlides?'1':'0.3';
+  // Load iframe
+  var frame=document.getElementById('pptFrame');
+  var loading=document.getElementById('pptLoading');
+  loading.style.display='flex';frame.style.opacity='0';
+  var embedUrl='https://docs.google.com/presentation/d/'+PPT_STATE.fileId+'/embed?start=false&loop=false&delayms=0&rm=minimal&slide=id.p'+n;
+  frame.src='';
+  setTimeout(function(){
+    frame.src=embedUrl;
+    frame.onload=function(){loading.style.display='none';frame.style.opacity='1';frame.style.transition='opacity .3s';};
+  },80);
+}
+
+function closePptModal(){
+  var modal=document.getElementById('pptModal');if(modal)modal.classList.remove('vis');
+  var frame=document.getElementById('pptFrame');if(frame)frame.src='';
+  document.body.style.overflow='';
+}
+document.addEventListener('click',function(e){if(e.target.id==='pptModal')closePptModal();});
+// Keyboard slide navigation
+document.addEventListener('keydown',function(e){
+  if(!document.getElementById('pptModal').classList.contains('vis'))return;
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')pptGoSlide(PPT_STATE.slide+1,null);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')pptGoSlide(PPT_STATE.slide-1,null);
+});
 
 // ── LFI VIDEO PLAYER ─────────────────────────────────────────
 var VM={record:null,lang:'en',scenes:[],audios:[],sceneIdx:0,playing:false,paused:false,currentAudio:null,_rafId:null,_fallbackTimer:null};
@@ -1691,45 +1775,6 @@ function pptFileId(url){
   m=String(url).match(/[?&]id=([-\w]+)/);if(m)return m[1];
   return'';
 }
-function openPptModal(pptLink,lfiId){
-  var fid=pptFileId(pptLink);
-  if(!fid){window.open(pptLink,'_blank');return;}
-  var embedUrl='https://docs.google.com/presentation/d/'+fid+'/embed?start=false&loop=false&delayms=0&rm=minimal';
-  var modal=document.getElementById('pptModal');
-  var frame=document.getElementById('pptFrame');
-  var loading=document.getElementById('pptLoading');
-  var titleEl=document.getElementById('pptModalTitle');
-  var openBtn=document.getElementById('pptModalOpenBtn');
-  if(!modal)return;
-  titleEl.textContent=(lfiId||'LFI Alert')+' \u2014 '+t('ppt_preview');
-  openBtn.href=pptLink;
-  openBtn.textContent=t('ppt_modal_open');
-  document.getElementById('pptModalCloseBtn').textContent=t('ppt_modal_close');
-  frame.src='';
-  loading.style.display='flex';
-  frame.style.opacity='0';
-  modal.classList.add('vis');
-  document.body.style.overflow='hidden';
-  // slight delay so the modal animates in before the iframe starts loading
-  setTimeout(function(){
-    frame.src=embedUrl;
-    frame.onload=function(){loading.style.display='none';frame.style.opacity='1';frame.style.transition='opacity .3s';};
-  },150);
-}
-function closePptModal(){
-  var modal=document.getElementById('pptModal');
-  if(modal)modal.classList.remove('vis');
-  var frame=document.getElementById('pptFrame');
-  if(frame)frame.src='';
-  document.body.style.overflow='';
-}
-// Close on backdrop click
-document.addEventListener('click',function(e){
-  if(e.target.id==='pptModal')closePptModal();
-});
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape')closePptModal();
-});
 
 // ══════════════════════════════════════════════════════════════
 // CVE — CINEMATIC VIDEO ENGINE
@@ -2382,25 +2427,50 @@ document.addEventListener('DOMContentLoaded',function(){
   </div>
 </div>
 
-<!-- PPT PREVIEW MODAL -->
+<!-- SVG FILTERS — liquid glass refraction -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <defs>
+    <filter id="liquidEdge" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025 0.015" numOctaves="3" seed="8" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+      <feComposite in="displaced" in2="SourceGraphic" operator="atop"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- PPT SLIDE NAVIGATOR MODAL — glassmorphic with slide-by-slide navigation -->
 <div id="pptModal">
   <div class="ppt-modal-box">
     <div class="ppt-modal-header">
-      <span style="font-size:18px;flex-shrink:0">&#128218;</span>
+      <span style="font-size:16px;flex-shrink:0">&#128218;</span>
       <div class="ppt-modal-title" id="pptModalTitle">LFI Alert</div>
+      <div class="ppt-slide-lang-tabs" id="pptSlideTabs">
+        <button class="ppt-slt active" onclick="pptGoSlide(1,this)">&#127468;&#127463; EN</button>
+        <button class="ppt-slt" onclick="pptGoSlide(2,this)">&#127470;&#127475; &#2361;&#2367;</button>
+        <button class="ppt-slt" onclick="pptGoSlide(3,this)">&#127462;&#127466; &#1593;</button>
+      </div>
       <div class="ppt-modal-actions">
-        <a id="pptModalOpenBtn" href="#" target="_blank" class="ppt-modal-btn open">&#128279; Open in Drive</a>
-        <button id="pptModalCloseBtn" class="ppt-modal-btn close" onclick="closePptModal()">&#215; Close</button>
+        <a id="pptModalOpenBtn" href="#" target="_blank" class="ppt-modal-btn open">&#128279; Drive</a>
+        <button class="ppt-modal-btn close" onclick="closePptModal()">&#215;</button>
       </div>
     </div>
     <div class="ppt-modal-frame-wrap">
       <div class="ppt-modal-loading" id="pptLoading">
-        <div class="spin-w"></div>
-        <span>Loading presentation...</span>
+        <div class="spin-w"></div><span>Loading slide...</span>
       </div>
-      <iframe id="pptFrame" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style="opacity:0"></iframe>
+      <button class="ppt-nav-btn ppt-nav-prev" id="pptNavPrev" onclick="pptGoSlide(PPT_STATE.slide-1,null)">&#10094;</button>
+      <iframe id="pptFrame" allowfullscreen="true" style="opacity:0"></iframe>
+      <button class="ppt-nav-btn ppt-nav-next" id="pptNavNext" onclick="pptGoSlide(PPT_STATE.slide+1,null)">&#10095;</button>
     </div>
-    <div class="ppt-modal-footer">Click outside or press Esc to close &nbsp;&#183;&nbsp; You must be signed into your altasnim.com account to view</div>
+    <div class="ppt-modal-footer">
+      <div class="ppt-slide-dots" id="pptSlideDots">
+        <span class="ppt-sd active" onclick="pptGoSlide(1,null)"></span>
+        <span class="ppt-sd" onclick="pptGoSlide(2,null)"></span>
+        <span class="ppt-sd" onclick="pptGoSlide(3,null)"></span>
+      </div>
+      <span style="flex:1;text-align:center;font-size:10px;color:rgba(255,255,255,.35)" id="pptSlideLabel">Slide 1 of 3 &mdash; English</span>
+      <span style="font-size:10px;color:rgba(255,255,255,.25)">Sign in to altasnim.com to view</span>
+    </div>
   </div>
 </div>
 
