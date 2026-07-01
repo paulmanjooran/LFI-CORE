@@ -273,7 +273,67 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 .ppt-modal-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:rgba(255,255,255,.75);font-size:12px;font-weight:600;pointer-events:none}
 .ppt-modal-loading .spin-w{width:32px;height:32px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
 .ppt-modal-footer{padding:10px 18px;text-align:center;font-size:10px;color:rgba(255,255,255,.45);border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
-@media(max-width:600px){.ppt-modal-header{flex-wrap:wrap}.ppt-modal-title{font-size:11px}}
+/* ── LFI VIDEO PLAYER MODAL ── */
+#videoModal{display:none;position:fixed;inset:0;z-index:3100;align-items:center;justify-content:center;background:rgba(4,8,18,.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:16px}
+#videoModal.vis{display:flex;animation:fadeIn .25s ease}
+.vm-box{width:min(95vw,960px);background:rgba(8,12,22,.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:18px;box-shadow:0 40px 100px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.08);overflow:hidden;display:flex;flex-direction:column}
+.vm-header{display:flex;align-items:center;gap:10px;padding:11px 16px;background:rgba(33,64,154,.5);border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.vm-title{color:#fff;font-size:12px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.2px}
+.vm-lang-badge{padding:3px 9px;border-radius:10px;background:rgba(245,130,32,.25);color:var(--or);font-size:10px;font-weight:800;border:1px solid rgba(245,130,32,.4);flex-shrink:0}
+.vm-hbtn{padding:5px 12px;border:1px solid rgba(255,255,255,.2);border-radius:7px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;transition:background .2s}
+.vm-hbtn:hover{background:rgba(220,53,69,.4);color:#fff}
+/* Scene screen */
+.vm-screen{position:relative;width:100%;padding-top:51%;background:#050810;overflow:hidden;flex-shrink:0}
+.vm-scenes-wrap{position:absolute;inset:0}
+.vm-scene{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(18px,3vw,40px) clamp(20px,4vw,52px);opacity:0;transform:translateX(36px);transition:opacity .38s ease,transform .38s ease;pointer-events:none}
+.vm-scene.active{opacity:1;transform:translateX(0);pointer-events:auto}
+.vm-scene.exit{opacity:0;transform:translateX(-36px)}
+.vm-scene::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--vac,#21409a)}
+/* Scene: intro */
+.vm-scene-intro{background:linear-gradient(145deg,rgba(8,15,32,.98) 60%,rgba(20,35,70,.95))}
+.vm-alert-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(220,53,69,.18);border:1px solid rgba(220,53,69,.4);color:#ff9090;padding:4px 12px;border-radius:20px;font-size:9.5px;font-weight:800;letter-spacing:1px;margin-bottom:12px;width:fit-content}
+.vm-lfi-id{font-family:'Courier New',monospace;font-size:9px;color:rgba(255,255,255,.35);font-weight:700;letter-spacing:.8px;margin-bottom:8px}
+.vm-category{font-size:clamp(18px,2.8vw,30px);font-weight:900;color:#fff;line-height:1.15;margin-bottom:16px;letter-spacing:-.3px}
+.vm-meta-row{display:flex;flex-wrap:wrap;gap:8px 18px}
+.vm-meta-chip{font-size:11px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:5px;font-weight:500}
+/* Scene: content */
+.vm-scene-content{}
+.vm-scene-hdr{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--vac,#fff);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.vm-scene-hdr::after{content:'';flex:1;height:1px;background:var(--vac,rgba(255,255,255,.15));opacity:.35}
+.vm-scene-body{font-size:clamp(11.5px,1.5vw,14px);color:rgba(255,255,255,.85);line-height:1.75;max-height:36vw;overflow-y:auto;padding-right:6px;white-space:pre-line}
+.vm-scene-body::-webkit-scrollbar{width:3px}
+.vm-scene-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:2px}
+.vm-scene[dir="rtl"] .vm-scene-body{text-align:right;padding-right:0;padding-left:6px}
+/* Scene: outro */
+.vm-scene-outro{background:linear-gradient(145deg,rgba(8,14,28,.98),rgba(25,45,90,.9));align-items:center;justify-content:center;text-align:center;gap:0}
+.vm-outro-logo{width:52px;height:52px;background:linear-gradient(135deg,var(--or),#d46d16);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;box-shadow:0 4px 16px rgba(245,130,32,.4)}
+.vm-outro-name{font-size:clamp(14px,2vw,18px);font-weight:900;color:#fff;letter-spacing:.3px;margin-bottom:4px}
+.vm-outro-tag{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:20px}
+.vm-outro-cta{display:inline-block;padding:10px 22px;background:linear-gradient(135deg,var(--or),#d46d16);color:#fff;font-size:11.5px;font-weight:800;border-radius:20px;letter-spacing:.4px;box-shadow:0 4px 16px rgba(245,130,32,.35)}
+/* Controls */
+.vm-controls{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,.5);border-top:1px solid rgba(255,255,255,.05);flex-shrink:0}
+.vm-dots{display:flex;gap:5px;align-items:center;flex:1;min-width:0}
+.vm-dot{height:6px;width:6px;border-radius:3px;background:rgba(255,255,255,.18);transition:all .3s ease;cursor:pointer;flex-shrink:0}
+.vm-dot.done{background:rgba(255,255,255,.45)}
+.vm-dot.cur{background:var(--or);width:18px}
+.vm-cbtn{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.8);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0}
+.vm-cbtn:hover{background:rgba(255,255,255,.18)}
+.vm-cbtn.pp{background:rgba(33,64,154,.55);border-color:rgba(33,64,154,.8);width:38px;height:38px;border-radius:10px;font-size:15px}
+.vm-cbtn.pp:hover{background:rgba(33,64,154,.85)}
+.vm-abar{width:70px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;flex-shrink:0}
+.vm-afill{height:100%;background:linear-gradient(to right,var(--bl),var(--or));width:0%;transition:width .08s linear}
+/* Loading overlay */
+.vm-loading{position:absolute;inset:0;background:rgba(4,8,18,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:20}
+.vm-loading.hidden{display:none}
+.vm-ld-title{color:#fff;font-size:13px;font-weight:700}
+.vm-ld-bar{width:200px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.vm-ld-fill{height:100%;background:linear-gradient(to right,var(--bl),var(--or));border-radius:2px;transition:width .3s;width:0%}
+.vm-ld-status{font-size:10.5px;color:rgba(255,255,255,.4);font-weight:600}
+/* Video button on flashcard */
+.fc-vid-btn{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;background:linear-gradient(135deg,rgba(40,167,69,.85),rgba(28,118,49,.9));color:#fff;border:none;cursor:pointer;transition:filter .2s}
+.fc-vid-btn:hover{filter:brightness(1.12)}
+@media(max-width:600px){.vm-scene{padding:16px 16px}.vm-category{font-size:16px}.vm-scene-body{max-height:50vw}}
+
 
 @media(max-width:1100px){.krow{grid-template-columns:repeat(2,1fr)}.kc.headline{grid-column:1/-1}}
 @media(max-width:900px){.crow{grid-template-columns:1fr}.fcg{grid-template-columns:1fr}}
@@ -710,12 +770,14 @@ function renderFC(){
         '<div class="fps"><span class="fp">'+esc(r.div)+'</span><span class="fp">'+esc(r.by)+'</span>'+
           (r.ppt?'<span class="fp ok">'+t('ppt_done')+'</span>':'<span class="fp pnd">'+t('ppt_pending')+'</span>')+
         '</div>'+
-        (hasPpt
-          ?'<div class="fpl">'
-            +(r.thumb?'<button onclick="_fcOpenPpt('+idx+')" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;background:var(--bl);color:#fff;border:none;cursor:pointer">&#9654; '+t('ppt_preview')+'</button>':'')
-            +'<a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">&#128218; '+t('ppt_open')+'</a>'
-            +'</div>'
-          :'')+
+        (function(){
+          var hasDesc=!!(r.descEN||r.descHI||r.descAR);
+          var fplBtns='';
+          if(hasPpt&&r.thumb) fplBtns+='<button onclick="_fcOpenPpt('+idx+')" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;background:var(--bl);color:#fff;border:none;cursor:pointer">&#9654; '+t('ppt_preview')+'</button>';
+          if(hasPpt) fplBtns+='<a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">&#128218; '+t('ppt_open')+'</a>';
+          if(hasDesc) fplBtns+='<button class="fc-vid-btn" onclick="_fcOpenVideo('+idx+')">&#127909; LFI Video</button>';
+          return fplBtns?'<div class="fpl">'+fplBtns+'</div>':'';
+        })()+
       '</div></div>';
   });
   grid.innerHTML=html;
@@ -728,6 +790,263 @@ function _fcOpenPpt(idx){
   if(!entry||!entry.link)return;
   openPptModal(entry.link,entry.id);
 }
+
+// ── LFI VIDEO PLAYER ─────────────────────────────────────────
+var VM={record:null,lang:'en',scenes:[],audios:[],sceneIdx:0,playing:false,paused:false,currentAudio:null,_rafId:null,_fallbackTimer:null};
+
+function _fcOpenVideo(idx){
+  var entry=window._FC_PPT&&window._FC_PPT[idx];
+  if(!entry)return;
+  // Find full record from RAW
+  var r=null;
+  if(RAW){for(var i=0;i<RAW.length;i++){if(RAW[i].id===entry.id){r=RAW[i];break;}}}
+  if(!r){alert('Record data not found — try refreshing.');return;}
+  VM.record=r; VM.lang=LANG;
+  VM.scenes=_vmBuildScenes(r,LANG);
+  VM.audios=new Array(VM.scenes.length).fill(null);
+  VM.sceneIdx=0; VM.playing=false; VM.paused=false;
+  // Show modal
+  var modal=document.getElementById('videoModal');
+  modal.classList.add('vis');
+  document.body.style.overflow='hidden';
+  document.getElementById('vmTitle').textContent=(r.id||'LFI')+' \u2014 '+VM.scenes[0].label;
+  document.getElementById('vmLangBadge').textContent=LANG==='ar'?'\ud83c\uddfa\ud83c\udde6 AR':LANG==='hi'?'\ud83c\uddee\ud83c\uddf3 HI':'\ud83c\uddec\ud83c\udde7 EN';
+  // Render scene structure and start loading audio
+  _vmRenderScenes();
+  _vmShowScene(0,false);
+  _vmLoadAllAudio();
+}
+
+function _vmBuildScenes(r,lang){
+  var isAR=lang==='ar',isHI=lang==='hi';
+  function tx(en,hi,ar){return isAR&&ar?ar:isHI&&hi?hi:en||'';}
+  var desc=tx(r.descEN,r.descHI,r.descAR)||'';
+  var find=tx(r.findEN,r.findHI,r.findAR)||'';
+  var learn=tx(r.learnEN,r.learnHI,r.learnAR)||'';
+  var scenes=[
+    {id:'intro',label:isAR?'\u062a\u0646\u0628\u064a\u0647 \u062d\u0627\u062f\u062b\u0629':isHI?'LFI \u0905\u0932\u0930\u094d\u091f':'Incident Alert',
+     narration:isAR?'\u062a\u0646\u0628\u064a\u0647 \u062d\u0627\u062f\u062b\u0629. '+r.cat+'. '+r.loc+'. '+r.dt+'.':isHI?'LFI \u0905\u0932\u0930\u094d\u091f\u0964 '+r.cat+'\u0964 '+r.loc+'\u0964':'Learning from Incident. '+r.cat+'. Location: '+r.loc+'. Date: '+r.dt+'.',
+     accent:'#21409a',type:'intro',ms:4500},
+    {id:'desc',label:isAR?'\u0645\u0627\u0630\u0627 \u062d\u062f\u062b\u061f':isHI?'\u0915\u094d\u092f\u093e \u0939\u0941\u0906?':'What Happened',
+     icon:'\u26a0\ufe0f',text:desc,narration:desc.substring(0,750),accent:'#dc3545',type:'content',dir:isAR?'rtl':'ltr',ms:12000},
+    {id:'find',label:isAR?'\u0627\u0644\u0646\u062a\u0627\u0626\u062c \u0648\u0627\u0644\u0623\u0633\u0628\u0627\u0628':isHI?'\u0928\u093f\u0937\u094d\u0915\u0930\u094d\u0937 / \u0915\u093e\u0631\u0923':'Findings & Root Cause',
+     icon:'\ud83d\udd0d',text:find,narration:find.substring(0,750),accent:'#f58220',type:'content',dir:isAR?'rtl':'ltr',ms:12000},
+    {id:'learn',label:isAR?'\u0627\u0644\u062f\u0631\u0648\u0633 \u0627\u0644\u0645\u0633\u062a\u0641\u0627\u062f\u0629':isHI?'\u0938\u0940\u0916':'Key Learnings',
+     icon:'\ud83d\udca1',text:learn,narration:learn.substring(0,750),accent:'#28a745',type:'content',dir:isAR?'rtl':'ltr',ms:12000},
+    {id:'outro',label:isAR?'\u0627\u0628\u0642\u064e \u0641\u064a \u0623\u0645\u0627\u0646':isHI?'\u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0930\u0939\u0947\u0902':'Stay Safe',
+     narration:isAR?'\u0627\u0628\u0642\u064e \u0641\u064a \u0623\u0645\u0627\u0646. \u0623\u0628\u0644\u063a \u0639\u0646 \u062c\u0645\u064a\u0639 \u0627\u0644\u062d\u0627\u0644\u0627\u062a \u063a\u064a\u0631 \u0627\u0644\u0622\u0645\u0646\u0629 \u0641\u0648\u0631\u0627\u064b.':isHI?'\u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0930\u0939\u0947\u0902\u0964 \u0938\u092d\u0940 \u0905\u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0938\u094d\u0925\u093f\u0924\u093f\u092f\u094b\u0902 \u0915\u0940 \u0924\u0941\u0930\u0902\u0924 \u0930\u093f\u092a\u094b\u0930\u094d\u091f \u0915\u0930\u0947\u0902\u0964':'Stay safe. Report all unsafe conditions immediately. Al Tasnim HSE.',
+     accent:'#4d555b',type:'outro',ms:5000}
+  ];
+  // Filter content scenes that have no text
+  return scenes.filter(function(s){return s.type==='intro'||s.type==='outro'||(s.text&&s.text.trim().length>10);});
+}
+
+function _vmRenderScenes(){
+  var wrap=document.getElementById('vmScenesWrap');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  var r=VM.record;
+  VM.scenes.forEach(function(s,idx){
+    var el=document.createElement('div');
+    el.className='vm-scene vm-scene-'+s.type;
+    el.id='vmS'+idx;
+    el.style.setProperty('--vac',s.accent||'#21409a');
+    if(s.dir==='rtl')el.setAttribute('dir','rtl');
+    if(s.type==='intro'){
+      el.innerHTML='<div class="vm-alert-chip">\u26a0 LFI ALERT</div>'+
+        '<div class="vm-lfi-id">'+esc(r.id||'')+'</div>'+
+        '<div class="vm-category">'+esc(r.cat||'')+'</div>'+
+        '<div class="vm-meta-row">'+
+          '<div class="vm-meta-chip">\ud83d\udccd '+esc(r.loc||'')+'</div>'+
+          '<div class="vm-meta-chip">\ud83d\udcc5 '+esc(r.dt||'')+'</div>'+
+          '<div class="vm-meta-chip">\ud83d\udc64 '+esc(r.by||'')+'</div>'+
+          '<div class="vm-meta-chip">\ud83d\udd27 '+esc(r.disc||'')+'</div>'+
+        '</div>';
+    }else if(s.type==='content'){
+      el.innerHTML='<div class="vm-scene-hdr">'+(s.icon||'')+' '+esc(s.label)+'</div>'+
+        '<div class="vm-scene-body">'+esc(s.text||'')+'</div>';
+    }else if(s.type==='outro'){
+      el.innerHTML='<div class="vm-outro-logo">\ud83c\udfd7</div>'+
+        '<div class="vm-outro-name">AL TASNIM ENTERPRISES</div>'+
+        '<div class="vm-outro-tag">Quality You Can Build On &nbsp;\u00b7&nbsp; PDO ODC Programme</div>'+
+        '<div class="vm-outro-cta">\u26a0\ufe0f Report All Unsafe Conditions Immediately</div>';
+    }
+    wrap.appendChild(el);
+  });
+}
+
+function _vmShowScene(idx,animate){
+  VM.scenes.forEach(function(_,i){
+    var el=document.getElementById('vmS'+i);
+    if(!el)return;
+    el.classList.remove('active','exit');
+  });
+  var target=document.getElementById('vmS'+idx);
+  if(target){
+    if(animate){
+      target.style.transform='translateX(36px)';target.style.opacity='0';
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
+        target.classList.add('active');target.style.transform='';target.style.opacity='';
+      });});
+    }else{target.classList.add('active');}
+  }
+  VM.sceneIdx=idx;
+  var titleEl=document.getElementById('vmTitle');
+  if(titleEl&&VM.record)titleEl.textContent=esc(VM.record.id||'LFI')+' \u2014 '+(VM.scenes[idx]?VM.scenes[idx].label:'');
+  _vmUpdateDots();
+}
+
+function _vmUpdateDots(){
+  var el=document.getElementById('vmDots');if(!el)return;el.innerHTML='';
+  VM.scenes.forEach(function(s,i){
+    var d=document.createElement('div');
+    d.className='vm-dot'+(i<VM.sceneIdx?' done':i===VM.sceneIdx?' cur':'');
+    d.title=s.label||'';
+    d.onclick=(function(ii){return function(){_vmGoTo(ii);};})(i);
+    el.appendChild(d);
+  });
+}
+
+function _vmLoadAllAudio(){
+  var fill=document.getElementById('vmLdFill');
+  var status=document.getElementById('vmLdStatus');
+  var loading=document.getElementById('vmLoading');
+  if(fill)fill.style.width='0%';
+  if(loading)loading.classList.remove('hidden');
+  var total=VM.scenes.length,loaded=0;
+  VM.scenes.forEach(function(s,idx){
+    if(!s.narration||!s.narration.trim()){
+      VM.audios[idx]=null;loaded++;
+      if(fill)fill.style.width=Math.round(loaded/total*100)+'%';
+      if(loaded===total)_vmOnAllLoaded();
+      return;
+    }
+    _fetchTTSRaw(s.narration,VM.lang,function(b64){
+      VM.audios[idx]=b64?new Audio('data:audio/mp3;base64,'+b64):null;
+      loaded++;
+      if(fill)fill.style.width=Math.round(loaded/total*100)+'%';
+      if(status)status.textContent='Loading audio '+loaded+' of '+total+'...';
+      if(loaded===total)_vmOnAllLoaded();
+    });
+  });
+}
+
+function _vmOnAllLoaded(){
+  var loading=document.getElementById('vmLoading');
+  if(loading)loading.classList.add('hidden');
+  _vmUpdateDots();
+  VM.playing=true;VM.paused=false;
+  _vmUpdatePlayBtn();
+  _vmPlayScene(0);
+}
+
+// Raw TTS fetch — purely functional, no button UI management
+function _fetchTTSRaw(text,lang,callback){
+  if(!text||!text.trim()){callback(null);return;}
+  var codes={en:'en-US',hi:'hi-IN',ar:'ar-XA'};
+  var lc=codes[lang]||'en-US';
+  var cbN='_vtts'+Date.now()+'_'+Math.random().toString(36).slice(2);
+  var script=document.createElement('script'),done=false;
+  var tid=setTimeout(function(){if(done)return;done=true;delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);callback(null);},18000);
+  window[cbN]=function(d){if(done)return;done=true;clearTimeout(tid);delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);callback(d&&d.audio?d.audio:null);};
+  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbN];callback(null);};
+  script.src=API_BASE+'?action=tts&lang='+encodeURIComponent(lc)+'&text='+encodeURIComponent(text.substring(0,750))+'&callback='+cbN;
+  document.head.appendChild(script);
+}
+
+function _vmPlayScene(idx){
+  if(!VM.playing||VM.paused)return;
+  _vmStopAudio();
+  _vmShowScene(idx,idx>0);
+  var audio=VM.audios[idx];
+  var fallMs=VM.scenes[idx]?VM.scenes[idx].ms||8000:8000;
+  if(audio){
+    VM.currentAudio=audio;
+    audio.currentTime=0;
+    _vmRunProgressBar(audio,null);
+    audio.onended=function(){_vmOnSceneEnd();};
+    audio.onerror=function(){_vmFallback(fallMs);};
+    audio.play().catch(function(){_vmFallback(fallMs);});
+  }else{_vmFallback(fallMs);}
+}
+
+function _vmFallback(ms){
+  var start=Date.now();
+  _vmRunProgressBar(null,ms);
+  VM._fallbackTimer=setTimeout(function(){_vmOnSceneEnd();},ms);
+}
+
+function _vmOnSceneEnd(){
+  _vmStopAudio();
+  if(VM.sceneIdx<VM.scenes.length-1){
+    setTimeout(function(){_vmPlayScene(VM.sceneIdx+1);},100);
+  }else{
+    VM.playing=false;_vmUpdatePlayBtn();
+    var btn=document.getElementById('vmPP');if(btn)btn.textContent='\u27f3';
+  }
+}
+
+function _vmStopAudio(){
+  if(VM.currentAudio){try{VM.currentAudio.pause();VM.currentAudio.currentTime=0;}catch(e){}VM.currentAudio.onended=null;VM.currentAudio=null;}
+  clearTimeout(VM._fallbackTimer);
+  if(VM._rafId){cancelAnimationFrame(VM._rafId);VM._rafId=null;}
+  var fill=document.getElementById('vmAFill');if(fill)fill.style.width='0%';
+}
+
+function _vmRunProgressBar(audio,fallMs){
+  var fill=document.getElementById('vmAFill');if(!fill)return;
+  var start=Date.now();
+  function tick(){
+    if(audio){
+      if(!audio.duration){VM._rafId=requestAnimationFrame(tick);return;}
+      fill.style.width=Math.min(100,(audio.currentTime/audio.duration)*100)+'%';
+      if(!audio.ended&&!audio.paused)VM._rafId=requestAnimationFrame(tick);
+    }else if(fallMs){
+      var pct=Math.min(100,((Date.now()-start)/fallMs)*100);
+      fill.style.width=pct+'%';
+      if(pct<100)VM._rafId=requestAnimationFrame(tick);
+    }
+  }
+  VM._rafId=requestAnimationFrame(tick);
+}
+
+function _vmTogglePause(){
+  if(!VM.playing){// replay
+    VM.playing=true;VM.paused=false;_vmUpdatePlayBtn();
+    VM.audios.forEach(function(a){if(a){try{a.currentTime=0;}catch(e){}}});
+    _vmPlayScene(0);return;
+  }
+  VM.paused=!VM.paused;
+  if(VM.paused){
+    if(VM.currentAudio)try{VM.currentAudio.pause();}catch(e){}
+    clearTimeout(VM._fallbackTimer);
+    if(VM._rafId){cancelAnimationFrame(VM._rafId);VM._rafId=null;}
+  }else{
+    if(VM.currentAudio){VM.currentAudio.play().catch(function(){});_vmRunProgressBar(VM.currentAudio,null);}
+    else{_vmFallback(VM.scenes[VM.sceneIdx]?VM.scenes[VM.sceneIdx].ms||8000:8000);}
+  }
+  _vmUpdatePlayBtn();
+}
+
+function _vmUpdatePlayBtn(){
+  var btn=document.getElementById('vmPP');if(!btn)return;
+  if(!VM.playing){btn.textContent='\u27f3';return;}
+  btn.textContent=VM.paused?'\u25b6':'\u23f8';
+}
+
+function _vmNext(){if(VM.sceneIdx<VM.scenes.length-1)_vmGoTo(VM.sceneIdx+1);}
+function _vmPrev(){if(VM.sceneIdx>0)_vmGoTo(VM.sceneIdx-1);}
+function _vmGoTo(idx){_vmStopAudio();clearTimeout(VM._fallbackTimer);if(VM.playing&&!VM.paused)_vmPlayScene(idx);else _vmShowScene(idx,true);}
+
+function closeVideoModal(){
+  _vmStopAudio();clearTimeout(VM._fallbackTimer);VM.playing=false;VM.paused=false;
+  document.getElementById('videoModal').classList.remove('vis');
+  document.body.style.overflow='';
+  VM.audios.forEach(function(a){if(a)try{a.pause();}catch(e){}});
+  VM.audios=[];VM.scenes=[];VM.record=null;
+}
+document.addEventListener('click',function(e){if(e.target.id==='videoModal')closeVideoModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePptModal();closeVideoModal();}});
 function sclang(btn,lang){
   stopSpeech();
   var card=btn.closest('.fc'),cont=card.querySelector('.fcc');
@@ -1227,6 +1546,34 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 
+
+<!-- LFI VIDEO PLAYER MODAL -->
+<div id="videoModal">
+  <div class="vm-box">
+    <div class="vm-header">
+      <span style="font-size:16px;flex-shrink:0">&#127909;</span>
+      <div class="vm-title" id="vmTitle">LFI Video</div>
+      <div class="vm-lang-badge" id="vmLangBadge">EN</div>
+      <button class="vm-hbtn" onclick="closeVideoModal()">&#215; Close</button>
+    </div>
+    <div class="vm-screen">
+      <div class="vm-scenes-wrap" id="vmScenesWrap"></div>
+      <div class="vm-loading" id="vmLoading">
+        <div class="spin" style="width:36px;height:36px;border-color:rgba(255,255,255,.15);border-top-color:#fff"></div>
+        <div class="vm-ld-title">Preparing your LFI video...</div>
+        <div class="vm-ld-bar"><div class="vm-ld-fill" id="vmLdFill"></div></div>
+        <div class="vm-ld-status" id="vmLdStatus">Loading audio narration...</div>
+      </div>
+    </div>
+    <div class="vm-controls">
+      <div class="vm-dots" id="vmDots"></div>
+      <div class="vm-abar"><div class="vm-afill" id="vmAFill"></div></div>
+      <button class="vm-cbtn" onclick="_vmPrev()" title="Previous scene">&#9664;</button>
+      <button class="vm-cbtn pp" id="vmPP" onclick="_vmTogglePause()" title="Play / Pause">&#9208;</button>
+      <button class="vm-cbtn" onclick="_vmNext()" title="Next scene">&#9654;</button>
+    </div>
+  </div>
+</div>
 
 <!-- PPT PREVIEW MODAL -->
 <div id="pptModal">
