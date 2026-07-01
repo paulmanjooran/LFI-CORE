@@ -769,9 +769,13 @@ var ADMIN_UNLOCKED=false,ADMIN_ATTEMPTS=0,ADMIN_MAX=3,ADMIN_LOCKED_UNTIL=0;
 var LANG='en',DRILL=null,RAW=null,CH={},CUR_PAGE='overview';
 var PAL=['#21409a','#f58220','#28a745','#dc3545','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#e83e8c'];
 var SPEAKING_BTN=null;
-var CURRENT_AUDIO=null; // HTML Audio element for Cloud TTS playback
-// Voice state
+var CURRENT_AUDIO=null;
 var VS={loading:true,ready:false,all:[],en:null,hi:null,ar:null,primed:false,polls:0,inIframe:(window.self!==window.top),gestureReceived:false};
+// CAT_COLORS declared here (top of script) — renderFC and CVE both call catColor().
+// Root cause of "LFI Hub empty" bug: was declared ~1000 lines later inside CVE block,
+// so catColor() returned undefined on every renderFC() call, silently breaking all cards.
+var CAT_COLORS={'Motor Vehicle Incident':'#dc3545','Slip / Trip / Fall':'#e67e22','Fire & Explosion':'#e74c3c','Pinch Points':'#8e44ad','Heat Stress':'#f39c12','Falling Objects':'#2980b9','Lifting & Hoisting':'#16a085','Asset Damage':'#7f8c8d','Environmental Damage':'#27ae60','O&G':'#21409a','CIVIL & MEP':'#4d555b'};
+function catColor(cat){for(var k in CAT_COLORS){if(cat&&cat.toLowerCase().indexOf(k.toLowerCase())>=0)return CAT_COLORS[k];}return'#21409a';}
 
 // ── Utils ────────────────────────────────────────────────────
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -800,15 +804,24 @@ function navTo(page,el){
   var pg=document.getElementById('page-'+page);if(pg)pg.classList.add('active');
   document.querySelectorAll('nav a:not([href])').forEach(function(a){a.classList.remove('active');});
   if(el&&!el.getAttribute('href'))el.classList.add('active');
-  var T={overview:'Overview Dashboard',lfi:'LFI Register \u2014 Flashcards',admin:'Admin Controls'};
+  // Mobile bottom nav sync
+  document.querySelectorAll('.mn-tab').forEach(function(t){t.classList.toggle('active',t.dataset&&t.dataset.page===page);});
+  // Page titles
+  var T={overview:'Overview Dashboard',lfi:'LFI Hub \u2014 Flashcards & Videos',videos:'LFI Hub \u2014 Flashcards & Videos',admin:'Admin Controls'};
   document.getElementById('ptitle').textContent=T[page]||'Dashboard';
-  if(page==='lfi')renderFC();
+  // Page-specific actions
+  if(page==='lfi')try{renderFC();}catch(e){console.error('renderFC:',e);}
+  if(page==='videos')try{renderVideoGallery();}catch(e){console.error('renderVideoGallery:',e);}
   if(page==='admin'){
-    if(!ADMIN_UNLOCKED){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});admShowModal();return false;}
-    _adminPageInit();
+    if(!ADMIN_UNLOCKED){
+      document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+      try{admShowModal();}catch(e){console.error('admShowModal:',e);}
+      return false;
+    }
+    try{_adminPageInit();}catch(e){console.error('_adminPageInit:',e);}
   }
   if(page!=='admin')ADMIN_UNLOCKED=false;
-  if(window.innerWidth<=700)document.getElementById('sb').classList.remove('open');
+  if(window.innerWidth<=700){var sb=document.getElementById('sb');if(sb)sb.classList.remove('open');}
   return false;
 }
 
@@ -1917,9 +1930,7 @@ var CVE={
   W:1880,H:800
 };
 
-// Category → accent color
-var CAT_COLORS={'Motor Vehicle Incident':'#dc3545','Slip / Trip / Fall':'#e67e22','Fire & Explosion':'#e74c3c','Pinch Points':'#8e44ad','Heat Stress':'#f39c12','Falling Objects':'#2980b9','Lifting & Hoisting':'#16a085','Asset Damage':'#7f8c8d','Environmental Damage':'#27ae60','O&G':'#21409a','CIVIL & MEP':'#4d555b'};
-function catColor(cat){for(var k in CAT_COLORS){if(cat&&cat.toLowerCase().indexOf(k.toLowerCase())>=0)return CAT_COLORS[k];}return'#21409a';}
+// Category → accent color (declared at top of script to avoid "used before defined")
 
 function openCveModal(idx){
   var entry=window._FC_PPT&&window._FC_PPT[idx];
@@ -2427,30 +2438,6 @@ function _vlPlay(idx){
   if(fIdx<0){window._FC_PPT.push({link:entry.link,id:entry.id});fIdx=window._FC_PPT.length-1;}
   openCveModal(fIdx);
 }
-
-// ── Update navTo to handle 'videos' ──────────────────────────
-var _origNavTo=navTo;
-navTo=function(page,el){
-  if(page==='videos'){
-    CUR_PAGE='videos';
-    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-    var pg=document.getElementById('page-videos');if(pg)pg.classList.add('active');
-    document.querySelectorAll('nav a:not([href])').forEach(function(a){a.classList.remove('active');});
-    if(el&&!el.getAttribute('href'))el.classList.add('active');
-    document.getElementById('ptitle').textContent='LFI Video Library';
-    // Mobile nav sync
-    document.querySelectorAll('.mn-tab').forEach(function(t){t.classList.remove('active');});
-    var mnTab=document.querySelector('.mn-tab[data-page="videos"]');if(mnTab)mnTab.classList.add('active');
-    if(window.innerWidth<=700)document.getElementById('sb').classList.remove('open');
-    renderVideoGallery();
-    return;
-  }
-  // Mobile nav sync for other pages
-  document.querySelectorAll('.mn-tab').forEach(function(t){
-    t.classList.toggle('active',t.dataset.page===page);
-  });
-  _origNavTo(page,el);
-};
 
 // Sync mobile nav with sidebar on page init
 document.addEventListener('DOMContentLoaded',function(){
