@@ -1009,8 +1009,14 @@ function renderFC(){
 }
 
 // ── PPT SLIDE NAVIGATOR ───────────────────────────────────────
-var PPT_STATE={fileId:'',lfiId:'',link:'',slide:1,totalSlides:3};
+// Root cause of old bug: Google Slides embed ignores ?slide=id.pN params
+// in iframes — all tabs showed slide 1.
+// Fix: fetch real slide object IDs via Apps Script (SlidesApp, already
+// authorised), then display each slide as an export/png image.
+// Result: instant navigation, no iframe reload, true glassmorphic control.
+var PPT_STATE={fileId:'',lfiId:'',link:'',slide:1,totalSlides:3,slideIds:[],fetching:false};
 var SLIDE_LABELS=['English','हिंदी','عربي'];
+var PPT_IDS_CACHE={}; // fileId → [id1, id2, id3] — avoid refetching same file
 
 function _fcOpenPpt(idx){
   var entry=window._FC_PPT&&window._FC_PPT[idx];
@@ -1021,50 +1027,113 @@ function _fcOpenPpt(idx){
 function openPptModal(pptLink,lfiId){
   var fid=pptFileId(pptLink);
   if(!fid){window.open(pptLink,'_blank');return;}
-  PPT_STATE.fileId=fid;PPT_STATE.lfiId=lfiId||'';PPT_STATE.link=pptLink;PPT_STATE.slide=1;
+  PPT_STATE.fileId=fid;PPT_STATE.lfiId=lfiId||'';
+  PPT_STATE.link=pptLink;PPT_STATE.slide=1;PPT_STATE.slideIds=[];
   var modal=document.getElementById('pptModal');
   modal.classList.add('vis');document.body.style.overflow='hidden';
   document.getElementById('pptModalTitle').textContent=(lfiId||'LFI Alert')+' \u2014 Slide Navigator';
   document.getElementById('pptModalOpenBtn').href=pptLink;
-  pptGoSlide(1,document.querySelector('.ppt-slt'));
+  _pptResetUI();
+  _pptShowLoading(true);
+  // Check cache first — avoids re-fetching same presentation
+  if(PPT_IDS_CACHE[fid]){
+    PPT_STATE.slideIds=PPT_IDS_CACHE[fid];
+    _pptGoSlide(1);
+    return;
+  }
+  // Fetch slide IDs from Apps Script
+  PPT_STATE.fetching=true;
+  var cbName='_sids'+Date.now(),script=document.createElement('script'),done=false;
+  var tid=setTimeout(function(){
+    if(done)return;done=true;delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);
+    PPT_STATE.fetching=false;
+    _pptFallbackIframe(); // iframe fallback if Apps Script unreachable
+  },12000);
+  window[cbName]=function(data){
+    if(done)return;done=true;clearTimeout(tid);delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);
+    PPT_STATE.fetching=false;
+    if(data&&data.status==='OK'&&data.slides&&data.slides.length){
+      PPT_STATE.slideIds=data.slides.map(function(s){return s.id;});
+      PPT_STATE.totalSlides=PPT_STATE.slideIds.length;
+      PPT_IDS_CACHE[fid]=PPT_STATE.slideIds;
+      _pptGoSlide(1);
+    }else{
+      _pptFallbackIframe();
+    }
+  };
+  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbName];PPT_STATE.fetching=false;_pptFallbackIframe();};
+  script.src=API_BASE+'?action=slideIds&id='+encodeURIComponent(fid)+'&callback='+cbName;
+  document.head.appendChild(script);
 }
 
-function pptGoSlide(n,tabBtn){
+function _pptGoSlide(n){
   n=Math.max(1,Math.min(PPT_STATE.totalSlides,n));PPT_STATE.slide=n;
-  // Update tab buttons
+  // Update lang tabs
   document.querySelectorAll('.ppt-slt').forEach(function(b,i){b.classList.toggle('active',i===n-1);});
   // Update dots
   document.querySelectorAll('.ppt-sd').forEach(function(d,i){d.classList.toggle('active',i===n-1);});
   // Slide label
-  var lblEl=document.getElementById('pptSlideLabel');
-  if(lblEl)lblEl.textContent='Slide '+n+' of '+PPT_STATE.totalSlides+' \u2014 '+SLIDE_LABELS[n-1];
-  // Prev/next arrow visibility
+  var lbl=document.getElementById('pptSlideLabel');
+  if(lbl)lbl.textContent='Slide '+n+' of '+PPT_STATE.totalSlides+' \u2014 '+(SLIDE_LABELS[n-1]||'');
+  // Arrow opacity
   var prev=document.getElementById('pptNavPrev'),next=document.getElementById('pptNavNext');
   if(prev)prev.style.opacity=n>1?'1':'0.3';
   if(next)next.style.opacity=n<PPT_STATE.totalSlides?'1':'0.3';
-  // Load iframe
+  // Load slide as image using export/png with real pageId
+  if(PPT_STATE.slideIds.length>=n){
+    var pageId=PPT_STATE.slideIds[n-1];
+    var imgUrl='https://docs.google.com/presentation/d/'+PPT_STATE.fileId
+      +'/export/png?id='+PPT_STATE.fileId+'&pageid='+encodeURIComponent(pageId);
+    _pptShowImage(imgUrl);
+  }
+}
+
+function _pptShowImage(url){
+  _pptShowLoading(true);
+  // Hide iframe, show image
+  var frame=document.getElementById('pptFrame');if(frame)frame.style.display='none';
+  var img=document.getElementById('pptSlideImg');
+  img.style.opacity='0';img.style.display='block';
+  img.onload=function(){_pptShowLoading(false);img.style.opacity='1';img.style.transition='opacity .3s ease';};
+  img.onerror=function(){
+    // Slide image failed — sign-in issue or wrong ID, fall back to iframe
+    img.style.display='none';_pptFallbackIframe();
+  };
+  img.src=url;
+}
+
+function _pptFallbackIframe(){
+  // Last resort: show full embed iframe (slide 1 only, but at least shows something)
+  var img=document.getElementById('pptSlideImg');if(img)img.style.display='none';
   var frame=document.getElementById('pptFrame');
-  var loading=document.getElementById('pptLoading');
-  loading.style.display='flex';frame.style.opacity='0';
-  var embedUrl='https://docs.google.com/presentation/d/'+PPT_STATE.fileId+'/embed?start=false&loop=false&delayms=0&rm=minimal&slide=id.p'+n;
+  if(!frame)return;
+  frame.style.display='';frame.style.opacity='0';
+  _pptShowLoading(true);
+  var embedUrl='https://docs.google.com/presentation/d/'+PPT_STATE.fileId+'/embed?start=false&loop=false&rm=minimal';
   frame.src='';
   setTimeout(function(){
     frame.src=embedUrl;
-    frame.onload=function(){loading.style.display='none';frame.style.opacity='1';frame.style.transition='opacity .3s';};
-  },80);
+    frame.onload=function(){_pptShowLoading(false);frame.style.opacity='1';frame.style.transition='opacity .3s';};
+  },100);
 }
 
+function _pptResetUI(){
+  var img=document.getElementById('pptSlideImg');if(img){img.src='';img.style.opacity='0';}
+  var frame=document.getElementById('pptFrame');if(frame){frame.src='';frame.style.display='none';}
+}
+function _pptShowLoading(show){var el=document.getElementById('pptLoading');if(el)el.style.display=show?'flex':'none';}
+
+// Public wrappers used by onclick in HTML
+function pptGoSlide(n,tabBtn){_pptGoSlide(n);}
 function closePptModal(){
   var modal=document.getElementById('pptModal');if(modal)modal.classList.remove('vis');
-  var frame=document.getElementById('pptFrame');if(frame)frame.src='';
-  document.body.style.overflow='';
+  _pptResetUI();document.body.style.overflow='';
 }
 document.addEventListener('click',function(e){if(e.target.id==='pptModal')closePptModal();});
-// Keyboard slide navigation
 document.addEventListener('keydown',function(e){
   if(!document.getElementById('pptModal').classList.contains('vis'))return;
-  if(e.key==='ArrowRight'||e.key==='ArrowDown')pptGoSlide(PPT_STATE.slide+1,null);
-  if(e.key==='ArrowLeft'||e.key==='ArrowUp')pptGoSlide(PPT_STATE.slide-1,null);
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')_pptGoSlide(PPT_STATE.slide+1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')_pptGoSlide(PPT_STATE.slide-1);
 });
 
 // ── LFI VIDEO PLAYER ─────────────────────────────────────────
@@ -2459,7 +2528,11 @@ document.addEventListener('DOMContentLoaded',function(){
         <div class="spin-w"></div><span>Loading slide...</span>
       </div>
       <button class="ppt-nav-btn ppt-nav-prev" id="pptNavPrev" onclick="pptGoSlide(PPT_STATE.slide-1,null)">&#10094;</button>
-      <iframe id="pptFrame" allowfullscreen="true" style="opacity:0"></iframe>
+      <!-- Image shown for real slide navigation (via export/png with actual pageId) -->
+      <img id="pptSlideImg" alt="LFI Slide" loading="eager"
+           style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#0a0a12;display:none;opacity:0">
+      <!-- Iframe fallback — used only if slide ID fetch fails (sign-in issue etc.) -->
+      <iframe id="pptFrame" allowfullscreen="true" style="position:absolute;inset:0;width:100%;height:100%;border:none;opacity:0;display:none"></iframe>
       <button class="ppt-nav-btn ppt-nav-next" id="pptNavNext" onclick="pptGoSlide(PPT_STATE.slide+1,null)">&#10095;</button>
     </div>
     <div class="ppt-modal-footer">
