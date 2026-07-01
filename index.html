@@ -335,6 +335,174 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 @media(max-width:600px){.vm-scene{padding:16px 16px}.vm-category{font-size:16px}.vm-scene-body{max-height:50vw}}
 
 
+/* ── VIDEO LIBRARY GALLERY ── */
+.vl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.vl-card{background:var(--glass-bg-strong);backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative}
+.vl-card:hover{transform:translateY(-4px);box-shadow:var(--glass-shadow-hover)}
+.vl-poster{position:relative;width:100%;padding-top:56.25%;background:#080c14;overflow:hidden}
+.vl-poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.vl-card:hover .vl-poster img{transform:scale(1.06)}
+.vl-poster-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,var(--bl),#080c14)}
+.vl-poster-icon{font-size:36px;opacity:.35}
+.vl-play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.38);opacity:0;transition:opacity .2s}
+.vl-card:hover .vl-play-overlay{opacity:1}
+.vl-play-btn{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.vl-dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;backdrop-filter:blur(4px)}
+.vl-cat-badge{position:absolute;top:8px;left:8px;padding:3px 9px;border-radius:10px;font-size:9px;font-weight:800;color:#fff;letter-spacing:.4px;backdrop-filter:blur(4px)}
+.vl-info{padding:12px 14px}
+.vl-id{font-family:'Courier New',monospace;font-size:9.5px;color:var(--muted);font-weight:700;margin-bottom:4px}
+.vl-title{font-size:13px;font-weight:800;color:var(--dg);margin-bottom:6px;line-height:1.3}
+.vl-meta{display:flex;gap:10px;font-size:10.5px;color:var(--muted);flex-wrap:wrap}
+.vl-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)}
+.vl-empty .vl-ei{font-size:48px;margin-bottom:12px;opacity:.3}
+
+/* ── CINEMATIC VIDEO ENGINE (CVE) MODAL ── */
+#cveModal{display:none;position:fixed;inset:0;z-index:4000;align-items:center;justify-content:center;background:rgba(0,0,0,.92);backdrop-filter:blur(20px)}
+#cveModal.vis{display:flex;animation:fadeIn .3s ease}
+.cve-box{width:min(98vw,1200px);display:flex;flex-direction:column;gap:0}
+/* The cinema canvas wrapper — 2.35:1 ratio */
+.cve-screen{position:relative;width:100%;background:#000;line-height:0}
+.cve-canvas{display:block;width:100%;height:auto;max-height:75vh}
+/* Controls */
+.cve-controls{background:rgba(8,10,16,.95);padding:12px 18px;display:flex;flex-direction:column;gap:10px}
+.cve-progress-wrap{position:relative;height:4px;background:rgba(255,255,255,.12);border-radius:2px;cursor:pointer}
+.cve-progress-fill{height:100%;background:linear-gradient(to right,var(--bl),var(--or));border-radius:2px;pointer-events:none;transition:width .1s linear}
+.cve-progress-thumb{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 6px rgba(0,0,0,.5);opacity:0;transition:opacity .2s}
+.cve-progress-wrap:hover .cve-progress-thumb{opacity:1}
+.cve-ctrl-row{display:flex;align-items:center;gap:12px}
+.cve-btn{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.85);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0}
+.cve-btn:hover{background:rgba(255,255,255,.18)}
+.cve-btn.play{background:rgba(33,64,154,.6);border-color:rgba(33,64,154,.9);width:44px;height:44px;font-size:18px;border-radius:12px}
+.cve-btn.play:hover{background:rgba(33,64,154,.9)}
+.cve-btn.rec{background:rgba(220,53,69,.6);border-color:rgba(220,53,69,.9)}
+.cve-btn.rec:hover{background:rgba(220,53,69,.9)}
+.cve-btn.rec.recording{animation:recpulse 1.5s ease-in-out infinite}
+@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(220,53,69,.5)}50%{box-shadow:0 0 0 6px rgba(220,53,69,0)}}
+.cve-title{color:#fff;font-size:12px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cve-time{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;white-space:nowrap;font-family:'Courier New',monospace}
+.cve-scene-indicators{display:flex;gap:4px;align-items:center}
+.cve-si{height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,.15);transition:background .3s;cursor:pointer;min-width:20px}
+.cve-si.done{background:rgba(255,255,255,.5)}
+.cve-si.cur{background:var(--or)}
+.cve-close{padding:6px 14px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(255,255,255,.06);color:#fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0}
+.cve-close:hover{background:rgba(220,53,69,.4)}
+.cve-loading{position:absolute;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5}
+.cve-loading.hidden{display:none}
+.cve-ld-text{color:#fff;font-size:13px;font-weight:700}
+.cve-ld-bar{width:240px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.cve-ld-fill{height:100%;background:linear-gradient(to right,var(--bl),var(--or));border-radius:2px;transition:width .3s}
+.cve-ld-sub{font-size:10px;color:rgba(255,255,255,.4);font-weight:600}
+.cve-rec-badge{display:none;align-items:center;gap:6px;padding:3px 10px;background:rgba(220,53,69,.15);border:1px solid rgba(220,53,69,.4);border-radius:10px;font-size:10px;font-weight:800;color:#ff8888}
+.cve-rec-badge.show{display:flex}
+.cve-rec-dot{width:7px;height:7px;border-radius:50%;background:#dc3545;animation:recpulse 1s ease-in-out infinite}
+.cve-dl-btn{display:none;padding:7px 16px;background:linear-gradient(135deg,var(--gr),#1a7a30);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer}
+.cve-dl-btn.show{display:flex;align-items:center;gap:6px}
+
+/* ════════════════════════════════ MOBILE UX OVERHAUL ════════════════════════════════ */
+/* Mobile bottom navigation bar */
+#mobileNav{
+  display:none;position:fixed;bottom:0;left:0;right:0;height:60px;z-index:300;
+  background:rgba(33,38,42,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,.1);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.mn-inner{display:flex;height:100%;align-items:stretch}
+.mn-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:rgba(255,255,255,.45);transition:color .2s;border:none;background:none;padding:0;font-family:inherit}
+.mn-tab:active{background:rgba(255,255,255,.05)}
+.mn-tab.active{color:var(--or)}
+.mn-tab-icon{font-size:18px;line-height:1}
+.mn-tab-label{font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+
+/* Mobile: hide sidebar, show bottom nav */
+@media(max-width:768px){
+  #sb{display:none!important}
+  #mobileNav{display:block}
+  #stog{display:none!important}
+  #main{margin-left:0!important;margin-right:0!important;padding-bottom:68px}
+  body{font-size:14px}
+  /* Topbar mobile compact */
+  #topbar{padding:8px 12px;gap:6px;flex-wrap:nowrap;overflow-x:auto}
+  #ptitle{font-size:14px;min-width:0}
+  .ltgl{flex-shrink:0}
+  .lbt{padding:4px 7px;font-size:10px}
+  .bexp,.bref{padding:6px 10px;font-size:10px}
+  #lu{display:none}
+  /* Provenance bar mobile */
+  #provBar{padding:5px 12px;gap:8px;flex-wrap:nowrap;overflow-x:auto;font-size:10px}
+  /* Filter bar mobile — collapsible */
+  #fb{padding:10px 12px;gap:6px}
+  .fg label{font-size:9px}
+  .fg select,.fg input{height:34px;font-size:12px;padding:5px 8px}
+  .fgs{min-width:100%;order:10}
+  #frc{display:none}
+  /* KPI grid — 2x3 on mobile */
+  .krow{grid-template-columns:1fr 1fr!important;gap:8px;margin-bottom:12px}
+  .kc.headline{grid-column:1/-1}
+  .kc.headline .kv{font-size:36px}
+  .kv{font-size:26px}
+  .kl{font-size:9px}
+  .ki{font-size:16px}
+  .kp{font-size:9px}
+  /* Charts — single column */
+  .crow{grid-template-columns:1fr!important;gap:10px}
+  .cv{height:200px}
+  .cvl{height:240px}
+  /* Content padding */
+  #content{padding:12px}
+  /* Flashcards — full width */
+  .fcg{grid-template-columns:1fr!important;gap:10px}
+  .fc-thumb-wrap{aspect-ratio:16/9}
+  /* Video library — 1 column */
+  .vl-grid{grid-template-columns:1fr!important;gap:12px}
+  /* Admin — single column */
+  #page-admin > div{grid-template-columns:1fr!important}
+  #page-admin > div > .cc{grid-column:auto!important}
+  /* Sidebar section headers hide on mobile */
+  .sb-sec{display:none}
+  /* Drill bar compact */
+  #drillBar{padding:7px 12px;font-size:11px}
+  /* Voice bar compact */
+  .vsbar{padding:8px 10px;gap:6px}
+  /* CVE modal — full screen on mobile */
+  #cveModal{padding:0;align-items:flex-end}
+  .cve-box{width:100%;border-radius:0}
+  .cve-canvas{max-height:55vw}
+  .cve-controls{padding:10px 12px}
+  /* PPT modal mobile */
+  #pptModal{padding:8px}
+  .ppt-modal-box{border-radius:12px}
+  /* Video modal mobile */
+  #videoModal{padding:8px}
+  .vm-box{border-radius:12px}
+}
+@media(min-width:769px) and (max-width:1100px){
+  .krow{grid-template-columns:repeat(3,1fr)!important}
+  .kc.headline{grid-column:1/-1}
+  .vl-grid{grid-template-columns:repeat(2,1fr)!important}
+}
+
+/* ─── Touch-friendly tap targets across the board ─── */
+@media(max-width:768px){
+  nav a,.mn-tab,.kc,.fc .fch,.vl-card,.vm-cbtn,.cve-btn{min-height:44px}
+  .fc .fch{padding:14px 16px}
+  .lbt,.bf,.bref,.bexp{min-height:36px}
+  input,select{min-height:40px}
+  .adm-btn{padding:12px 14px;min-height:44px}
+  .badge{font-size:11px;padding:4px 10px}
+  button{-webkit-tap-highlight-color:transparent}
+}
+
+@media(max-width:480px){
+  .krow{grid-template-columns:1fr 1fr!important}
+  #topbar{padding:6px 10px}
+  #content{padding:10px}
+  .vl-info{padding:10px 12px}
+}
+/* iOS safe area */
+@supports(padding-bottom:env(safe-area-inset-bottom)){
+  #mobileNav{padding-bottom:env(safe-area-inset-bottom)}
+}
+
 @media(max-width:1100px){.krow{grid-template-columns:repeat(2,1fr)}.kc.headline{grid-column:1/-1}}
 @media(max-width:900px){.crow{grid-template-columns:1fr}.fcg{grid-template-columns:1fr}}
 @media(max-width:700px){
@@ -357,6 +525,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     <div class="sb-sec" data-i18n="sb_sec_dash">Dashboard</div>
     <a class="active" onclick="navTo('overview',this)"><span class="ni">&#128200;</span><span data-i18n="sb_overview">Overview</span></a>
     <a onclick="navTo('lfi',this)"><span class="ni">&#128203;</span><span data-i18n="sb_lfi">LFI Register</span></a>
+    <a onclick="navTo('videos',this)" style="position:relative"><span class="ni">&#127909;</span><span>LFI Video Library</span><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--or);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:8px" id="sbVidCount"></span></a>
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform?usp=dialog" target="_blank" rel="noopener noreferrer"
        style="background:linear-gradient(135deg,var(--or),#d46d16);color:#fff;border-left-color:transparent;margin:8px 4px 10px;border-radius:9px;justify-content:center;font-weight:700;flex-shrink:0;box-shadow:0 4px 12px rgba(245,130,32,.3)">
       <span class="ni">&#128221;</span><span data-i18n="sb_submit">+ Submit New LFI</span>
@@ -478,6 +647,24 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         </div>
       </div>
       <div class="fcg" id="fcGrid"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ VIDEO LIBRARY PAGE -->
+    <div class="page" id="page-videos">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:18px;font-weight:800;color:var(--dg)">&#127909; LFI Video Library</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px">Click any card to play the cinematic LFI story</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="vlSearch" type="text" placeholder="&#128269; Search videos..." oninput="renderVideoGallery()" style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;outline:none;width:200px;background:var(--glass-bg-strong)">
+          <select id="vlCat" onchange="renderVideoGallery()" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--glass-bg-strong)">
+            <option value="">All Categories</option>
+          </select>
+          <span id="vlCount" style="font-size:11px;color:var(--muted);white-space:nowrap;font-weight:600"></span>
+        </div>
+      </div>
+      <div class="vl-grid" id="vlGrid"></div>
     </div>
     <div class="page" id="page-admin">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
@@ -619,6 +806,11 @@ function processData(d){
   // PROVENANCE FOOTER UPDATE (additive only — does not affect existing logic)
   var pvU=document.getElementById('pvUpdated');if(pvU)pvU.textContent=d.ts||'just now';
   var pvC=document.getElementById('pvCount');if(pvC)pvC.textContent=RAW.length;
+  // Update video library badge count
+  var badge=document.getElementById('sbVidCount');
+  if(badge)badge.textContent=RAW.filter(function(r){return !!(r.descEN||r.descHI||r.descAR);}).length;
+  // Refresh gallery if currently open
+  if(CUR_PAGE==='videos')renderVideoGallery();
   initFilters();applyAll();
 }
 
@@ -775,7 +967,7 @@ function renderFC(){
           var fplBtns='';
           if(hasPpt&&r.thumb) fplBtns+='<button onclick="_fcOpenPpt('+idx+')" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;background:var(--bl);color:#fff;border:none;cursor:pointer">&#9654; '+t('ppt_preview')+'</button>';
           if(hasPpt) fplBtns+='<a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">&#128218; '+t('ppt_open')+'</a>';
-          if(hasDesc) fplBtns+='<button class="fc-vid-btn" onclick="_fcOpenVideo('+idx+')">&#127909; LFI Video</button>';
+          if(hasDesc) fplBtns+='<button class="fc-vid-btn" onclick="openCveModal('+idx+')">&#127909; LFI Video</button>';
           return fplBtns?'<div class="fpl">'+fplBtns+'</div>':'';
         })()+
       '</div></div>';
@@ -1539,15 +1731,630 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape')closePptModal();
 });
 
+// ══════════════════════════════════════════════════════════════
+// CVE — CINEMATIC VIDEO ENGINE
+// Canvas-based 2.35:1 cinematic renderer with Ken Burns effects,
+// animated typography, colour grading, vignette, grain, scrubber.
+// MediaRecorder captures real .webm video on demand.
+// ══════════════════════════════════════════════════════════════
+var CVE={
+  canvas:null,ctx:null,
+  scenes:[],audios:[],
+  sceneIdx:0,sceneStart:0,globalStart:0,
+  totalMs:0,elapsedMs:0,
+  playing:false,paused:false,
+  animFrame:null,
+  record:null,lang:'en',
+  // MediaRecorder
+  recorder:null,recChunks:[],recording:false,recBlob:null,
+  // Canvas dimensions (2.35:1 cinema ratio)
+  W:1880,H:800
+};
+
+// Category → accent color
+var CAT_COLORS={'Motor Vehicle Incident':'#dc3545','Slip / Trip / Fall':'#e67e22','Fire & Explosion':'#e74c3c','Pinch Points':'#8e44ad','Heat Stress':'#f39c12','Falling Objects':'#2980b9','Lifting & Hoisting':'#16a085','Asset Damage':'#7f8c8d','Environmental Damage':'#27ae60','O&G':'#21409a','CIVIL & MEP':'#4d555b'};
+function catColor(cat){for(var k in CAT_COLORS){if(cat&&cat.toLowerCase().indexOf(k.toLowerCase())>=0)return CAT_COLORS[k];}return'#21409a';}
+
+function openCveModal(idx){
+  var entry=window._FC_PPT&&window._FC_PPT[idx];
+  if(!entry)return;
+  var r=null;if(RAW){for(var i=0;i<RAW.length;i++){if(RAW[i].id===entry.id){r=RAW[i];break;}}}
+  if(!r){alert('Record not found. Refresh and try again.');return;}
+  CVE.record=r; CVE.lang=LANG;
+  CVE.scenes=cveScenes(r,LANG);
+  CVE.audios=new Array(CVE.scenes.length).fill(null);
+  CVE.sceneIdx=0; CVE.sceneStart=0; CVE.globalStart=0;
+  CVE.elapsedMs=0; CVE.totalMs=0;
+  CVE.playing=false; CVE.paused=false;
+  CVE.recorder=null; CVE.recChunks=[]; CVE.recording=false; CVE.recBlob=null;
+  // Setup canvas
+  CVE.canvas=document.getElementById('cveCanvas');
+  CVE.ctx=CVE.canvas.getContext('2d');
+  CVE.canvas.width=CVE.W; CVE.canvas.height=CVE.H;
+  // Show modal
+  document.getElementById('cveModal').classList.add('vis');
+  document.body.style.overflow='hidden';
+  document.getElementById('cveTitle').textContent=esc(r.id||'LFI')+' \u2014 '+esc(r.cat||'');
+  document.getElementById('cveDlBtn').classList.remove('show');
+  document.getElementById('cveRecBadge').classList.remove('show');
+  var recBtn=document.getElementById('cveRecBtn');recBtn.classList.remove('recording');recBtn.textContent='\u25cf REC';
+  // Draw first frame
+  cveDrawFrame(0,0,0);
+  cveBuildSceneIndicators();
+  // Load audio
+  cveLoadAudio();
+}
+
+function cveScenes(r,lang){
+  var isAR=lang==='ar',isHI=lang==='hi';
+  function tx(en,hi,ar){return isAR&&ar?ar:isHI&&hi?hi:en||'';}
+  var accent=catColor(r.cat);
+  var desc=tx(r.descEN,r.descHI,r.descAR)||'';
+  var find=tx(r.findEN,r.findHI,r.findAR)||'';
+  var learn=tx(r.learnEN,r.learnHI,r.learnAR)||'';
+  var scenes=[
+    {id:'intro',label:'Incident Alert',accentColor:accent,
+     bgColor1:'#060d1e',bgColor2:'#0a1628',
+     gradeColor:'rgba(33,64,154,.18)',
+     narration:isAR?'\u062a\u0646\u0628\u064a\u0647 \u062d\u0627\u062f\u062b\u0629. '+r.cat+'. '+r.loc+'. '+r.dt+'.':isHI?'LFI \u0905\u0932\u0930\u094d\u091f\u0964 '+r.cat+'\u0964 '+r.loc+'\u0964':'Learning from Incident. '+r.cat+'. '+r.loc+'. '+r.dt+'.',
+     fallbackMs:5000,hasText:true},
+    {id:'desc',label:isAR?'\u0645\u0627\u0630\u0627 \u062d\u062f\u062b':isHI?'\u0915\u094d\u092f\u093e \u0939\u0941\u0906':'What Happened',
+     text:desc,narration:desc.substring(0,750),
+     accentColor:'#dc3545',bgColor1:'#150508',bgColor2:'#0a0305',
+     gradeColor:'rgba(220,53,69,.12)',dir:isAR?'rtl':'ltr',
+     fallbackMs:14000,hasText:!!(desc&&desc.trim())},
+    {id:'find',label:isAR?'\u0627\u0644\u0646\u062a\u0627\u0626\u062c':isHI?'\u0928\u093f\u0937\u094d\u0915\u0930\u094d\u0937':'Findings',
+     text:find,narration:find.substring(0,750),
+     accentColor:'#f58220',bgColor1:'#130a01',bgColor2:'#0d0600',
+     gradeColor:'rgba(245,130,32,.10)',dir:isAR?'rtl':'ltr',
+     fallbackMs:14000,hasText:!!(find&&find.trim())},
+    {id:'learn',label:isAR?'\u0627\u0644\u062f\u0631\u0648\u0633':isHI?'\u0938\u0940\u0916':'Key Learnings',
+     text:learn,narration:learn.substring(0,750),
+     accentColor:'#28a745',bgColor1:'#010f05',bgColor2:'#000a03',
+     gradeColor:'rgba(40,167,69,.10)',dir:isAR?'rtl':'ltr',
+     fallbackMs:14000,hasText:!!(learn&&learn.trim())},
+    {id:'outro',label:'Al Tasnim HSE',
+     accentColor:'#21409a',bgColor1:'#04080f',bgColor2:'#080c18',
+     gradeColor:'rgba(33,64,154,.12)',
+     narration:isAR?'\u0627\u0628\u0642\u064e \u0641\u064a \u0623\u0645\u0627\u0646. \u0623\u0628\u0644\u063a \u0639\u0646 \u062c\u0645\u064a\u0639 \u0627\u0644\u062d\u0627\u0644\u0627\u062a \u063a\u064a\u0631 \u0627\u0644\u0622\u0645\u0646\u0629.':isHI?'\u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0930\u0939\u0947\u0902\u0964 \u0938\u092d\u0940 \u0905\u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0938\u094d\u0925\u093f\u0924\u093f\u092f\u094b\u0902 \u0915\u0940 \u0924\u0941\u0930\u0902\u0924 \u0930\u093f\u092a\u094b\u0930\u094d\u091f \u0915\u0930\u0947\u0902\u0964':'Stay safe. Report all unsafe conditions immediately.',
+     fallbackMs:5500,hasText:true}
+  ].filter(function(s){return s.id==='intro'||s.id==='outro'||s.hasText;});
+  return scenes;
+}
+
+function cveLoadAudio(){
+  var ld=document.getElementById('cveLoading'),fill=document.getElementById('cveLdFill'),sub=document.getElementById('cveLdSub');
+  ld.classList.remove('hidden');fill.style.width='0%';
+  var total=CVE.scenes.length,loaded=0;
+  CVE.scenes.forEach(function(s,i){
+    if(!s.narration||!s.narration.trim()){CVE.audios[i]=null;loaded++;fill.style.width=Math.round(loaded/total*100)+'%';if(loaded===total)cveOnReady();return;}
+    _fetchTTSRaw(s.narration,CVE.lang,function(b64){
+      if(b64){var a=new Audio('data:audio/mp3;base64,'+b64);a.load();CVE.audios[i]=a;}
+      loaded++;fill.style.width=Math.round(loaded/total*100)+'%';
+      if(sub)sub.textContent='Loaded '+loaded+' of '+total+' audio tracks...';
+      if(loaded===total)cveOnReady();
+    });
+  });
+}
+
+function cveOnReady(){
+  document.getElementById('cveLoading').classList.add('hidden');
+  // Compute total duration from audio durations + fallbacks
+  var computeTotals=function(){
+    CVE.totalMs=0;
+    CVE.scenes.forEach(function(s,i){
+      var a=CVE.audios[i];
+      if(a&&a.duration&&isFinite(a.duration))s._ms=Math.ceil(a.duration*1000)+500;
+      else s._ms=s.fallbackMs||8000;
+      CVE.totalMs+=s._ms;
+    });
+    cveUpdateTimeDisplay();
+    cveBuildSceneIndicators();
+    // Auto-play
+    CVE.playing=true;CVE.paused=false;
+    cveUpdatePlayBtn();
+    CVE.globalStart=performance.now();
+    CVE.sceneStart=0;CVE.sceneIdx=0;
+    cveStartSceneAudio(0);
+    CVE.animFrame=requestAnimationFrame(cveTick);
+  };
+  // Wait for audio metadata
+  var pending=CVE.audios.filter(function(a){return a&&!a.duration;}).length;
+  if(!pending){computeTotals();return;}
+  var resolved=0;
+  CVE.audios.forEach(function(a){
+    if(!a||a.duration){resolved++;if(resolved===CVE.audios.length)computeTotals();return;}
+    a.onloadedmetadata=function(){resolved++;if(resolved===CVE.audios.length)computeTotals();};
+    a.onerror=function(){resolved++;if(resolved===CVE.audios.length)computeTotals();};
+  });
+}
+
+function cveTick(ts){
+  if(!CVE.playing||CVE.paused)return;
+  var scene=CVE.scenes[CVE.sceneIdx];
+  var sceneMs=scene._ms||8000;
+  var sinceStart=ts-CVE.globalStart;
+  // Accumulate scene elapsed
+  var sceneOffset=sinceStart-CVE.sceneStart;
+  CVE.elapsedMs=0;for(var i=0;i<CVE.sceneIdx;i++)CVE.elapsedMs+=(CVE.scenes[i]._ms||8000);
+  CVE.elapsedMs+=sceneOffset;
+  var progress=Math.min(1,sceneOffset/sceneMs);
+  cveDrawFrame(CVE.sceneIdx,progress,sinceStart);
+  cveUpdateProgress();
+  if(progress>=1){
+    cveStopSceneAudio();
+    if(CVE.sceneIdx<CVE.scenes.length-1){
+      CVE.sceneIdx++;CVE.sceneStart=sinceStart;
+      cveStartSceneAudio(CVE.sceneIdx);
+      cveBuildSceneIndicators();
+    }else{cveFinish();return;}
+  }
+  CVE.animFrame=requestAnimationFrame(cveTick);
+}
+
+function cveDrawFrame(sceneIdx,progress,globalMs){
+  var ctx=CVE.ctx,W=CVE.W,H=CVE.H,s=CVE.scenes[sceneIdx];
+  if(!ctx||!s)return;
+  var r=CVE.record;
+  ctx.clearRect(0,0,W,H);
+
+  // ── 1. BACKGROUND ──────────────────────────────────────────
+  var kenX=Math.sin(globalMs*0.00012)*25; var kenY=Math.cos(globalMs*0.00009)*15;
+  var kenScale=1+progress*0.04;
+  var grd=ctx.createRadialGradient(W*0.3+kenX,H*0.4+kenY,0,W*0.5,H*0.5,W*0.85*kenScale);
+  grd.addColorStop(0,s.bgColor1||'#060d1e'); grd.addColorStop(1,s.bgColor2||'#020408');
+  ctx.fillStyle=grd; ctx.fillRect(0,0,W,H);
+  // Subtle animated light beam
+  ctx.save();
+  var bx=W*0.15+Math.sin(globalMs*0.0003)*80;
+  var beam=ctx.createLinearGradient(bx,0,bx+200,H);
+  beam.addColorStop(0,'rgba(255,255,255,0)');
+  beam.addColorStop(0.5,'rgba(255,255,255,.025)');
+  beam.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=beam; ctx.fillRect(0,0,W,H);
+  ctx.restore();
+
+  // ── 2. ACCENT LINE TOP ─────────────────────────────────────
+  var acW=W*Math.min(1,progress*2.5);
+  ctx.fillStyle=s.accentColor||'#21409a';ctx.fillRect(0,0,acW,3);
+
+  // ── 3. COLOUR GRADE OVERLAY ────────────────────────────────
+  ctx.fillStyle=s.gradeColor||'rgba(33,64,154,.15)'; ctx.fillRect(0,0,W,H);
+
+  // ── 4. VIGNETTE ────────────────────────────────────────────
+  var vig=ctx.createRadialGradient(W/2,H/2,H*0.25,W/2,H/2,W*0.75);
+  vig.addColorStop(0,'rgba(0,0,0,0)'); vig.addColorStop(1,'rgba(0,0,0,.72)');
+  ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
+
+  // ── 5. SCENE CONTENT ───────────────────────────────────────
+  if(s.id==='intro')cveDrawIntro(ctx,r,s,progress,W,H);
+  else if(s.id==='outro')cveDrawOutro(ctx,r,s,progress,W,H);
+  else cveDrawContent(ctx,r,s,progress,W,H);
+
+  // ── 6. LETTERBOX BARS (cinematic 2.35:1) ───────────────────
+  var barH=Math.round(H*0.04);
+  ctx.fillStyle='#000';
+  ctx.fillRect(0,0,W,barH);
+  ctx.fillRect(0,H-barH,W,barH);
+
+  // ── 7. FILM GRAIN ─────────────────────────────────────────
+  // Efficient: use small random blocks rather than per-pixel
+  ctx.save();ctx.globalAlpha=0.025;
+  for(var gi=0;gi<400;gi++){
+    var gx=Math.random()*W,gy=Math.random()*H,gs=Math.random()*3+1;
+    var gb=Math.random()>0.5?255:0;
+    ctx.fillStyle='rgb('+gb+','+gb+','+gb+')';
+    ctx.fillRect(gx,gy,gs,gs);
+  }
+  ctx.restore();
+
+  // ── 8. LFI ID WATERMARK (lower left) ──────────────────────
+  ctx.save();ctx.globalAlpha=0.2;
+  ctx.font='bold 16px Courier New';ctx.fillStyle='#fff';
+  ctx.fillText(r?esc(r.id||''):'',32,H-20);ctx.restore();
+}
+
+function cveDrawIntro(ctx,r,s,progress,W,H){
+  var fadeIn=Math.min(1,progress*3);
+  var slideY=Math.max(0,(1-Math.min(1,progress*2.5))*40);
+  // ALERT chip
+  if(progress>0.05){
+    ctx.save();ctx.globalAlpha=Math.min(1,(progress-0.05)*8);
+    var chipTxt='⚠  LFI ALERT';
+    ctx.font='bold 18px "Segoe UI",Arial';
+    var tw=ctx.measureText(chipTxt).width;
+    ctx.fillStyle='rgba(220,53,69,.25)';
+    ctx.beginPath();ctx.roundRect(60,H*0.28-14,tw+28,28,14);ctx.fill();
+    ctx.fillStyle='#ff9090';ctx.fillText(chipTxt,74,H*0.28+6);
+    ctx.restore();
+  }
+  // Category (large hero text)
+  ctx.save();ctx.globalAlpha=fadeIn;ctx.translate(0,-slideY);
+  ctx.font='bold '+Math.round(W*0.042)+'px "Segoe UI",Arial';
+  ctx.fillStyle='#ffffff';ctx.fillText(r?esc(r.cat||''):'',60,H*0.48);
+  ctx.restore();
+  // Meta line
+  if(progress>0.25){
+    ctx.save();ctx.globalAlpha=Math.min(1,(progress-0.25)*4);
+    ctx.font=(W*0.018)+'px "Segoe UI",Arial';ctx.fillStyle='rgba(255,255,255,.65)';
+    var meta=(r?'\ud83d\udccd '+(r.loc||'')+'\u2003\ud83d\udcc5 '+(r.dt||'')+'\u2003\ud83d\udc64 '+(r.by||''):'');
+    ctx.fillText(meta,60,H*0.62);
+    ctx.restore();
+  }
+  // Division badge
+  if(progress>0.4&&r&&r.div){
+    ctx.save();ctx.globalAlpha=Math.min(1,(progress-0.4)*5);
+    ctx.font='bold '+(W*0.016)+'px "Segoe UI",Arial';
+    var divTxt=r.div;var dtw=ctx.measureText(divTxt).width;
+    ctx.fillStyle=s.accentColor||'#21409a';
+    ctx.beginPath();ctx.roundRect(60,H*0.7,dtw+24,26,13);ctx.fill();
+    ctx.fillStyle='#fff';ctx.fillText(divTxt,72,H*0.7+18);
+    ctx.restore();
+  }
+}
+
+function cveDrawContent(ctx,r,s,progress,W,H){
+  // Section label
+  ctx.save();ctx.globalAlpha=Math.min(1,progress*4);
+  ctx.font='bold '+(W*0.016)+'px "Segoe UI",Arial';
+  ctx.fillStyle=s.accentColor||'#fff';
+  ctx.fillText((s.label||'').toUpperCase(),60,H*0.18);
+  // Accent rule
+  var ruleW=Math.min(W-120,240);
+  ctx.fillStyle=s.accentColor||'#fff';ctx.globalAlpha=0.4;
+  ctx.fillRect(60,H*0.2,ruleW,1.5);
+  ctx.restore();
+  // Body text — word-by-word reveal
+  if(!s.text)return;
+  var words=s.text.split(/\s+/).filter(Boolean);
+  var totalWords=words.length;
+  // Reveal words progressively — skip first 10% (header time)
+  var textProgress=Math.max(0,(progress-0.12)/0.88);
+  var revealCount=Math.round(textProgress*totalWords);
+  var visibleText=words.slice(0,revealCount).join(' ');
+  // Word-wrap and draw
+  var fs=Math.round(W*0.0175);
+  ctx.font=fs+'px "Segoe UI",Arial';ctx.fillStyle='rgba(255,255,255,.88)';
+  var maxW=W*0.62,lineH=fs*1.65,startX=60,startY=H*0.28;
+  var linesDrawn=0,maxLines=Math.floor((H*0.6)/lineH);
+  var lines=[],curLine='';
+  visibleText.split(' ').forEach(function(w){
+    var test=curLine?curLine+' '+w:w;
+    if(ctx.measureText(test).width>maxW&&curLine){lines.push(curLine);curLine=w;}else curLine=test;
+  });
+  if(curLine)lines.push(curLine);
+  ctx.save();ctx.globalAlpha=Math.min(1,progress*5);
+  lines.slice(0,maxLines).forEach(function(line){
+    ctx.fillText(line,startX,startY+linesDrawn*lineH);linesDrawn++;
+  });
+  ctx.restore();
+}
+
+function cveDrawOutro(ctx,r,s,progress,W,H){
+  var cx=W/2;
+  // Brand name
+  ctx.save();ctx.globalAlpha=Math.min(1,progress*3);
+  ctx.font='bold '+(W*0.032)+'px "Segoe UI",Arial';ctx.fillStyle='#ffffff';
+  ctx.textAlign='center';ctx.fillText('AL TASNIM ENTERPRISES',cx,H*0.38);
+  ctx.font=(W*0.018)+'px "Segoe UI",Arial';ctx.fillStyle='rgba(255,255,255,.45)';
+  ctx.fillText('Quality You Can Build On',cx,H*0.46);
+  ctx.restore();
+  // CTA button shape
+  if(progress>0.35){
+    ctx.save();ctx.globalAlpha=Math.min(1,(progress-0.35)*4);
+    var ctaTxt='\u26a0\ufe0f  Report All Unsafe Conditions Immediately';
+    ctx.font='bold '+(W*0.016)+'px "Segoe UI",Arial';
+    var ctaW=ctx.measureText(ctaTxt).width+48;
+    ctx.fillStyle='rgba(245,130,32,.85)';
+    ctx.beginPath();ctx.roundRect(cx-ctaW/2,H*0.56,ctaW,36,18);ctx.fill();
+    ctx.fillStyle='#fff';ctx.fillText(ctaTxt,cx,H*0.56+24);
+    ctx.restore();
+  }
+  ctx.textAlign='left';
+}
+
+function cveStartSceneAudio(idx){
+  cveStopSceneAudio();
+  var a=CVE.audios[idx];if(!a)return;
+  try{a.currentTime=0;a.play().catch(function(){});}catch(e){}
+}
+function cveStopSceneAudio(){
+  CVE.scenes.forEach(function(_,i){var a=CVE.audios[i];if(a)try{a.pause();}catch(e){};});
+}
+
+// Playback controls
+function cveTogglePlay(){
+  if(!CVE.playing){// restart
+    CVE.playing=true;CVE.paused=false;CVE.sceneIdx=0;
+    CVE.elapsedMs=0;CVE.globalStart=performance.now();CVE.sceneStart=0;
+    cveStartSceneAudio(0);cveUpdatePlayBtn();
+    CVE.animFrame=requestAnimationFrame(cveTick);return;
+  }
+  CVE.paused=!CVE.paused;
+  if(CVE.paused){cveStopSceneAudio();if(CVE.animFrame)cancelAnimationFrame(CVE.animFrame);}
+  else{cveStartSceneAudio(CVE.sceneIdx);CVE.globalStart=performance.now()-CVE.sceneStart;CVE.animFrame=requestAnimationFrame(cveTick);}
+  cveUpdatePlayBtn();
+}
+function cveUpdatePlayBtn(){
+  var b=document.getElementById('cvePlayBtn');if(!b)return;
+  b.textContent=CVE.playing&&!CVE.paused?'\u23f8':'\u25b6';
+}
+function cvePrev(){if(CVE.sceneIdx>0)cveGoTo(CVE.sceneIdx-1);}
+function cveNext(){if(CVE.sceneIdx<CVE.scenes.length-1)cveGoTo(CVE.sceneIdx+1);}
+function cveGoTo(idx){
+  cveStopSceneAudio();if(CVE.animFrame)cancelAnimationFrame(CVE.animFrame);
+  var beforeMs=0;for(var i=0;i<idx;i++)beforeMs+=(CVE.scenes[i]._ms||8000);
+  CVE.sceneIdx=idx;CVE.elapsedMs=beforeMs;
+  CVE.sceneStart=performance.now()-CVE.globalStart;
+  CVE.globalStart=performance.now()-beforeMs;CVE.sceneStart=beforeMs;
+  cveDrawFrame(idx,0,beforeMs);
+  if(CVE.playing&&!CVE.paused){cveStartSceneAudio(idx);CVE.animFrame=requestAnimationFrame(cveTick);}
+  cveBuildSceneIndicators();
+}
+function cveSeek(e){
+  if(!CVE.totalMs)return;
+  var wrap=document.getElementById('cveProgressWrap');
+  var pct=Math.max(0,Math.min(1,(e.offsetX||e.clientX-wrap.getBoundingClientRect().left)/wrap.offsetWidth));
+  var targetMs=pct*CVE.totalMs;
+  var accMs=0,targetScene=CVE.scenes.length-1;
+  for(var i=0;i<CVE.scenes.length;i++){
+    var sm=CVE.scenes[i]._ms||8000;if(targetMs<=accMs+sm){targetScene=i;break;}accMs+=sm;
+  }
+  cveGoTo(targetScene);
+}
+function cveFinish(){
+  CVE.playing=false;cveStopSceneAudio();
+  if(CVE.animFrame)cancelAnimationFrame(CVE.animFrame);
+  cveUpdatePlayBtn();cveUpdateProgress();
+  if(CVE.recording)cveStopRecord(true);
+}
+function cveUpdateProgress(){
+  if(!CVE.totalMs)return;
+  var pct=Math.min(100,(CVE.elapsedMs/CVE.totalMs)*100);
+  var fill=document.getElementById('cveProgressFill');
+  var thumb=document.getElementById('cveProgressThumb');
+  if(fill)fill.style.width=pct+'%';
+  if(thumb)thumb.style.left=pct+'%';
+  cveUpdateTimeDisplay();
+}
+function cveUpdateTimeDisplay(){
+  var el=document.getElementById('cveTime');if(!el)return;
+  function fmt(ms){var s=Math.floor(ms/1000);return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);}
+  el.textContent=fmt(CVE.elapsedMs)+' / '+fmt(CVE.totalMs);
+}
+function cveBuildSceneIndicators(){
+  var el=document.getElementById('cveSI');if(!el)return;el.innerHTML='';
+  CVE.scenes.forEach(function(_,i){
+    var d=document.createElement('div');d.className='cve-si'+(i<CVE.sceneIdx?' done':i===CVE.sceneIdx?' cur':'');
+    d.onclick=(function(ii){return function(){cveGoTo(ii);};})(i);d.title=CVE.scenes[i].label||'';
+    el.appendChild(d);
+  });
+}
+
+// ── MediaRecorder: capture canvas → real .webm video ──────────
+function cveToggleRecord(){
+  if(CVE.recording){cveStopRecord(false);return;}
+  cveStartRecord();
+}
+function cveStartRecord(){
+  if(!CVE.canvas){alert('Canvas not ready.');return;}
+  var stream=CVE.canvas.captureStream(30);
+  // Try to add audio from loaded audio tracks
+  try{
+    var AudioCtx=window.AudioContext||window.webkitAudioContext;
+    var actx=new AudioCtx();
+    var dest=actx.createMediaStreamDestination();
+    CVE.audios.forEach(function(a){
+      if(!a)return;
+      try{var src=actx.createMediaElementSource(a);src.connect(dest);src.connect(actx.destination);}catch(e){}
+    });
+    dest.stream.getAudioTracks().forEach(function(t){stream.addTrack(t);});
+  }catch(e){console.log('Audio mix not available:',e);}
+  var mimeTypes=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'];
+  var mimeType=mimeTypes.find(function(m){return MediaRecorder.isTypeSupported(m);})||'video/webm';
+  CVE.recorder=new MediaRecorder(stream,{mimeType:mimeType,videoBitsPerSecond:4000000});
+  CVE.recChunks=[];CVE.recBlob=null;
+  CVE.recorder.ondataavailable=function(e){if(e.data.size>0)CVE.recChunks.push(e.data);};
+  CVE.recorder.onstop=function(){
+    CVE.recBlob=new Blob(CVE.recChunks,{type:mimeType});
+    var url=URL.createObjectURL(CVE.recBlob);
+    var dlBtn=document.getElementById('cveDlBtn');
+    dlBtn.classList.add('show');
+    dlBtn.onclick=function(){
+      var a=document.createElement('a');a.href=url;
+      a.download=(CVE.record?CVE.record.id:'LFI_Video')+'_'+CVE.lang+'.webm';
+      document.body.appendChild(a);a.click();document.body.removeChild(a);
+    };
+  };
+  CVE.recorder.start(100);CVE.recording=true;
+  var rb=document.getElementById('cveRecBtn');rb.classList.add('recording');rb.textContent='\u23f9 Stop REC';
+  document.getElementById('cveRecBadge').classList.add('show');
+  // Restart playback from beginning for a full clean recording
+  cveGoTo(0);
+  if(!CVE.playing){cveTogglePlay();}
+}
+function cveStopRecord(fromFinish){
+  if(!CVE.recorder)return;
+  try{CVE.recorder.stop();}catch(e){}
+  CVE.recording=false;
+  var rb=document.getElementById('cveRecBtn');rb.classList.remove('recording');rb.textContent='\u25cf REC';
+  document.getElementById('cveRecBadge').classList.remove('show');
+}
+
+function closeCveModal(){
+  if(CVE.animFrame)cancelAnimationFrame(CVE.animFrame);
+  cveStopSceneAudio();
+  if(CVE.recorder&&CVE.recording)try{CVE.recorder.stop();}catch(e){}
+  CVE.playing=false;CVE.recording=false;
+  document.getElementById('cveModal').classList.remove('vis');
+  document.body.style.overflow='';
+}
+document.addEventListener('click',function(e){if(e.target.id==='cveModal')closeCveModal();});
+
+// ── VIDEO GALLERY ─────────────────────────────────────────────
+function renderVideoGallery(){
+  var grid=document.getElementById('vlGrid');if(!grid)return;
+  if(!RAW||!RAW.length){grid.innerHTML='<div class="vl-empty"><div class="vl-ei">&#127909;</div><p>No LFI records loaded yet. Click Refresh.</p></div>';return;}
+  // Populate category filter on first call
+  var catSel=document.getElementById('vlCat');
+  if(catSel&&catSel.options.length<2){
+    var cats={};RAW.forEach(function(r){if(r.cat)cats[r.cat]=1;});
+    Object.keys(cats).sort().forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;catSel.appendChild(o);});
+  }
+  var q=(document.getElementById('vlSearch')||{}).value||'';q=q.toLowerCase().trim();
+  var cat=(document.getElementById('vlCat')||{}).value||'';
+  var filtered=RAW.filter(function(r){
+    var hasContent=!!(r.descEN||r.descHI||r.descAR);
+    if(!hasContent)return false;
+    if(cat&&r.cat!==cat)return false;
+    if(q&&[r.id,r.cat,r.loc,r.by,r.disc,r.descEN].join(' ').toLowerCase().indexOf(q)<0)return false;
+    return true;
+  }).sort(function(a,b){
+    var da=a.dateObj?a.dateObj.getTime():0,db=b.dateObj?b.dateObj.getTime():0;return db-da;
+  });
+  var countEl=document.getElementById('vlCount');if(countEl)countEl.textContent=filtered.length+' videos';
+  // Update sidebar badge
+  var badge=document.getElementById('sbVidCount');if(badge)badge.textContent=RAW.filter(function(r){return !!(r.descEN||r.descHI||r.descAR);}).length;
+  if(!filtered.length){grid.innerHTML='<div class="vl-empty"><div class="vl-ei">&#128269;</div><p>No videos match your search.</p></div>';return;}
+  // Build lookup table for CVE (reuse _FC_PPT pattern)
+  window._VL_PPT=[];
+  var html='';
+  filtered.forEach(function(r,idx){
+    window._VL_PPT.push({link:r.pptLink||'',id:r.id||''});
+    var accent=catColor(r.cat);
+    var poster=r.thumb
+      ?'<img src="'+esc(r.thumb)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
+      :'<div class="vl-poster-bg" style="background:linear-gradient(145deg,'+accent+',#080c14)"><div class="vl-poster-icon">&#127909;</div></div>';
+    // Estimate duration from scene count
+    var sceneCount=[r.descEN,r.findEN,r.learnEN].filter(Boolean).length+2;
+    var estSec=sceneCount*12;
+    var estDur=Math.floor(estSec/60)+':'+(estSec%60<10?'0':'')+estSec%60;
+    html+='<div class="vl-card" onclick="_vlPlay('+idx+')" style="border-top:3px solid '+accent+'">'+
+      '<div class="vl-poster">'+poster+
+        '<div class="vl-play-overlay"><div class="vl-play-btn">&#9654;</div></div>'+
+        '<div class="vl-dur">~'+estDur+'</div>'+
+        '<div class="vl-cat-badge" style="background:'+accent+'aa;backdrop-filter:blur(6px)">'+esc(r.cat)+'</div>'+
+      '</div>'+
+      '<div class="vl-info">'+
+        '<div class="vl-id">'+esc(r.id||'')+'</div>'+
+        '<div class="vl-title">'+esc(r.cat||'Unknown Category')+'</div>'+
+        '<div class="vl-meta">'+
+          '<span>&#128205; '+esc(r.loc||'')+'</span>'+
+          '<span>&#128197; '+esc(r.dt||'')+'</span>'+
+          (r.ppt?'<span style="color:var(--gr)">PPT &#10003;</span>':'')+''+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  });
+  grid.innerHTML=html;
+}
+
+function _vlPlay(idx){
+  var entry=window._VL_PPT&&window._VL_PPT[idx];if(!entry)return;
+  // Find record in RAW
+  var r=null;if(RAW){for(var i=0;i<RAW.length;i++){if(RAW[i].id===entry.id){r=RAW[i];break;}}}
+  if(!r)return;
+  // Build a temporary _FC_PPT entry so openCveModal can find it
+  window._FC_PPT=window._FC_PPT||[];
+  var fIdx=window._FC_PPT.findIndex?window._FC_PPT.findIndex(function(e){return e.id===entry.id;}):
+    (function(){for(var j=0;j<window._FC_PPT.length;j++){if(window._FC_PPT[j].id===entry.id)return j;}return -1;})();
+  if(fIdx<0){window._FC_PPT.push({link:entry.link,id:entry.id});fIdx=window._FC_PPT.length-1;}
+  openCveModal(fIdx);
+}
+
+// ── Update navTo to handle 'videos' ──────────────────────────
+var _origNavTo=navTo;
+navTo=function(page,el){
+  if(page==='videos'){
+    CUR_PAGE='videos';
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+    var pg=document.getElementById('page-videos');if(pg)pg.classList.add('active');
+    document.querySelectorAll('nav a:not([href])').forEach(function(a){a.classList.remove('active');});
+    if(el&&!el.getAttribute('href'))el.classList.add('active');
+    document.getElementById('ptitle').textContent='LFI Video Library';
+    // Mobile nav sync
+    document.querySelectorAll('.mn-tab').forEach(function(t){t.classList.remove('active');});
+    var mnTab=document.querySelector('.mn-tab[data-page="videos"]');if(mnTab)mnTab.classList.add('active');
+    if(window.innerWidth<=700)document.getElementById('sb').classList.remove('open');
+    renderVideoGallery();
+    return;
+  }
+  // Mobile nav sync for other pages
+  document.querySelectorAll('.mn-tab').forEach(function(t){
+    t.classList.toggle('active',t.dataset.page===page);
+  });
+  _origNavTo(page,el);
+};
+
+// Sync mobile nav with sidebar on page init
 document.addEventListener('DOMContentLoaded',function(){
-  refresh();
-  initVoices();
-  applyI18n();
+  refresh();initVoices();applyI18n();
 });
 </script>
 
 
-<!-- LFI VIDEO PLAYER MODAL -->
+<!-- MOBILE BOTTOM NAVIGATION -->
+<nav id="mobileNav" aria-label="Mobile navigation">
+  <div class="mn-inner">
+    <button class="mn-tab active" onclick="navTo('overview',this)" data-page="overview">
+      <span class="mn-tab-icon">&#128200;</span>
+      <span class="mn-tab-label">Overview</span>
+    </button>
+    <button class="mn-tab" onclick="navTo('lfi',this)" data-page="lfi">
+      <span class="mn-tab-icon">&#128203;</span>
+      <span class="mn-tab-label">Register</span>
+    </button>
+    <button class="mn-tab" onclick="navTo('videos',this)" data-page="videos">
+      <span class="mn-tab-icon">&#127909;</span>
+      <span class="mn-tab-label">Videos</span>
+    </button>
+    <button class="mn-tab" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform','_blank')">
+      <span class="mn-tab-icon">&#128221;</span>
+      <span class="mn-tab-label">Submit</span>
+    </button>
+    <button class="mn-tab" onclick="navTo('admin',this)" data-page="admin">
+      <span class="mn-tab-icon">&#9881;</span>
+      <span class="mn-tab-label">Admin</span>
+    </button>
+  </div>
+</nav>
+
+<!-- CINEMATIC VIDEO ENGINE MODAL -->
+<div id="cveModal">
+  <div class="cve-box">
+    <div class="cve-screen">
+      <canvas id="cveCanvas" class="cve-canvas"></canvas>
+      <div class="cve-loading" id="cveLoading">
+        <div class="spin" style="width:40px;height:40px;border-color:rgba(255,255,255,.1);border-top-color:#fff"></div>
+        <div class="cve-ld-text">Preparing cinematic video...</div>
+        <div class="cve-ld-bar"><div class="cve-ld-fill" id="cveLdFill"></div></div>
+        <div class="cve-ld-sub" id="cveLdSub">Loading audio narration...</div>
+      </div>
+    </div>
+    <div class="cve-controls">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div class="cve-scene-indicators" id="cveSI"></div>
+      </div>
+      <div class="cve-progress-wrap" id="cveProgressWrap" onclick="cveSeek(event)">
+        <div class="cve-progress-fill" id="cveProgressFill"></div>
+        <div class="cve-progress-thumb" id="cveProgressThumb"></div>
+      </div>
+      <div class="cve-ctrl-row">
+        <button class="cve-btn play" id="cvePlayBtn" onclick="cveTogglePlay()" title="Play/Pause">&#9654;</button>
+        <button class="cve-btn" onclick="cvePrev()" title="Previous scene">&#9664;&#9664;</button>
+        <button class="cve-btn" onclick="cveNext()" title="Next scene">&#9654;&#9654;</button>
+        <div class="cve-title" id="cveTitle">LFI CORE Cinematic</div>
+        <div class="cve-time" id="cveTime">0:00 / 0:00</div>
+        <div class="cve-rec-badge" id="cveRecBadge"><div class="cve-rec-dot"></div>REC</div>
+        <button class="cve-btn rec" id="cveRecBtn" onclick="cveToggleRecord()" title="Record video">&#9679; REC</button>
+        <button class="cve-dl-btn" id="cveDlBtn">&#11015; Download .webm</button>
+        <button class="cve-close" onclick="closeCveModal()">&#215; Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div id="videoModal">
   <div class="vm-box">
     <div class="vm-header">
