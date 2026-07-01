@@ -666,17 +666,28 @@ function renderFC(){
     var db=b.dateObj?b.dateObj.getTime():0;
     return db-da;
   });
+
+  // Build a lookup table keyed by index — avoids ALL quoting/escaping
+  // issues with URLs in onclick attributes (& ? = chars break inline HTML)
+  window._FC_PPT=[];
+
   var html='';
-  sorted.forEach(function(r){
+  sorted.forEach(function(r,idx){
     var lang=LANG,c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
     var enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');
-    var thumbClick=r.pptLink?'onclick="event.stopPropagation();openPptModal(\''+r.pptLink.replace(/'/g,"\\'")+"',"+JSON.stringify(esc(r.id))+')"':'';
+    window._FC_PPT.push({link:r.pptLink||'',id:r.id||''});
+
+    var hasPpt=!!(r.pptLink);
     var thumbHtml = r.thumb
-      ? '<div class="fc-thumb-wrap" style="cursor:'+(r.pptLink?'pointer':'default')+'" '+thumbClick+' title="'+(r.pptLink?t('ppt_preview'):'')+'">'
-        +'<img src="'+esc(r.thumb)+'" alt="PPT preview for '+esc(r.id)+'" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=&quot;fc-thumb-placeholder&quot;><div class=&quot;tpi&quot;>&#128218;</div><span>Preview unavailable</span></div>\'">'
-        +(r.pptLink?'<div class="fc-thumb-badge">&#9654; '+t('ppt_preview')+'</div>':'')
-        +'</div>'
+      ? '<div class="fc-thumb-wrap" style="cursor:'+(hasPpt?'pointer':'default')+'" '
+          +(hasPpt?'onclick="event.stopPropagation();_fcOpenPpt('+idx+')"':'')
+          +' title="'+(hasPpt?t('ppt_preview'):'')+'">'
+          +'<img src="'+esc(r.thumb)+'" alt="PPT preview" loading="lazy" '
+          +'onerror="this.parentElement.innerHTML=\'<div class=&quot;fc-thumb-placeholder&quot;><div class=&quot;tpi&quot;>&#128218;</div><span>Preview unavailable</span></div>\'">'
+          +(hasPpt?'<div class="fc-thumb-badge">&#9654; '+t('ppt_preview')+'</div>':'')
+          +'</div>'
       : '<div class="fc-thumb-wrap"><div class="fc-thumb-placeholder"><div class="tpi">&#128203;</div><span>'+(r.ppt?'Preview pending':t('ppt_pending'))+'</span></div></div>';
+
     html+='<div class="fc">'+
       thumbHtml+
       '<div class="fch" onclick="stopSpeech();this.closest(\'.fc\').classList.toggle(\'open\')">'+
@@ -699,15 +710,23 @@ function renderFC(){
         '<div class="fps"><span class="fp">'+esc(r.div)+'</span><span class="fp">'+esc(r.by)+'</span>'+
           (r.ppt?'<span class="fp ok">'+t('ppt_done')+'</span>':'<span class="fp pnd">'+t('ppt_pending')+'</span>')+
         '</div>'+
-        (r.pptLink
+        (hasPpt
           ?'<div class="fpl">'
-            +(r.thumb?'<button onclick="openPptModal(\''+r.pptLink.replace(/'/g,"\\'")+'\','+JSON.stringify(esc(r.id))+')" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;background:var(--bl);color:#fff;border:none;cursor:pointer">&#9654; '+t('ppt_preview')+'</button>':'')
+            +(r.thumb?'<button onclick="_fcOpenPpt('+idx+')" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;background:var(--bl);color:#fff;border:none;cursor:pointer">&#9654; '+t('ppt_preview')+'</button>':'')
             +'<a href="'+esc(r.pptLink)+'" target="_blank" class="plnk">&#128218; '+t('ppt_open')+'</a>'
             +'</div>'
           :'')+
       '</div></div>';
   });
   grid.innerHTML=html;
+}
+
+// Thin wrapper called from onclick — retrieves URL from lookup table, no
+// URL string ever appears in an HTML attribute, so no escaping issue.
+function _fcOpenPpt(idx){
+  var entry=window._FC_PPT&&window._FC_PPT[idx];
+  if(!entry||!entry.link)return;
+  openPptModal(entry.link,entry.id);
 }
 function sclang(btn,lang){
   stopSpeech();
