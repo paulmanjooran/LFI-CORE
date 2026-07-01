@@ -675,16 +675,6 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
         <div id="fc-sort-label" style="font-size:12px;color:var(--muted);font-weight:500">Sorted by incident date &#8212; newest first. Click a card to expand.</div>
         <span id="fc-newest-badge" style="font-size:10px;background:var(--bl);color:#fff;padding:3px 10px;border-radius:10px;font-weight:700;white-space:nowrap;flex-shrink:0">&#8595; Newest First</span>
-        <div style="display:flex;gap:8px">
-          <div class="btn-exp">
-            <button class="bexp" onclick="toggleExp2(this)">&#128190; Export &#9660;</button>
-            <div class="exp-menu" id="expMenu2">
-              <button onclick="exportExcel();closeAllExp()">&#128202; Excel (.xlsx)</button>
-              <button onclick="exportPDF();closeAllExp()">&#128196; PDF Report</button>
-            </div>
-          </div>
-          <button class="bref" style="font-size:11px;padding:7px 14px" onclick="refresh()">&#8635; Refresh</button>
-        </div>
       </div>
       <div class="fcg" id="fcGrid"></div>
     </div>
@@ -841,17 +831,20 @@ function _refreshJSONP(){
   document.head.appendChild(script);
 }
 function processData(d){
-  if(!d)return;RAW=d.rawRows||[];RAW.forEach(function(r){r.dateObj=pd(r.dt);});
+  if(!d)return;
+  RAW=d.rawRows||[];
+  RAW.forEach(function(r){r.dateObj=pd(r.dt);});
   document.getElementById('lu').textContent='Updated: '+(d.ts||'');
-  // PROVENANCE FOOTER UPDATE (additive only — does not affect existing logic)
-  var pvU=document.getElementById('pvUpdated');if(pvU)pvU.textContent=d.ts||'just now';
-  var pvC=document.getElementById('pvCount');if(pvC)pvC.textContent=RAW.length;
-  // Update video library badge count
-  var badge=document.getElementById('sbVidCount');
-  if(badge)badge.textContent=RAW.filter(function(r){return !!(r.descEN||r.descHI||r.descAR);}).length;
-  // Refresh gallery if currently open
-  if(CUR_PAGE==='videos')renderVideoGallery();
-  initFilters();applyAll();
+  // Provenance footer
+  try{var pvU=document.getElementById('pvUpdated');if(pvU)pvU.textContent=d.ts||'just now';}catch(e){}
+  try{var pvC=document.getElementById('pvCount');if(pvC)pvC.textContent=RAW.length;}catch(e){}
+  // Sidebar badge
+  try{var badge=document.getElementById('sbVidCount');if(badge)badge.textContent=RAW.filter(function(r){return !!(r.descEN||r.descHI||r.descAR);}).length;}catch(e){}
+  // Core data render — MUST run regardless of anything above
+  try{initFilters();}catch(e){console.error('initFilters error:',e);}
+  try{applyAll();}catch(e){console.error('applyAll error:',e);}
+  // Gallery refresh only if that tab is open
+  try{if(CUR_PAGE==='videos')renderVideoGallery();}catch(e){}
 }
 
 // ── Filters ──────────────────────────────────────────────────
@@ -1141,54 +1134,58 @@ function closePptModal(){
 document.addEventListener('click',function(e){if(e.target.id==='pptModal')closePptModal();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closePptModal();});
 
-// ── PPT Navigation: keyboard, touch swipe, mouse drag ─────────
-// Strategy: focus the modal itself (not document) so keyboard events
-// are captured even when an iframe fallback has stolen document focus.
+// ── PPT Navigation: keyboard, touch swipe, pointer drag ──────
 (function(){
   var modal=document.getElementById('pptModal');
-  var swipeStartX=0,swipeStartY=0,swipeActive=false;
+  var swipeStartX=0,swipeStartY=0,swipeActive=false,swipeMoved=false;
 
-  // KEYBOARD — fires on the modal element directly (not document)
-  // so it works regardless of whether an iframe has keyboard focus.
+  // KEYBOARD — on modal element directly so iframe focus doesn't swallow it
   modal.addEventListener('keydown',function(e){
     if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();_pptGoSlide(PPT_STATE.slide+1);}
     if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();_pptGoSlide(PPT_STATE.slide-1);}
     if(e.key==='Escape'){closePptModal();}
   });
 
-  // TOUCH SWIPE — left swipe = next slide, right swipe = prev slide
+  // Helper: is the event on an interactive control?
+  function onControl(e){return !!(e.target.closest('button,a,[tabindex],.ppt-modal-header,.ppt-modal-footer'));}
+
+  // POINTER DRAG (replaces mousedown — does NOT call preventDefault so button clicks work)
+  // Only activate swipe drag on the slide image/iframe area, not on buttons
+  modal.addEventListener('pointerdown',function(e){
+    if(onControl(e))return; // let buttons get their click naturally
+    swipeStartX=e.clientX;swipeStartY=e.clientY;swipeActive=true;swipeMoved=false;
+  });
+  modal.addEventListener('pointermove',function(e){
+    if(!swipeActive)return;
+    if(Math.abs(e.clientX-swipeStartX)>8)swipeMoved=true;
+  },{passive:true});
+  modal.addEventListener('pointerup',function(e){
+    if(!swipeActive)return;swipeActive=false;
+    if(!swipeMoved)return; // plain click, not a swipe — don't navigate
+    var dx=e.clientX-swipeStartX;
+    var dy=e.clientY-swipeStartY;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>55){
+      if(dx<0)_pptGoSlide(PPT_STATE.slide+1);
+      else _pptGoSlide(PPT_STATE.slide-1);
+    }
+    swipeMoved=false;
+  });
+  modal.addEventListener('pointercancel',function(){swipeActive=false;swipeMoved=false;});
+
+  // TOUCH SWIPE (mobile, same logic via touch events for compatibility)
   modal.addEventListener('touchstart',function(e){
-    if(e.target.closest('.ppt-nav-btn,.ppt-modal-header,.ppt-modal-footer'))return;
-    swipeStartX=e.touches[0].clientX;
-    swipeStartY=e.touches[0].clientY;
-    swipeActive=true;
+    if(onControl(e))return;
+    swipeStartX=e.touches[0].clientX;swipeStartY=e.touches[0].clientY;
   },{passive:true});
   modal.addEventListener('touchend',function(e){
-    if(!swipeActive)return;swipeActive=false;
+    if(onControl(e))return;
     var dx=e.changedTouches[0].clientX-swipeStartX;
     var dy=e.changedTouches[0].clientY-swipeStartY;
     if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>44){
-      // Horizontal swipe dominates: left=next, right=prev
       if(dx<0)_pptGoSlide(PPT_STATE.slide+1);
       else _pptGoSlide(PPT_STATE.slide-1);
     }
   },{passive:true});
-
-  // MOUSE DRAG — same logic for desktop
-  modal.addEventListener('mousedown',function(e){
-    if(e.target.closest('.ppt-nav-btn,.ppt-modal-header,.ppt-modal-footer'))return;
-    swipeStartX=e.clientX;swipeActive=true;
-    e.preventDefault(); // prevent img drag ghost
-  });
-  modal.addEventListener('mouseup',function(e){
-    if(!swipeActive)return;swipeActive=false;
-    var dx=e.clientX-swipeStartX;
-    if(Math.abs(dx)>60){
-      if(dx<0)_pptGoSlide(PPT_STATE.slide+1);
-      else _pptGoSlide(PPT_STATE.slide-1);
-    }
-  });
-  modal.addEventListener('mouseleave',function(){swipeActive=false;});
 })();
 
 // ── LFI VIDEO PLAYER ─────────────────────────────────────────
@@ -2457,7 +2454,16 @@ navTo=function(page,el){
 
 // Sync mobile nav with sidebar on page init
 document.addEventListener('DOMContentLoaded',function(){
-  refresh();initVoices();applyI18n();
+  try{refresh();}catch(e){console.error('refresh() failed on load:',e);}
+  try{initVoices();}catch(e){console.error('initVoices() failed:',e);}
+  try{applyI18n();}catch(e){console.error('applyI18n() failed:',e);}
+  // Auto-retry once after 10s if data still empty (Apps Script cold start can take 8-12s)
+  setTimeout(function(){
+    if(!RAW||!RAW.length){
+      console.log('LFI CORE: data not yet loaded, auto-retrying...');
+      try{refresh();}catch(e){console.error('Auto-retry failed:',e);}
+    }
+  },10000);
 });
 </script>
 
