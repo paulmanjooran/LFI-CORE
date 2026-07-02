@@ -998,8 +998,9 @@ function renderFC(){
   window._FC_PPT=[];
   var html='';
   sorted.forEach(function(r,idx){
+    try{
     var lang=LANG,c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
-    var enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');
+    var enc;try{enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');}catch(je){enc='{}';}
     window._FC_PPT.push({link:r.pptLink||'',id:r.id||''});
     var hasPpt=!!(r.pptLink),hasThumb=!!(r.thumb),hasDesc=!!(r.descEN||r.descHI||r.descAR);
     var accent=catColor(r.cat||'');
@@ -1046,6 +1047,13 @@ function renderFC(){
           (r.ppt?'<span class="fp ok">'+t('ppt_done')+'</span>':'<span class="fp pnd">'+t('ppt_pending')+'</span>')+
         '</div>'+
       '</div></div>';
+    }catch(rowErr){
+      console.error('renderFC row '+idx+' error:',rowErr,r);
+      // Still add a placeholder card so user sees which LFI failed
+      html+='<div class="fc" style="border-top:3px solid #dc3545;opacity:.6">'+
+        '<div class="fch"><div class="fct"><span class="fid">'+(r&&r.id?r.id:'Row '+idx)+'</span></div>'+
+        '<div class="fcm" style="color:#dc3545">Render error: '+String(rowErr)+'</div></div></div>';
+    }
   });
   grid.innerHTML=html;
 }
@@ -1182,8 +1190,14 @@ document.addEventListener('click',function(e){if(e.target.id==='pptModal')closeP
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closePptModal();});
 
 // ── PPT Navigation: keyboard, touch swipe, pointer drag ──────
-(function(){
+// FIX: Was an IIFE that ran at script-parse time BEFORE pptModal existed in the DOM.
+// document.getElementById('pptModal') returned null → modal.addEventListener threw →
+// ALL subsequent script execution stopped → var I18N={} never ran → I18N=undefined →
+// t() threw "Cannot read properties of undefined (reading 'en')" on LFI Hub.
+// Solution: named function called from DOMContentLoaded when DOM is fully ready.
+function _initPptNavEvents(){
   var modal=document.getElementById('pptModal');
+  if(!modal){console.warn('LFI CORE: pptModal not found in DOM');return;}
   var swipeStartX=0,swipeStartY=0,swipeActive=false,swipeMoved=false;
 
   // KEYBOARD — on modal element directly so iframe focus doesn't swallow it
@@ -1196,10 +1210,9 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closePptModa
   // Helper: is the event on an interactive control?
   function onControl(e){return !!(e.target.closest('button,a,[tabindex],.ppt-modal-header,.ppt-modal-footer'));}
 
-  // POINTER DRAG (replaces mousedown — does NOT call preventDefault so button clicks work)
-  // Only activate swipe drag on the slide image/iframe area, not on buttons
+  // POINTER DRAG
   modal.addEventListener('pointerdown',function(e){
-    if(onControl(e))return; // let buttons get their click naturally
+    if(onControl(e))return;
     swipeStartX=e.clientX;swipeStartY=e.clientY;swipeActive=true;swipeMoved=false;
   });
   modal.addEventListener('pointermove',function(e){
@@ -1208,7 +1221,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closePptModa
   },{passive:true});
   modal.addEventListener('pointerup',function(e){
     if(!swipeActive)return;swipeActive=false;
-    if(!swipeMoved)return; // plain click, not a swipe — don't navigate
+    if(!swipeMoved)return;
     var dx=e.clientX-swipeStartX;
     var dy=e.clientY-swipeStartY;
     if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>55){
@@ -1219,7 +1232,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closePptModa
   });
   modal.addEventListener('pointercancel',function(){swipeActive=false;swipeMoved=false;});
 
-  // TOUCH SWIPE (mobile, same logic via touch events for compatibility)
+  // TOUCH SWIPE
   modal.addEventListener('touchstart',function(e){
     if(onControl(e))return;
     swipeStartX=e.touches[0].clientX;swipeStartY=e.touches[0].clientY;
@@ -1233,7 +1246,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closePptModa
       else _pptGoSlide(PPT_STATE.slide-1);
     }
   },{passive:true});
-})();
+}
+// _initPptNavEvents() is called from DOMContentLoaded below
 
 // ── LFI VIDEO PLAYER ─────────────────────────────────────────
 var VM={record:null,lang:'en',scenes:[],audios:[],sceneIdx:0,playing:false,paused:false,currentAudio:null,_rafId:null,_fallbackTimer:null};
@@ -1831,7 +1845,12 @@ var I18N={
   }
 };
 
-function t(key){return(I18N[LANG]&&I18N[LANG][key])||I18N.en[key]||key;}
+function t(key){
+  try{
+    if(!I18N)return key;
+    return (I18N[LANG]&&I18N[LANG][key])||(I18N.en&&I18N.en[key])||key;
+  }catch(te){return key;}
+}
 
 function applyI18n(){
   var lang=LANG,dir=lang==='ar'?'rtl':'ltr';
@@ -2492,6 +2511,8 @@ function _startAutoRetry(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
+  // Register PPT slide navigator keyboard/touch events now that DOM is ready
+  try{_initPptNavEvents();}catch(e){console.error('_initPptNavEvents() failed:',e);}
   try{initVoices();}catch(e){console.error('initVoices() failed:',e);}
   try{applyI18n();}catch(e){console.error('applyI18n() failed:',e);}
   // Fire initial refresh immediately (auto-load flag = silent on timeout)
