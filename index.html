@@ -810,7 +810,19 @@ function navTo(page,el){
   var T={overview:'Overview Dashboard',lfi:'LFI Hub \u2014 Flashcards & Videos',videos:'LFI Hub \u2014 Flashcards & Videos',admin:'Admin Controls'};
   document.getElementById('ptitle').textContent=T[page]||'Dashboard';
   // Page-specific actions
-  if(page==='lfi')try{renderFC();}catch(e){console.error('renderFC:',e);}
+  if(page==='lfi'){
+    if(!RAW||!RAW.length){
+      // Data not loaded yet — trigger refresh (will call renderFC when data arrives)
+      console.log('LFI Hub: no data yet — triggering refresh...');
+      try{refresh(true);}catch(e){}
+    }else{
+      try{renderFC();}catch(e){
+        console.error('renderFC error:',e);
+        var grid=document.getElementById('fcGrid');
+        if(grid)grid.innerHTML='<div class="empty"><div class="eicon">&#9888;</div><p>Error rendering cards</p><div class="esub">'+String(e)+'</div></div>';
+      }
+    }
+  }
   if(page==='videos')try{renderVideoGallery();}catch(e){console.error('renderVideoGallery:',e);}
   if(page==='admin'){
     if(!ADMIN_UNLOCKED){
@@ -826,20 +838,31 @@ function navTo(page,el){
 }
 
 // ── Data fetch (auto-detect JSONP vs google.script.run) ──────
-function refresh(){
+function refresh(_autoLoad){
   showL();document.getElementById('errBanner').style.display='none';
   document.getElementById('refBtn').classList.add('ld');document.getElementById('lu').textContent='';
-  if(typeof google!=='undefined'&&google.script&&google.script.run){_refreshGSR();}else{_refreshJSONP();}
+  if(typeof google!=='undefined'&&google.script&&google.script.run){_refreshGSR();}else{_refreshJSONP(_autoLoad);}
 }
 function _refreshGSR(){
   var tid=setTimeout(function(){hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Timeout (30s). Run runFullSetup() from the spreadsheet menu, redeploy, retry.');},30000);
   google.script.run.withSuccessHandler(function(d){clearTimeout(tid);hideL();document.getElementById('refBtn').classList.remove('ld');if(d&&d.error){showErr('Server: '+d.error);return;}processData(d);}).withFailureHandler(function(e){clearTimeout(tid);hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Server error: '+String(e));}).getPublicDashData();
 }
-function _refreshJSONP(){
+function _refreshJSONP(_autoLoad){
   var cb='_lfi'+Date.now(),script=document.createElement('script'),done=false;
-  var tid=setTimeout(function(){if(done)return;done=true;delete window[cb];if(script.parentNode)script.parentNode.removeChild(script);hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Sign-in required (15s timeout).\n\nOpen this URL in this browser while signed into altasnim.com:\n'+API_BASE+'?action=api\n\nIf you see JSON data, click Refresh here.');document.getElementById('lu').textContent='Sign-in required';},15000);
+  var tid=setTimeout(function(){
+    if(done)return;done=true;delete window[cb];
+    if(script.parentNode)script.parentNode.removeChild(script);
+    hideL();document.getElementById('refBtn').classList.remove('ld');
+    if(_autoLoad){
+      document.getElementById('lu').textContent='';
+      console.log('LFI CORE: auto-load timeout (Apps Script cold start). Auto-retry pending...');
+    }else{
+      showErr('Sign-in required (28s timeout).\n\nOpen this URL in this browser while signed into altasnim.com:\n'+API_BASE+'?action=api\n\nIf you see JSON data, click Refresh here.');
+      document.getElementById('lu').textContent='Sign-in required';
+    }
+  },28000);
   window[cb]=function(d){if(done)return;done=true;clearTimeout(tid);if(script.parentNode)script.parentNode.removeChild(script);delete window[cb];hideL();document.getElementById('refBtn').classList.remove('ld');if(d&&d.error){showErr('Server: '+d.error);return;}processData(d);};
-  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cb];hideL();document.getElementById('refBtn').classList.remove('ld');showErr('Network error loading data.');};
+  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cb];hideL();document.getElementById('refBtn').classList.remove('ld');if(!_autoLoad)showErr('Network error loading data.');};
   script.src=API_BASE+'?action=api&callback='+cb;
   document.head.appendChild(script);
 }
@@ -858,6 +881,17 @@ function processData(d){
   try{applyAll();}catch(e){console.error('applyAll error:',e);}
   // Gallery refresh only if that tab is open
   try{if(CUR_PAGE==='videos')renderVideoGallery();}catch(e){}
+  // Force renderFC if user is already on LFI Hub tab when data arrives
+  // applyAll() handles this too but belt+suspenders — delayed 100ms to let DOM settle
+  setTimeout(function(){
+    try{
+      var lfiPage=document.getElementById('page-lfi');
+      if(lfiPage&&lfiPage.classList.contains('active')){
+        console.log('LFI CORE: data arrived while on LFI Hub — forcing renderFC');
+        renderFC();
+      }
+    }catch(e){console.error('Post-load renderFC:',e);}
+  },150);
 }
 
 // ── Filters ──────────────────────────────────────────────────
@@ -2439,18 +2473,39 @@ function _vlPlay(idx){
   openCveModal(fIdx);
 }
 
-// Sync mobile nav with sidebar on page init
+// ── Auto-load + persistent retry loop ───────────────────────
+// Apps Script cold start: first JSONP call may timeout (20s+).
+// Solution: fire refresh immediately AND keep retrying every 20s
+// silently until data arrives. No error banner on auto-retries.
+var _autoRetryInterval=null;
+function _startAutoRetry(){
+  if(_autoRetryInterval)return; // already running
+  _autoRetryInterval=setInterval(function(){
+    if(RAW&&RAW.length){
+      clearInterval(_autoRetryInterval);_autoRetryInterval=null;
+      console.log('LFI CORE: data loaded — stopping auto-retry.');
+      return;
+    }
+    console.log('LFI CORE: auto-retry refresh (Apps Script warm-up)...');
+    try{refresh(true);}catch(e){console.error('Auto-retry failed:',e);}
+  },20000); // retry every 20s until data lands
+}
+
 document.addEventListener('DOMContentLoaded',function(){
-  try{refresh();}catch(e){console.error('refresh() failed on load:',e);}
   try{initVoices();}catch(e){console.error('initVoices() failed:',e);}
   try{applyI18n();}catch(e){console.error('applyI18n() failed:',e);}
-  // Auto-retry once after 10s if data still empty (Apps Script cold start can take 8-12s)
-  setTimeout(function(){
-    if(!RAW||!RAW.length){
-      console.log('LFI CORE: data not yet loaded, auto-retrying...');
-      try{refresh();}catch(e){console.error('Auto-retry failed:',e);}
-    }
-  },10000);
+  // Fire initial refresh immediately (auto-load flag = silent on timeout)
+  try{refresh(true);}catch(e){console.error('refresh() failed on load:',e);}
+  // Start persistent retry loop in case cold start exceeds 28s timeout
+  _startAutoRetry();
+});
+
+// Also refresh when user returns to tab (handles Apps Script session expiry)
+window.addEventListener('focus',function(){
+  if(!RAW||!RAW.length){
+    console.log('LFI CORE: tab focused with no data — refreshing...');
+    try{refresh(true);}catch(e){}
+  }
 });
 </script>
 
