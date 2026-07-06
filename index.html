@@ -1026,7 +1026,7 @@ function renderCategoryHeatmap(rows){
     var freq=Math.round(n/total*100);
     var rc=n>=10?'#c62828':n>=5?'#e65100':n>=3?'#f9a825':'#2e7d32';
     var rl=n>=10?'SYSTEMIC':n>=5?'HIGH':n>=3?'MED':'LOW';
-    out+='<div class="hm-row" onclick="drillDown('cat',''+esc(cat)+'')" title="'+n+' incidents — click to filter">'+
+    out+='<div class="hm-row" onclick="drillDown(&quot;cat&quot;,&quot;'+esc(cat).replace(/"/g,'')+'&quot;)" title="'+n+' incidents — click to filter">'+
       '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">'+
       '<span style="font-size:11px;font-weight:700;flex:1;color:#222">'+(i+1)+'. '+esc(cat)+'</span>'+
       '<span style="background:'+rc+';color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px">'+rl+'</span>'+
