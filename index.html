@@ -552,6 +552,33 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
   #main{margin-left:0!important;margin-right:0!important}#stog{display:block}
   .krow{grid-template-columns:1fr 1fr}
 }
+
+/* ── Flashcard safe/unsafe image strip ── */
+.fc-imgs{display:flex;gap:8px;margin:8px 0}
+.fc-img{position:relative;flex:1;border-radius:8px;overflow:hidden;max-height:120px;border:2px solid transparent}
+.fc-img.unsafe{border-color:#c62828}.fc-img.safe{border-color:#2e7d32}
+.fc-img img{width:100%;height:120px;object-fit:cover;display:block}
+.fci-tag{position:absolute;bottom:0;left:0;right:0;font-size:9px;font-weight:800;padding:2px 6px;color:#fff;text-align:center;letter-spacing:.5px}
+.fci-tag.bad{background:rgba(198,40,40,.92)}.fci-tag.good{background:rgba(46,125,50,.92)}
+/* ── Glassmorph detail modal ── */
+#fdModal{display:none;position:fixed;inset:0;z-index:8500;background:rgba(8,12,24,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);overflow-y:auto;padding:30px 16px}
+#fdModal.vis{display:flex;align-items:flex-start;justify-content:center}
+#fdCard{width:100%;max-width:620px;background:rgba(255,255,255,.86);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border:1px solid rgba(255,255,255,.55);border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.6);animation:fdPop .32s cubic-bezier(.34,1.4,.5,1);overflow:hidden}
+@keyframes fdPop{0%{transform:scale(.88) translateY(24px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+#fdBody{padding:20px 22px}
+.fd-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;margin-bottom:12px}
+.fd-id{font-weight:800;font-size:15px;color:#21409a}
+.fd-cat{font-size:13px;font-weight:700;margin-top:4px}
+.fd-x{background:rgba(0,0,0,.08);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:14px;flex-shrink:0}
+.fd-x:hover{background:rgba(198,40,40,.15);color:#c62828}
+.fd-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:#555;margin-bottom:10px}
+.fd-lbar{display:flex;gap:6px;margin:10px 0}
+.fd-content .fd-sec{margin-bottom:12px}
+.fd-content label{font-size:10px;font-weight:800;text-transform:uppercase;color:#21409a;letter-spacing:.6px}
+.fd-content p{font-size:13px;color:#222;margin:3px 0 0;line-height:1.55}
+.fd-content.rtl{direction:rtl;text-align:right}
+.fd-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+@media(max-width:640px){#fdCard{max-width:100%}#fdModal{padding:14px 8px}}
 </style>
 </head>
 
@@ -1055,7 +1082,7 @@ function openQRCard(idx){
     var qrEl=document.getElementById('qrCodeBox');
     if(!qrEl)return;
     qrEl.innerHTML='';
-    try{new QRCode(qrEl,{text:API_BASE,width:140,height:140,colorDark:'#21409a',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});}
+    try{new QRCode(qrEl,{text:API_BASE,width:86,height:86,colorDark:'#21409a',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});}
     catch(e){qrEl.innerHTML='<div style="font-size:9px;color:#999;padding:10px;text-align:center">QR unavailable</div>';}
   },100);
 }
@@ -1069,41 +1096,46 @@ function _buildQRCardHTML(r){
   var sc=r.st==='Reviewed & Approved'?'#28a745':r.st==='Historic Data Input'?'#5cb85c':'#ffc107';
   var sl=r.st==='Reviewed & Approved'?'APPROVED':r.st==='Historic Data Input'?'HISTORIC':'PENDING';
   var cc=catColor(r.cat||'')||'#21409a';
-  return '<div id="printArea" style="font-family:Arial,sans-serif">'+
-    '<div style="background:#21409a;padding:16px 22px;display:flex;align-items:center;justify-content:space-between">'+
-    '<div><div style="color:#fff;font-size:17px;font-weight:800;letter-spacing:.5px">LEARNING FROM INCIDENTS</div>'+
-    '<div style="color:#b3c3e8;font-size:11px;margin-top:2px">ATNM | PDO ODC | LFI CORE — Verified Alert Card</div></div>'+
-    '<div><div style="background:'+sc+';color:#fff;padding:4px 12px;border-radius:4px;font-size:11px;font-weight:800">'+sl+'</div>'+
-    '<div style="color:#b3c3e8;font-size:10px;margin-top:4px;text-align:right">'+esc(r.id)+'</div></div></div>'+
-    '<div style="display:flex">'+
-    '<div style="flex:1;padding:18px 22px">'+
-    '<div style="background:'+cc+';color:#fff;display:inline-block;padding:3px 12px;border-radius:4px;font-size:12px;font-weight:700;margin-bottom:12px">'+esc(r.cat)+'</div>'+
-    '<table style="width:100%;border-collapse:collapse;margin-bottom:12px">'+
+  var imgs='';
+  if(r.unsafePic||r.safePic){
+    imgs='<div style="display:flex;gap:8px;margin:12px 0">';
+    if(r.unsafePic)imgs+='<div style="flex:1;position:relative;border:2px solid #c62828;border-radius:6px;overflow:hidden"><img src="'+esc(r.unsafePic)+'" style="width:100%;height:110px;object-fit:cover;display:block"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(198,40,40,.92);color:#fff;font-size:8px;font-weight:800;text-align:center;padding:2px">&#9888; UNSAFE</div></div>';
+    if(r.safePic)imgs+='<div style="flex:1;position:relative;border:2px solid #2e7d32;border-radius:6px;overflow:hidden"><img src="'+esc(r.safePic)+'" style="width:100%;height:110px;object-fit:cover;display:block"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(46,125,50,.92);color:#fff;font-size:8px;font-weight:800;text-align:center;padding:2px">&#10003; SAFE</div></div>';
+    imgs+='</div>';
+  }
+  return '<div id="printArea" style="font-family:Arial,sans-serif;max-width:420px;margin:0 auto">'+
+    '<div style="background:#21409a;padding:14px 18px;text-align:center">'+
+    '<div style="color:#fff;font-size:15px;font-weight:800;letter-spacing:.5px">LEARNING FROM INCIDENTS</div>'+
+    '<div style="color:#b3c3e8;font-size:10px;margin-top:2px">ATNM | PDO ODC | LFI CORE Verified Alert Card</div>'+
+    '<div style="margin-top:8px"><span style="background:'+sc+';color:#fff;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:800">'+sl+'</span>'+
+    '<span style="color:#fff;font-size:11px;font-weight:700;margin-left:10px">'+esc(r.id)+'</span></div></div>'+
+    '<div style="padding:16px 18px">'+
+    '<div style="background:'+cc+';color:#fff;display:inline-block;padding:3px 12px;border-radius:4px;font-size:11px;font-weight:700;margin-bottom:10px">'+esc(r.cat)+'</div>'+
+    '<table style="width:100%;border-collapse:collapse;margin-bottom:6px">'+
     _qrRow('&#128197; Date',esc(r.dt))+_qrRow('&#128205; Location',esc(r.loc))+
     _qrRow('&#127959; Division',esc(r.div))+_qrRow('&#128736; Discipline',esc(r.disc))+
     _qrRow('&#128100; Reported By',esc(r.by))+'</table>'+
-    '<div style="padding:10px;background:#f0f4ff;border-radius:6px;border-left:3px solid #21409a;margin-bottom:10px">'+
-    '<div style="font-size:9px;font-weight:800;color:#21409a;text-transform:uppercase;margin-bottom:4px">What Happened</div>'+
-    '<p style="font-size:11px;color:#333;margin:0;line-height:1.5">'+esc(String(r.descEN||'').substring(0,280))+'...</p></div>'+
-    '<div style="padding:10px;background:#fff8e1;border-radius:6px;border-left:3px solid #f58220">'+
-    '<div style="font-size:9px;font-weight:800;color:#f58220;text-transform:uppercase;margin-bottom:4px">Key Learning</div>'+
-    '<p style="font-size:11px;color:#333;margin:0;line-height:1.5">'+esc(String(r.learnEN||'').substring(0,200))+'</p></div></div>'+
-    '<div style="width:180px;background:#f8f9fa;border-left:1px solid #eee;padding:18px;display:flex;flex-direction:column;align-items:center">'+
-    '<div style="font-size:9px;font-weight:800;color:#21409a;margin-bottom:8px;text-transform:uppercase;text-align:center">Scan to Verify</div>'+
-    '<div id="qrCodeBox" style="width:140px;height:140px;border:2px solid #21409a;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center"></div>'+
-    '<div style="font-size:9px;color:#888;text-align:center;margin-top:8px;line-height:1.4">Scan to open<br>LFI CORE Dashboard</div>'+
-    '<div style="margin-top:14px;border-top:1px solid #ddd;padding-top:10px;width:100%;text-align:center">'+
-    '<div style="font-size:8px;color:#aaa">For Toolbox Talk</div>'+
-    '<div style="font-size:8px;color:#aaa">Gate Meeting | PTW Briefing</div></div></div></div>'+
-    '<div style="background:#4d555b;padding:8px 22px;display:flex;justify-content:space-between;align-items:center">'+
-    '<span style="color:#ccc;font-size:9px">Al Tasnim Enterprises LLC | HSE | PDO ODC C3100000177</span>'+
-    '<span style="color:#f58220;font-size:9px;font-weight:700">Quality You Can Build On | التسنيم</span></div></div>';
+    imgs+
+    '<div style="padding:9px 11px;background:#f0f4ff;border-radius:6px;border-left:3px solid #21409a;margin-bottom:8px">'+
+    '<div style="font-size:8px;font-weight:800;color:#21409a;text-transform:uppercase;margin-bottom:3px">What Happened</div>'+
+    '<p style="font-size:10px;color:#333;margin:0;line-height:1.5">'+esc(String(r.descEN||'').substring(0,240))+(String(r.descEN||'').length>240?'...':'')+'</p></div>'+
+    '<div style="padding:9px 11px;background:#fff8e1;border-radius:6px;border-left:3px solid #f58220;margin-bottom:12px">'+
+    '<div style="font-size:8px;font-weight:800;color:#f58220;text-transform:uppercase;margin-bottom:3px">Key Learning</div>'+
+    '<p style="font-size:10px;color:#333;margin:0;line-height:1.5">'+esc(String(r.learnEN||'').substring(0,180))+'</p></div>'+
+    '<div style="display:flex;align-items:center;gap:12px;border-top:1px solid #eee;padding-top:12px">'+
+    '<div id="qrCodeBox" style="width:90px;height:90px;border:2px solid #21409a;border-radius:6px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center"></div>'+
+    '<div><div style="font-size:9px;font-weight:800;color:#21409a;text-transform:uppercase">Scan to Verify</div>'+
+    '<div style="font-size:8px;color:#888;line-height:1.5;margin-top:3px">Opens LFI CORE Dashboard<br>For Toolbox Talk | Gate Meeting | PTW Briefing</div></div></div>'+
+    '</div>'+
+    '<div style="background:#4d555b;padding:8px 18px;text-align:center">'+
+    '<div style="color:#ccc;font-size:8px">Al Tasnim Enterprises LLC | HSE | PDO ODC C3100000177</div>'+
+    '<div style="color:#f58220;font-size:8px;font-weight:700">Quality You Can Build On | التسنيم</div></div></div>';
 }
 
 function printQRCard(){
   var area=document.getElementById('printArea');if(!area)return;
   var id=_QR_ROW?_QR_ROW.id:'LFI';
-  var w=window.open('','_blank','width=860,height=680');
+  var w=window.open('','_blank','width=480,height=760');
   w.document.write('<html><head><title>LFI Card '+id+'</title><style>body{margin:0;font-family:Arial,sans-serif}@media print{body{margin:0}}</style></head><body>'+area.outerHTML+'</body></html>');
   w.document.close();setTimeout(function(){w.print();},600);
 }
@@ -1159,12 +1191,13 @@ function renderFC(){
     html+='<div class="fc" style="border-top:3px solid '+accent+'">'+
       thumbHtml+
       actionRow+
-      '<div class="fch" onclick="stopSpeech();this.closest(\'.fc\').classList.toggle(\'open\')">'+
+      '<div class="fch" onclick="stopSpeech();openFcDetail('+idx+')">'+
         '<div class="fct"><span class="fid">'+esc(r.id)+'</span>'+mkbadge(r.st)+'<span style="font-size:12px;color:var(--muted)">&#9660;</span></div>'+
         '<div class="fcv">'+esc(r.cat)+'</div>'+
         '<div class="fcm"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span></div>'+
       '</div>'+
       '<div class="fcb">'+
+        _fcImgStrip(r)+
         '<div class="lbar">'+
           '<button class="lb'+(lang==='en'?' active':'')+'" onclick="sclang(this,\'en\')">&#127468;&#127463; EN</button>'+
           '<button class="lb'+(lang==='hi'?' active':'')+'" onclick="sclang(this,\'hi\')">&#127470;&#127475; &#2361;&#2367;</button>'+
@@ -1189,6 +1222,69 @@ function renderFC(){
     }
   });
   grid.innerHTML=html;
+}
+
+// ── Safe/Unsafe image strip for flashcards ───────────────────
+function _fcImgStrip(r){
+  var u=r.unsafePic||'',s=r.safePic||'';
+  if(!u&&!s)return '';
+  var out='<div class="fc-imgs">';
+  if(u)out+='<div class="fc-img unsafe"><img src="'+esc(u)+'" loading="lazy" onerror="this.parentElement.style.display=&quot;none&quot;"><span class="fci-tag bad">&#9888; UNSAFE</span></div>';
+  if(s)out+='<div class="fc-img safe"><img src="'+esc(s)+'" loading="lazy" onerror="this.parentElement.style.display=&quot;none&quot;"><span class="fci-tag good">&#10003; SAFE</span></div>';
+  return out+'</div>';
+}
+
+// ── Glassmorph LFI Detail Modal ──────────────────────────────
+var _FD={idx:-1,lang:null};
+function openFcDetail(idx){
+  var entry=window._FC_PPT&&window._FC_PPT[idx];if(!entry)return;
+  var r=null;if(RAW){for(var i=0;i<RAW.length;i++){if(RAW[i].id===entry.id){r=RAW[i];break;}}}
+  if(!r)return;
+  _FD.idx=idx;_FD.lang=LANG;
+  _renderFcDetail(r);
+  var modal=document.getElementById('fdModal');
+  modal.classList.add('vis');
+  document.body.style.overflow='hidden';
+}
+function closeFcDetail(){
+  var modal=document.getElementById('fdModal');
+  modal.classList.remove('vis');
+  document.body.style.overflow='';
+  stopSpeech();
+}
+function fdLang(l){
+  _FD.lang=l;
+  var entry=window._FC_PPT&&window._FC_PPT[_FD.idx];if(!entry)return;
+  var r=null;if(RAW){for(var i=0;i<RAW.length;i++){if(RAW[i].id===entry.id){r=RAW[i];break;}}}
+  if(r)_renderFcDetail(r);
+}
+function _renderFcDetail(r){
+  var lang=_FD.lang||LANG;
+  var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
+  var accent=catColor(r.cat||'');
+  var body=document.getElementById('fdBody');
+  var isApproved=(r.st==='Reviewed & Approved'||r.st==='Historic Data Input');
+  var h='<div class="fd-head" style="border-bottom:2px solid '+accent+'">'
+    +'<div><span class="fd-id">'+esc(r.id)+'</span> '+mkbadge(r.st)+'<div class="fd-cat" style="color:'+accent+'">'+esc(r.cat)+'</div></div>'
+    +'<button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div>'
+    +'<div class="fd-meta"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span><span>&#127959; '+esc(r.div)+'</span><span>&#128100; '+esc(r.by)+'</span></div>'
+    +_fcImgStrip(r)
+    +'<div class="fd-lbar">'
+    +'<button class="lb'+(lang==='en'?' active':'')+'" onclick="fdLang(&quot;en&quot;)">&#127468;&#127463; EN</button>'
+    +'<button class="lb'+(lang==='hi'?' active':'')+'" onclick="fdLang(&quot;hi&quot;)">&#127470;&#127475; &#2361;&#2367;</button>'
+    +'<button class="lb'+(lang==='ar'?' active':'')+'" onclick="fdLang(&quot;ar&quot;)">&#127462;&#127466; &#1593;</button>'
+    +'</div>'
+    +'<div class="fd-content'+(dir==='rtl'?' rtl':'')+'">'
+    +'<div class="fd-sec"><label>'+t('fc_desc')+'</label><p>'+(esc(c.desc)||'<em>Not yet translated</em>')+'</p></div>'
+    +'<div class="fd-sec"><label>'+t('fc_find')+'</label><p>'+(esc(c.find)||'<em>Not yet translated</em>')+'</p></div>'
+    +'<div class="fd-sec"><label>'+t('fc_learn')+'</label><p>'+(esc(c.learn)||'<em>Not yet translated</em>')+'</p></div>'
+    +'</div>'
+    +'<div class="fd-actions">'
+    +'<button class="fc-act-btn ppt-act" onclick="_fcOpenPpt('+_FD.idx+')"'+(r.pptLink?'':' disabled')+'>&#128218; Slides</button>'
+    +'<button class="fc-act-btn vid-act" onclick="closeFcDetail();openCveModal('+_FD.idx+')">&#127909; LFI Video</button>'
+    +'<button class="fc-act-btn" style="background:'+(isApproved?'#21409a':'#ccc')+';color:#fff" onclick="openQRCard('+_FD.idx+')"'+(isApproved?'':' disabled')+'>&#128218; QR Card</button>'
+    +'</div>';
+  body.innerHTML=h;
 }
 
 // ── PPT SLIDE NAVIGATOR ───────────────────────────────────────
@@ -2124,6 +2220,10 @@ function openCveModal(idx){
   var r=null;if(RAW){for(var i=0;i<RAW.length;i++){if(RAW[i].id===entry.id){r=RAW[i];break;}}}
   if(!r){alert('Record not found. Refresh and try again.');return;}
   CVE.record=r; CVE.lang=LANG;
+  // Preload safe/unsafe images (CORS-safe attempt for canvas)
+  CVE.imgU=null;CVE.imgS=null;
+  if(r.unsafePic){var iu=new Image();iu.crossOrigin='anonymous';iu.onload=function(){CVE.imgU=iu;};iu.src=r.unsafePic;}
+  if(r.safePic){var isf=new Image();isf.crossOrigin='anonymous';isf.onload=function(){CVE.imgS=isf;};isf.src=r.safePic;}
   CVE.scenes=cveScenes(r,LANG);
   CVE.audios=new Array(CVE.scenes.length).fill(null);
   CVE.sceneIdx=0; CVE.sceneStart=0; CVE.globalStart=0;
@@ -2182,6 +2282,16 @@ function cveScenes(r,lang){
      narration:isAR?'\u0627\u0628\u0642\u064e \u0641\u064a \u0623\u0645\u0627\u0646. \u0623\u0628\u0644\u063a \u0639\u0646 \u062c\u0645\u064a\u0639 \u0627\u0644\u062d\u0627\u0644\u0627\u062a \u063a\u064a\u0631 \u0627\u0644\u0622\u0645\u0646\u0629.':isHI?'\u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0930\u0939\u0947\u0902\u0964 \u0938\u092d\u0940 \u0905\u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0938\u094d\u0925\u093f\u0924\u093f\u092f\u094b\u0902 \u0915\u0940 \u0924\u0941\u0930\u0902\u0924 \u0930\u093f\u092a\u094b\u0930\u094d\u091f \u0915\u0930\u0947\u0902\u0964':'Stay safe. Report all unsafe conditions immediately.',
      fallbackMs:5500,hasText:true}
   ].filter(function(s){return s.id==='intro'||s.id==='outro'||s.hasText;});
+  // Insert safe/unsafe images scene after findings (if images exist)
+  if(r.unsafePic||r.safePic){
+    var picsIdx=3; // after intro, desc, find
+    scenes.splice(picsIdx,0,{id:'pics',
+      label:isAR?'\u063a\u064a\u0631 \u0622\u0645\u0646 \u0645\u0642\u0627\u0628\u0644 \u0622\u0645\u0646':isHI?'\u0905\u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u092c\u0928\u093e\u092e \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924':'Unsafe vs Safe',
+      accentColor:accent,bgColor1:'#0a0e1a',bgColor2:'#060a14',
+      gradeColor:'rgba(33,64,154,.12)',
+      narration:isAR?'\u0644\u0642\u0637\u0627\u062a \u0645\u0646 \u0645\u0648\u0642\u0639 \u0627\u0644\u062d\u0627\u062f\u062b\u0629.':isHI?'\u0918\u091f\u0928\u093e \u0938\u094d\u0925\u0932 \u0915\u0940 \u0924\u0938\u094d\u0935\u0940\u0930\u0947\u0902\u0964':'Photographs from the incident location. Compare the unsafe condition against the safe standard.',
+      fallbackMs:6000,hasText:false});
+  }
   return scenes;
 }
 
@@ -2255,6 +2365,41 @@ function cveTick(ts){
   CVE.animFrame=requestAnimationFrame(cveTick);
 }
 
+function cveDrawPics(ctx,r,s,progress,W,H){
+  var fade=Math.min(1,progress*3);
+  ctx.save();ctx.globalAlpha=fade;
+  // Title
+  ctx.fillStyle='#fff';ctx.font='700 34px Arial';ctx.textAlign='center';
+  ctx.fillText(s.label||'Unsafe vs Safe',W/2,84);
+  var boxW=W*0.38,boxH=H*0.52,gap=W*0.06;
+  var y=H*0.24;
+  var xU=W/2-gap/2-boxW, xS=W/2+gap/2;
+  function drawImg(img,x,tag,color){
+    ctx.save();
+    ctx.strokeStyle=color;ctx.lineWidth=4;
+    ctx.strokeRect(x,y,boxW,boxH);
+    if(img&&img.complete&&img.naturalWidth>0){
+      try{
+        var ar=img.naturalWidth/img.naturalHeight,bw=boxW-8,bh=boxH-8;
+        var dw=bw,dh=bw/ar;if(dh>bh){dh=bh;dw=bh*ar;}
+        ctx.drawImage(img,x+4+(bw-dw)/2,y+4+(bh-dh)/2,dw,dh);
+      }catch(de){
+        ctx.fillStyle='rgba(255,255,255,.06)';ctx.fillRect(x+4,y+4,boxW-8,boxH-8);
+        ctx.fillStyle='#889';ctx.font='16px Arial';ctx.fillText('Image unavailable',x+boxW/2,y+boxH/2);
+      }
+    }else{
+      ctx.fillStyle='rgba(255,255,255,.06)';ctx.fillRect(x+4,y+4,boxW-8,boxH-8);
+      ctx.fillStyle='#889';ctx.font='16px Arial';ctx.fillText('Loading...',x+boxW/2,y+boxH/2);
+    }
+    ctx.fillStyle=color;ctx.fillRect(x,y+boxH,boxW,34);
+    ctx.fillStyle='#fff';ctx.font='800 18px Arial';ctx.fillText(tag,x+boxW/2,y+boxH+24);
+    ctx.restore();
+  }
+  if(r.unsafePic)drawImg(CVE.imgU,xU,'\u26a0 UNSAFE','#c62828');
+  if(r.safePic)drawImg(CVE.imgS,r.unsafePic?xS:W/2-boxW/2,'\u2713 SAFE','#2e7d32');
+  ctx.restore();
+}
+
 function cveDrawFrame(sceneIdx,progress,globalMs){
   var ctx=CVE.ctx,W=CVE.W,H=CVE.H,s=CVE.scenes[sceneIdx];
   if(!ctx||!s)return;
@@ -2292,6 +2437,7 @@ function cveDrawFrame(sceneIdx,progress,globalMs){
   // ── 5. SCENE CONTENT ───────────────────────────────────────
   if(s.id==='intro')cveDrawIntro(ctx,r,s,progress,W,H);
   else if(s.id==='outro')cveDrawOutro(ctx,r,s,progress,W,H);
+  else if(s.id==='pics')cveDrawPics(ctx,r,s,progress,W,H);
   else cveDrawContent(ctx,r,s,progress,W,H);
 
   // ── 6. LETTERBOX BARS (cinematic 2.35:1) ───────────────────
@@ -2826,6 +2972,11 @@ window.addEventListener('focus',function(){
       <div id="adminLockMsg" style="display:none;text-align:center;margin-top:10px;font-size:11px;color:var(--rd)"></div>
     </div>
   </div>
+</div>
+
+<!-- LFI DETAIL GLASSMORPH MODAL -->
+<div id="fdModal" onclick="if(event.target===this)closeFcDetail()">
+  <div id="fdCard"><div id="fdBody"></div></div>
 </div>
 
 <!-- QR CARD MODAL -->
