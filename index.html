@@ -1204,7 +1204,9 @@ function _renderFcDetail(r){
     +'<button class="lb'+(lang==='en'?' active':'')+'" onclick="fdLang(&quot;en&quot;)">&#127468;&#127463; EN</button>'
     +'<button class="lb'+(lang==='hi'?' active':'')+'" onclick="fdLang(&quot;hi&quot;)">&#127470;&#127475; &#2361;&#2367;</button>'
     +'<button class="lb'+(lang==='ar'?' active':'')+'" onclick="fdLang(&quot;ar&quot;)">&#127462;&#127466; &#1593;</button>'
+    +'<button class="spk" style="margin-left:auto" onclick="speakCard(this)">'+_spkLabel(lang,'read')+'</button>'
     +'</div>'
+    +'<div class="fd-tts" style="display:none" data-lang="'+lang+'" data-row=\''+(function(){try{return JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');}catch(je){return '{}';}})()+'\'></div>'
     +'<div class="fd-content'+(dir==='rtl'?' rtl':'')+'">'
     +'<div class="fd-sec"><label>'+t('fc_desc')+'</label><p>'+(esc(c.desc)||'<em>Not yet translated</em>')+'</p></div>'
     +'<div class="fd-sec"><label>'+t('fc_find')+'</label><p>'+(esc(c.find)||'<em>Not yet translated</em>')+'</p></div>'
@@ -1666,7 +1668,9 @@ document.addEventListener('click',function(e){if(e.target.id==='videoModal')clos
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePptModal();closeVideoModal();}});
 function sclang(btn,lang){
   stopSpeech();
-  var card=btn.closest('.fc'),cont=card.querySelector('.fcc');
+  var card=btn.closest('.fc')||btn.closest('#fdCard');
+  var cont=card.querySelector('.fcc')||card.querySelector('.fd-tts');
+  if(!cont)return;
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
   var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
   cont.className='fcc'+(dir==='rtl'?' rtl':'');cont.dataset.lang=lang;
@@ -1783,7 +1787,9 @@ function stopSpeech(){
 function speakCard(btn){
   if(SPEAKING_BTN===btn){stopSpeech();return;}
   stopSpeech();
-  var card=btn.closest('.fc'),cont=card.querySelector('.fcc');
+  var card=btn.closest('.fc')||btn.closest('#fdCard');
+  var cont=card.querySelector('.fcc')||card.querySelector('.fd-tts');
+  if(!cont)return;
   var cardLang=cont.dataset.lang||'en';
   var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
   var voice=cardLang==='hi'?VS.hi:cardLang==='ar'?VS.ar:VS.en;
