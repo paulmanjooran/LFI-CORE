@@ -817,14 +817,13 @@ function mkbadge(st){
   if(st==='Reviewed & Returned')return'<span class="badge br2">Returned</span>';
   return'<span class="badge bp">Pending</span>';
 }
-function pd(dt){if(!dt)return null;var m={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};var p=dt.split('-');if(p.length===3)return new Date(parseInt(p[2]),m[p[1]]||0,parseInt(p[0]));return new Date(dt);}
+function pd(dt){if(!dt)return null;var m={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};var p=String(dt).split('-');if(p.length===3){var mo=(p[1] in m)?m[p[1]]:(isNaN(p[1])?null:parseInt(p[1],10)-1);if(mo===null||isNaN(mo))return null;var d=new Date(parseInt(p[2],10),mo,parseInt(p[0],10));return isNaN(d.getTime())?null:d;}var f=new Date(dt);return isNaN(f.getTime())?null:f;}
 function uniq(a){var s={},r=[];a.forEach(function(v){if(v&&!s[v]){s[v]=1;r.push(v);}});return r.sort();}
 function fill(id,vals){var el=document.getElementById(id);if(!el)return;var cur=el.value;while(el.options.length>1)el.remove(1);vals.forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});el.value=cur;}
 function showErr(msg){var b=document.getElementById('errBanner');document.getElementById('errMsg').textContent=msg;b.style.display='flex';}
 function showL(){document.getElementById('loader').classList.add('vis');}
 function hideL(){document.getElementById('loader').classList.remove('vis');}
 function toggleExp(btn){document.getElementById('expMenu').classList.toggle('open');}
-function toggleExp2(btn){document.getElementById('expMenu2').classList.toggle('open');}
 function closeAllExp(){document.getElementById('expMenu').classList.remove('open');var e2=document.getElementById('expMenu2');if(e2)e2.classList.remove('open');}
 document.addEventListener('click',function(e){if(!e.target.closest('.btn-exp'))closeAllExp();});
 
@@ -1413,28 +1412,7 @@ function _initPptNavEvents(){
 // ── LFI VIDEO PLAYER ─────────────────────────────────────────
 var VM={record:null,lang:'en',scenes:[],audios:[],sceneIdx:0,playing:false,paused:false,currentAudio:null,_rafId:null,_fallbackTimer:null};
 
-function _fcOpenVideo(idx){
-  var entry=window._FC_PPT&&window._FC_PPT[idx];
-  if(!entry)return;
-  // Find full record from RAW
-  var r=null;
-  if(RAW){for(var i=0;i<RAW.length;i++){if(RAW[i].id===entry.id){r=RAW[i];break;}}}
-  if(!r){alert('Record data not found — try refreshing.');return;}
-  VM.record=r; VM.lang=LANG;
-  VM.scenes=_vmBuildScenes(r,LANG);
-  VM.audios=new Array(VM.scenes.length).fill(null);
-  VM.sceneIdx=0; VM.playing=false; VM.paused=false;
-  // Show modal
-  var modal=document.getElementById('videoModal');
-  modal.classList.add('vis');
-  document.body.style.overflow='hidden';
-  document.getElementById('vmTitle').textContent=(r.id||'LFI')+' \u2014 '+VM.scenes[0].label;
-  document.getElementById('vmLangBadge').textContent=LANG==='ar'?'\ud83c\uddfa\ud83c\udde6 AR':LANG==='hi'?'\ud83c\uddee\ud83c\uddf3 HI':'\ud83c\uddec\ud83c\udde7 EN';
-  // Render scene structure and start loading audio
-  _vmRenderScenes();
-  _vmShowScene(0,false);
-  _vmLoadAllAudio();
-}
+
 
 function _vmBuildScenes(r,lang){
   var isAR=lang==='ar',isHI=lang==='hi';
@@ -1735,7 +1713,6 @@ function _vFind(lang,voices){
   if(lang==='ar'){for(var ai=0;ai<arCodes.length;ai++){var av=voices.find(function(v){return v.lang===arCodes[ai];});if(av)return av;}}
   return voices.find(function(v){return v.lang===exact;})||voices.find(function(v){return v.lang.toLowerCase()===lang;})||voices.find(function(v){return v.lang.toLowerCase().startsWith(pfx);})||null;
 }
-function _getVoice(lang){return _vFind(lang);}
 function _vsUI(state){
   function setTag(id,voice,label){
     var el=document.getElementById(id);if(!el)return;
