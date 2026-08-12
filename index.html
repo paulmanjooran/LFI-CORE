@@ -640,6 +640,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     <div class="fg"><label>From Date</label><input type="date" id="fFrom" onchange="applyAll()"></div>
     <div class="fg"><label>To Date</label><input type="date" id="fTo" onchange="applyAll()"></div>
     <div class="fg"><label>Division</label><select id="fDiv" onchange="applyAll()"><option value="">All Divisions</option></select></div>
+    <div class="fg"><label>LFI Category</label><select id="fCat" onchange="applyAll()"><option value="">All Categories</option></select></div>
     <div class="fg"><label>Cluster</label><select id="fLoc" onchange="applyAll()"><option value="">All Clusters</option></select></div>
     <div class="fg"><label>Status</label>
       <select id="fSt" onchange="applyAll()">
@@ -928,6 +929,7 @@ function processData(d){
 function initFilters(){
   if(!RAW)return;
   fill('fDiv',uniq(RAW.map(function(r){return r.div;})));
+  fill('fCat',uniq(RAW.map(function(r){return r.cat;})));
   fill('fLoc',uniq(RAW.map(function(r){return r.loc;})));
   fill('fDisc',uniq(RAW.map(function(r){return r.disc;})));
 }
@@ -941,10 +943,12 @@ function getF(){
     return r[DRILL.f]===DRILL.v;
   });}
   var div=document.getElementById('fDiv').value,loc=document.getElementById('fLoc').value,
+      cat=document.getElementById('fCat').value,
       st=document.getElementById('fSt').value,disc=document.getElementById('fDisc').value,
       q=document.getElementById('fQ').value.toLowerCase().trim(),
       from=document.getElementById('fFrom').value,to=document.getElementById('fTo').value;
   if(div)rows=rows.filter(function(r){return r.div===div;});
+  if(cat)rows=rows.filter(function(r){return r.cat===cat;});
   if(loc)rows=rows.filter(function(r){return r.loc===loc;});
   if(st)rows=rows.filter(function(r){return r.st===st;});
   if(disc)rows=rows.filter(function(r){return r.disc===disc;});
@@ -953,7 +957,7 @@ function getF(){
   if(q)rows=rows.filter(function(r){return[r.id,r.cat,r.div,r.loc,r.by,r.disc,r.st,r.descEN,r.descHI,r.descAR].join(' ').toLowerCase().indexOf(q)!==-1;});
   return rows;
 }
-function resetF(){['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});['fDiv','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});clearDrill();}
+function resetF(){['fFrom','fTo','fQ'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});['fDiv','fCat','fLoc','fSt','fDisc'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});clearDrill();}
 function drillDown(f,v){
   DRILL={f:f,v:v};document.getElementById('drillBar').classList.add('vis');
   var label=f==='stGrp'?'Approved (all)':f==='ppt'?'PPTs Created':String(v);
