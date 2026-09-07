@@ -597,6 +597,8 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
        style="background:linear-gradient(135deg,var(--or),#d46d16);color:#fff;border-left-color:transparent;margin:8px 4px 10px;border-radius:9px;justify-content:center;font-weight:700;flex-shrink:0;box-shadow:0 4px 12px rgba(245,130,32,.3)">
       <span class="ni">&#128221;</span><span data-i18n="sb_submit">+ Submit New LFI</span>
     </a>
+    <div class="sb-sec" style="margin-top:4px" data-i18n="sb_sec_gov">Governance</div>
+    <a onclick="navTo('committee',this)"><span class="ni">&#9878;</span><span data-i18n="sb_committee">LFI Committee</span></a>
     <div class="sb-sec" style="margin-top:4px" data-i18n="sb_sec_sys">System</div>
     <a onclick="navTo('admin',this)" style="font-size:11px;color:rgba(255,255,255,.55)"><span class="ni">&#9881;</span><span data-i18n="sb_admin">Admin Controls</span></a>
   </nav>
@@ -781,8 +783,66 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         </div>
       </div>
     </div>
+
+    <div class="page" id="page-committee">
+      <div class="cc" style="margin-bottom:16px;border-left:4px solid #21409a">
+        <div style="font-size:13px;color:#4d555b;line-height:1.5">
+          <strong>Failed Barrier classification</strong> is confirmed only by the LFI Committee. AI-suggested
+          barriers (via LFI Tools &gt; AI: Suggest Failed Barriers) are advisory only and never appear here until
+          a Committee member explicitly promotes them. <strong>Action items (ATR)</strong> cannot be closed
+          without evidence and closeout notes — enforced in the sheet, not just displayed here.
+        </div>
+      </div>
+
+      <div class="krow" id="committeeKpiRow" style="grid-template-columns:repeat(5,1fr)">
+        <div class="kc headline" style="--accent:#21409a"><div class="ki-wrap"><div class="ki">&#128203;</div></div>
+          <div class="kv" id="atrOpen">&#8212;</div><div class="kl">Open Actions</div></div>
+        <div class="kc" style="--accent:#c62828"><div class="ki-wrap"><div class="ki">&#9888;</div></div>
+          <div class="kv" id="atrOverdue">&#8212;</div><div class="kl">Overdue</div></div>
+        <div class="kc" style="--accent:#28a745"><div class="ki-wrap"><div class="ki">&#10004;</div></div>
+          <div class="kv" id="atrClosed">&#8212;</div><div class="kl">Closed</div></div>
+        <div class="kc" style="--accent:#f9a825"><div class="ki-wrap"><div class="ki">&#128269;</div></div>
+          <div class="kv" id="atrPendingEvidence">&#8212;</div><div class="kl">Pending Evidence</div></div>
+        <div class="kc" style="--accent:#8e44ad"><div class="ki-wrap"><div class="ki">&#129302;</div></div>
+          <div class="kv" id="barrierPendingAi">&#8212;</div><div class="kl">AI Suggestions Awaiting Review</div></div>
+      </div>
+
+      <div class="cc" style="margin-top:16px">
+        <div class="ch">Top Failed Barriers <span style="font-weight:400;color:#6B7280;font-size:11px">— confirmed by Committee only</span></div>
+        <div id="barrierChart" style="padding:6px 0"></div>
+        <div id="barrierEmpty" style="display:none;text-align:center;padding:24px;color:#6B7280">
+          No confirmed barrier classifications yet. Run <strong>LFI Tools &gt; LFI Committee &gt; AI: Suggest Failed
+          Barriers</strong>, then promote suggestions you agree with.
+        </div>
+      </div>
+
+      <div class="cc" style="margin-top:16px">
+        <div class="ch">Action Tracking Register (ATR)</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px" id="atrTable">
+          <thead><tr style="text-align:left;color:#6B7280;font-size:11px;text-transform:uppercase">
+            <th style="padding:8px">ATR ID</th><th style="padding:8px">LFI ID</th><th style="padding:8px">Action</th>
+            <th style="padding:8px">Owner</th><th style="padding:8px">Due</th><th style="padding:8px">Priority</th>
+            <th style="padding:8px">Status</th><th style="padding:8px">Evidence</th>
+          </tr></thead>
+          <tbody id="atrTableBody"></tbody>
+        </table>
+        <div id="atrEmpty" style="display:none;text-align:center;padding:30px;color:#6B7280">
+          No actions logged yet. Select an LFI row in the sheet and run
+          <strong>LFI Tools &gt; LFI Committee &gt; Log Committee Action (ATR)</strong>.
+        </div>
+      </div>
+
+      <div class="cc" style="margin-top:16px">
+        <div class="ch">Barrier Taxonomy <span style="font-weight:400;color:#6B7280;font-size:11px">— editable, not hardcoded</span></div>
+        <div id="barrierTaxonomyList" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 0"></div>
+        <div style="font-size:11px;color:#6B7280;margin-top:6px">
+          To edit this list: <strong>LFI Tools &gt; LFI Committee &gt; Edit Barrier Taxonomy</strong> in the spreadsheet,
+          then run <strong>Apply Barrier Dropdown Validation</strong> to sync the change to every dropdown.
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+
 <div id="loader"><div class="spin"></div><p>Loading LFI data...</p></div>
 
 <script>
@@ -838,9 +898,10 @@ function navTo(page,el){
   // Mobile bottom nav sync
   document.querySelectorAll('.mn-tab').forEach(function(t){t.classList.toggle('active',t.dataset&&t.dataset.page===page);});
   // Page titles
-  var T={overview:'Overview Dashboard',lfi:'LFI Hub \u2014 Flashcards & Videos',videos:'LFI Hub \u2014 Flashcards & Videos',admin:'Admin Controls'};
+  var T={overview:'Overview Dashboard',lfi:'LFI Hub \u2014 Flashcards & Videos',videos:'LFI Hub \u2014 Flashcards & Videos',admin:'Admin Controls',committee:'LFI Committee \u2014 Barriers & Action Tracking'};
   document.getElementById('ptitle').textContent=T[page]||'Dashboard';
   // Page-specific actions
+  if(page==='committee'){renderCommitteePage();}
   if(page==='lfi'){
     if(!RAW||!RAW.length){
       // Data not loaded yet — trigger refresh (will call renderFC when data arrives)
@@ -1220,6 +1281,114 @@ function _renderFcDetail(r){
     +'<button class="fc-act-btn vid-act" onclick="closeFcDetail();openCveModal('+_FD.idx+')">&#127909; LFI Video</button>'
     +'</div>';
   body.innerHTML=h;
+}
+
+// ── LFI Committee page: Barrier analytics + ATR register ───────
+var COMMITTEE_CACHE = { atr: null, barrier: null, loaded: false };
+
+function renderCommitteePage(){
+  if(!COMMITTEE_CACHE.loaded){
+    _fetchAtrList();
+    _fetchBarrierStats();
+    COMMITTEE_CACHE.loaded = true;
+  } else {
+    _renderAtrTable(COMMITTEE_CACHE.atr);
+    _renderBarrierChart(COMMITTEE_CACHE.barrier);
+  }
+}
+
+function _fetchAtrList(){
+  var cb='_atr'+Date.now(), script=document.createElement('script'), done=false;
+  var tid=setTimeout(function(){ if(done)return; done=true; delete window[cb]; if(script.parentNode)script.parentNode.removeChild(script); },20000);
+  window[cb]=function(d){
+    if(done)return; done=true; clearTimeout(tid); delete window[cb];
+    if(script.parentNode)script.parentNode.removeChild(script);
+    COMMITTEE_CACHE.atr=d; _renderAtrTable(d);
+  };
+  script.onerror=function(){ if(done)return; done=true; clearTimeout(tid); delete window[cb]; };
+  script.src=API_BASE+'?action=atrList&callback='+cb;
+  document.head.appendChild(script);
+}
+
+function _fetchBarrierStats(){
+  var cb='_bst'+Date.now(), script=document.createElement('script'), done=false;
+  var tid=setTimeout(function(){ if(done)return; done=true; delete window[cb]; if(script.parentNode)script.parentNode.removeChild(script); },20000);
+  window[cb]=function(d){
+    if(done)return; done=true; clearTimeout(tid); delete window[cb];
+    if(script.parentNode)script.parentNode.removeChild(script);
+    COMMITTEE_CACHE.barrier=d; _renderBarrierChart(d);
+  };
+  script.onerror=function(){ if(done)return; done=true; clearTimeout(tid); delete window[cb]; };
+  script.src=API_BASE+'?action=barrierStats&callback='+cb;
+  document.head.appendChild(script);
+  // Taxonomy is small + static per session — piggyback same trip pattern
+  var cb2='_btx'+Date.now(), script2=document.createElement('script'), done2=false;
+  var tid2=setTimeout(function(){ if(done2)return; done2=true; delete window[cb2]; if(script2.parentNode)script2.parentNode.removeChild(script2); },20000);
+  window[cb2]=function(d){
+    if(done2)return; done2=true; clearTimeout(tid2); delete window[cb2];
+    if(script2.parentNode)script2.parentNode.removeChild(script2);
+    var el=document.getElementById('barrierTaxonomyList');
+    if(el && d && d.taxonomy){
+      el.innerHTML=d.taxonomy.map(function(t){
+        return '<span style="background:#EEF1FA;color:#21409a;padding:4px 12px;border-radius:14px;font-size:12px;font-weight:600">'+esc(t)+'</span>';
+      }).join('');
+    }
+  };
+  script2.onerror=function(){ if(done2)return; done2=true; clearTimeout(tid2); delete window[cb2]; };
+  script2.src=API_BASE+'?action=barrierTaxonomy&callback='+cb2;
+  document.head.appendChild(script2);
+}
+
+function _renderAtrTable(d){
+  if(!d||!d.rows)return;
+  var open=0, overdue=0, closed=0, pendingEvidence=0;
+  d.rows.forEach(function(r){
+    if(r.status==='Closed')closed++;
+    else if(r.status==='Overdue')overdue++;
+    else open++;
+    if(r.status==='Pending Evidence')pendingEvidence++;
+  });
+  document.getElementById('atrOpen').textContent=open;
+  document.getElementById('atrOverdue').textContent=overdue;
+  document.getElementById('atrClosed').textContent=closed;
+  document.getElementById('atrPendingEvidence').textContent=pendingEvidence;
+
+  var tb=document.getElementById('atrTableBody');
+  var empty=document.getElementById('atrEmpty');
+  if(!d.rows.length){ tb.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  var stColor={Open:'#21409a','In Progress':'#f9a825','Pending Evidence':'#e67e22','Pending Closeout Approval':'#8e44ad',Closed:'#28a745',Overdue:'#c62828'};
+  tb.innerHTML=d.rows.map(function(r){
+    var sc=stColor[r.status]||'#6B7280';
+    return '<tr style="border-top:1px solid #EEF1FA">'+
+      '<td style="padding:8px;font-weight:600">'+esc(r.atrId)+'</td>'+
+      '<td style="padding:8px;font-size:11px">'+esc(r.lfiId)+'</td>'+
+      '<td style="padding:8px;max-width:280px">'+esc(r.action)+'</td>'+
+      '<td style="padding:8px">'+esc(r.owner)+'</td>'+
+      '<td style="padding:8px">'+esc(r.due)+'</td>'+
+      '<td style="padding:8px">'+esc(r.priority)+'</td>'+
+      '<td style="padding:8px"><span style="background:'+sc+';color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">'+esc(r.status)+'</span></td>'+
+      '<td style="padding:8px">'+(r.evidence?'<a href="'+esc(r.evidence)+'" target="_blank" style="color:#21409a">&#128206; View</a>':'<span style="color:#c0c4cc">&#8212;</span>')+'</td>'+
+      '</tr>';
+  }).join('');
+}
+
+function _renderBarrierChart(d){
+  if(!d)return;
+  document.getElementById('barrierPendingAi').textContent=d.pendingAiReview||0;
+  var el=document.getElementById('barrierChart'), empty=document.getElementById('barrierEmpty');
+  if(!d.barrierTop||!d.barrierTop.length){ el.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  var max=Math.max.apply(null,d.barrierTop.map(function(x){return x[1];}));
+  el.innerHTML=d.barrierTop.map(function(x){
+    var pct=Math.round(x[1]/max*100);
+    return '<div style="display:flex;align-items:center;gap:10px;margin:8px 0">'+
+      '<div style="width:190px;font-size:12px;color:#1A1F2B;flex-shrink:0">'+esc(x[0])+'</div>'+
+      '<div style="flex:1;background:#EEF1FA;border-radius:6px;height:20px;position:relative">'+
+      '<div style="width:'+pct+'%;background:#21409a;height:100%;border-radius:6px"></div></div>'+
+      '<div style="width:28px;font-size:12px;font-weight:700;color:#21409a;text-align:right">'+x[1]+'</div></div>';
+  }).join('');
 }
 
 // ── PPT SLIDE NAVIGATOR ───────────────────────────────────────
@@ -1909,7 +2078,7 @@ function admShowPwdErr(msg){var el=document.getElementById('adminPwdErr');if(!el
 var I18N={
   en:{
     sb_overview:'Overview',sb_lfi:'LFI Register',sb_admin:'Admin Controls',sb_submit:'+ Submit New LFI',
-    sb_sec_dash:'Dashboard',sb_sec_sys:'System',
+    sb_sec_dash:'Dashboard',sb_sec_sys:'System',sb_sec_gov:'Governance',sb_committee:'LFI Committee',
     ptitle_overview:'Overview Dashboard',ptitle_lfi:'LFI Register \u2014 Flashcards',ptitle_admin:'Admin Controls',
     topbar_export:'Export',topbar_refresh:'Refresh Data',
     filter_from:'From Date',filter_to:'To Date',filter_div:'Division',filter_loc:'Cluster',
@@ -1937,7 +2106,7 @@ var I18N={
   },
   hi:{
     sb_overview:'\u0905\u0935\u0932\u094b\u0915\u0928',sb_lfi:'LFI \u0930\u091c\u093f\u0938\u094d\u091f\u0930',sb_admin:'\u0905\u0921\u092e\u093f\u0928 \u0915\u0902\u091f\u094d\u0930\u094b\u0932',sb_submit:'+ \u0928\u092f\u093e LFI \u091c\u092e\u093e \u0915\u0930\u0947\u0902',
-    sb_sec_dash:'\u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921',sb_sec_sys:'\u0938\u093f\u0938\u094d\u091f\u092e',
+    sb_sec_dash:'\u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921',sb_sec_gov:'\u0936\u093e\u0938\u0928',sb_committee:'LFI \u0938\u092e\u093f\u0924\u093f',sb_sec_sys:'\u0938\u093f\u0938\u094d\u091f\u092e',
     ptitle_overview:'\u0905\u0935\u0932\u094b\u0915\u0928 \u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921',ptitle_lfi:'LFI \u0930\u091c\u093f\u0938\u094d\u091f\u0930',ptitle_admin:'\u0905\u0921\u092e\u093f\u0928 \u0915\u0902\u091f\u094d\u0930\u094b\u0932',
     topbar_export:'\u090f\u0915\u094d\u0938\u092a\u094b\u0930\u094d\u091f',topbar_refresh:'\u0921\u0947\u091f\u093e \u0930\u093f\u092b\u094d\u0930\u0947\u0936',
     filter_from:'\u0924\u093e\u0930\u0940\u0916 \u0938\u0947',filter_to:'\u0924\u093e\u0930\u0940\u0916 \u0924\u0915',filter_div:'\u0921\u093f\u0935\u093f\u091c\u0928',filter_loc:'\u0915\u094d\u0932\u0938\u094d\u091f\u0930',
@@ -1964,7 +2133,7 @@ var I18N={
   },
   ar:{
     sb_overview:'\u0646\u0638\u0631\u0629 \u0639\u0627\u0645\u0629',sb_lfi:'\u0633\u062c\u0644 LFI',sb_admin:'\u0644\u0648\u062d\u0629 \u0627\u0644\u062a\u062d\u0643\u0645',sb_submit:'+ \u0625\u0636\u0627\u0641\u0629 LFI',
-    sb_sec_dash:'\u0644\u0648\u062d\u0629 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a',sb_sec_sys:'\u0627\u0644\u0646\u0638\u0627\u0645',
+    sb_sec_dash:'\u0644\u0648\u062d\u0629 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a',sb_sec_gov:'\u0627\u0644\u062d\u0648\u0643\u0645\u0629',sb_committee:'\u0644\u062c\u0646\u0629 LFI',sb_sec_sys:'\u0627\u0644\u0646\u0638\u0627\u0645',
     ptitle_overview:'\u0644\u0648\u062d\u0629 \u0627\u0644\u0645\u0631\u0627\u0642\u0628\u0629',ptitle_lfi:'\u0633\u062c\u0644 LFI',ptitle_admin:'\u0644\u0648\u062d\u0629 \u0627\u0644\u062a\u062d\u0643\u0645',
     topbar_export:'\u062a\u0635\u062f\u064a\u0631',topbar_refresh:'\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a',
     filter_from:'\u0645\u0646 \u062a\u0627\u0631\u064a\u062e',filter_to:'\u0625\u0644\u0649 \u062a\u0627\u0631\u064a\u062e',filter_div:'\u0627\u0644\u0642\u0633\u0645',filter_loc:'\u0627\u0644\u062a\u062c\u0645\u0639',
