@@ -787,14 +787,13 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     <div class="page" id="page-committee">
       <div class="cc" style="margin-bottom:16px;border-left:4px solid #21409a">
         <div style="font-size:13px;color:#4d555b;line-height:1.5">
-          <strong>Failed Barrier classification</strong> is confirmed only by the LFI Committee. AI-suggested
-          barriers (via LFI Tools &gt; AI: Suggest Failed Barriers) are advisory only and never appear here until
-          a Committee member explicitly promotes them. <strong>Action items (ATR)</strong> cannot be closed
-          without evidence and closeout notes — enforced in the sheet, not just displayed here.
+          <strong>Failed Barrier classification</strong> is entered directly by the LFI Committee against a
+          controlled dropdown list — no automation, no external services. <strong>Action items (ATR)</strong>
+          cannot be closed without evidence and closeout notes — enforced in the sheet, not just displayed here.
         </div>
       </div>
 
-      <div class="krow" id="committeeKpiRow" style="grid-template-columns:repeat(5,1fr)">
+      <div class="krow" id="committeeKpiRow" style="grid-template-columns:repeat(4,1fr)">
         <div class="kc headline" style="--accent:#21409a"><div class="ki-wrap"><div class="ki">&#128203;</div></div>
           <div class="kv" id="atrOpen">&#8212;</div><div class="kl">Open Actions</div></div>
         <div class="kc" style="--accent:#c62828"><div class="ki-wrap"><div class="ki">&#9888;</div></div>
@@ -803,8 +802,6 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
           <div class="kv" id="atrClosed">&#8212;</div><div class="kl">Closed</div></div>
         <div class="kc" style="--accent:#f9a825"><div class="ki-wrap"><div class="ki">&#128269;</div></div>
           <div class="kv" id="atrPendingEvidence">&#8212;</div><div class="kl">Pending Evidence</div></div>
-        <div class="kc" style="--accent:#8e44ad"><div class="ki-wrap"><div class="ki">&#129302;</div></div>
-          <div class="kv" id="barrierPendingAi">&#8212;</div><div class="kl">AI Suggestions Awaiting Review</div></div>
       </div>
 
       <div class="cc" style="margin-top:16px">
@@ -1376,7 +1373,6 @@ function _renderAtrTable(d){
 
 function _renderBarrierChart(d){
   if(!d)return;
-  document.getElementById('barrierPendingAi').textContent=d.pendingAiReview||0;
   var el=document.getElementById('barrierChart'), empty=document.getElementById('barrierEmpty');
   if(!d.barrierTop||!d.barrierTop.length){ el.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
