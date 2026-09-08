@@ -893,7 +893,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         <table style="width:100%;border-collapse:collapse;font-size:13px" id="atrTable">
           <thead><tr style="text-align:left;color:#6B7280;font-size:11px;text-transform:uppercase">
             <th style="padding:8px">ATR ID</th><th style="padding:8px">LFI ID</th><th style="padding:8px">Action</th>
-            <th style="padding:8px">Owner</th><th style="padding:8px">Due</th><th style="padding:8px">Priority</th>
+            <th style="padding:8px">Action Party</th><th style="padding:8px">Due</th><th style="padding:8px">Priority</th>
             <th style="padding:8px">Status</th><th style="padding:8px">Evidence</th><th style="padding:8px">Action</th>
           </tr></thead>
           <tbody id="atrTableBody"></tbody>
@@ -1385,7 +1385,7 @@ function openCommitteeActionForm(lfiId){
       + ['Work Methodology Review','Procedure Revision','Engineering Control','Training / Competency','Supervision / Oversight','Other'].map(function(t){return '<option>'+t+'</option>';}).join('')
       + '</select></div>'
       + '<div style="display:flex;gap:10px">'
-      + '<div class="fd-sec" style="flex:1"><label>Owner (name) *</label><input id="cmOwner" type="text" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px"></div>'
+      + '<div class="fd-sec" style="flex:1"><label>Action Party *</label><input id="cmOwner" type="text" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px"></div>'
       + '<div class="fd-sec" style="flex:1"><label>Due Date *</label><input id="cmDue" type="date" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px"></div>'
       + '</div>'
       + '<div class="fd-sec"><label>Priority</label><select id="cmPriority" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px"><option>Medium</option><option>High</option><option>Low</option></select></div>'
@@ -1402,7 +1402,7 @@ function _cmSubmitAction(lfiId, email){
   var due=document.getElementById('cmDue').value;
   var priority=document.getElementById('cmPriority').value;
   var msgEl=document.getElementById('cmActionMsg');
-  if(!desc||!owner||!due){ msgEl.textContent='Description, Owner and Due Date are required.'; return; }
+  if(!desc||!owner||!due){ msgEl.textContent='Description, Action Party and Due Date are required.'; return; }
   msgEl.style.color='#6B7280'; msgEl.textContent='Submitting...';
   var qs='?action=committeeLogActionWeb&lfiId='+encodeURIComponent(lfiId)+'&actionDesc='+encodeURIComponent(desc)+
     '&actionType='+encodeURIComponent(type)+'&owner='+encodeURIComponent(owner)+'&due='+encodeURIComponent(due)+
