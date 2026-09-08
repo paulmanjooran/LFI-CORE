@@ -2357,7 +2357,7 @@ function _admCall(cmd,cb){var cbN='admCb'+Date.now(),script=document.createEleme
 function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');admLoadReviewers();}
 
 // ── Admin: Global Reviewer management ────────────────────────
-function _admPwd(){ var el=document.getElementById('adminPwdInput'); return el?el.value:''; }
+function _admPwd(){ return ADMIN_SESSION_PWD || (function(){var el=document.getElementById('adminPwdInput');return el?el.value:'';})(); }
 function admLoadReviewers(){
   var el=document.getElementById('reviewerList');
   el.innerHTML='<span style="color:#6B7280;font-size:12px">Loading...</span>';
@@ -2365,23 +2365,72 @@ function admLoadReviewers(){
     if(!d||!d.ok){ el.innerHTML='<span style="color:#c62828;font-size:12px">Failed to load.</span>'; return; }
     if(!d.reviewers.length){ el.innerHTML='<span style="color:#6B7280;font-size:12px">No global reviewers set yet.</span>'; return; }
     el.innerHTML=d.reviewers.map(function(r){
-      return '<span style="background:#EEF1FA;color:#21409a;padding:5px 8px 5px 12px;border-radius:14px;font-size:12px;display:inline-flex;align-items:center;gap:6px">'
-        +esc(r.email)
-        +'<button onclick="admRemoveReviewer(&quot;'+esc(r.email)+'&quot;)" style="background:none;border:none;color:#c62828;cursor:pointer;font-weight:700;padding:0 2px" title="Remove">&#10005;</button></span>';
+      var safeE=esc(r.email).replace(/'/g,"\\'");
+      return '<span class="rv-chip" data-email="'+esc(r.email)+'" style="background:#EEF1FA;color:#21409a;padding:5px 6px 5px 12px;border-radius:14px;font-size:12px;display:inline-flex;align-items:center;gap:4px">'
+        +'<span class="rv-email">'+esc(r.email)+'</span>'
+        +'<button onclick="admEditReviewerStart(this)" style="background:none;border:none;color:#21409a;cursor:pointer;padding:0 4px" title="Edit email">&#9998;</button>'
+        +'<button onclick="admRemoveReviewer(&quot;'+esc(r.email)+'&quot;,this)" style="background:none;border:none;color:#c62828;cursor:pointer;font-weight:700;padding:0 4px" title="Remove">&#10005;</button></span>';
     }).join('');
   });
 }
+
+// ── Add: supports comma/semicolon-separated bulk entry + client-side validation ──
 function admAddReviewer(){
-  var email=document.getElementById('newReviewerEmail').value.trim();
-  if(!email){ admLog('Enter an email first.'); return; }
+  var raw=document.getElementById('newReviewerEmail').value.trim();
+  if(!raw){ admLog('Enter at least one email first.'); return; }
+  var emails=raw.split(/[,;]+/).map(function(e){return e.trim();}).filter(Boolean);
+  var invalid=emails.filter(function(e){return !/^[^\s@]+@altasnim\.com$/i.test(e);});
+  if(invalid.length){ admLog('Rejected — not valid @altasnim.com addresses: '+invalid.join(', ')); return; }
   var pwd=_admPwd();
-  _cmCall('?action=committeeAddReviewer&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
-    if(d&&d.ok){ admLog('Reviewer added: '+email); document.getElementById('newReviewerEmail').value=''; admLoadReviewers(); }
-    else admLog('Failed: '+((d&&d.error)||'unknown error'));
+  var done=0, failed=[];
+  emails.forEach(function(email){
+    _cmCall('?action=committeeAddReviewer&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
+      done++;
+      if(d&&d.ok) admLog('Reviewer added: '+email); else failed.push(email+': '+((d&&d.error)||'unknown error'));
+      if(done===emails.length){
+        if(failed.length) admLog('Some failed:\n'+failed.join('\n'));
+        document.getElementById('newReviewerEmail').value='';
+        admLoadReviewers();
+      }
+    });
   });
 }
-function admRemoveReviewer(email){
-  if(!confirm('Remove '+email+' as a global reviewer?')) return;
+
+// ── Edit: turn a chip's email into an inline input, Save/Cancel ──
+function admEditReviewerStart(btn){
+  var chip=btn.closest('.rv-chip'); var oldEmail=chip.dataset.email;
+  // Replace the WHOLE chip content in one shot — cleaner than patching
+  // individual buttons, and avoids leaving stale Edit/Remove buttons behind.
+  chip.innerHTML='<input class="rv-edit-input" type="text" value="'+esc(oldEmail)+'" style="width:190px;padding:3px 6px;border:1px solid #21409a;border-radius:4px;font-size:12px">'
+    +'<button onclick="admEditReviewerSave(this,&quot;'+esc(oldEmail)+'&quot;)" style="background:none;border:none;color:#28a745;cursor:pointer;font-weight:700;padding:0 4px" title="Save">&#10003;</button>'
+    +'<button onclick="admLoadReviewers()" style="background:none;border:none;color:#6B7280;cursor:pointer;padding:0 4px" title="Cancel">&#10005;</button>';
+  var inp=chip.querySelector('.rv-edit-input'); if(inp){ inp.focus(); inp.select(); }
+}
+function admEditReviewerSave(btn, oldEmail){
+  var chip=btn.closest('.rv-chip');
+  var newEmail=chip.querySelector('.rv-edit-input').value.trim();
+  if(!/^[^\s@]+@altasnim\.com$/i.test(newEmail)){ admLog('Not a valid @altasnim.com address.'); return; }
+  var pwd=_admPwd();
+  _cmCall('?action=committeeUpdateReviewer&oldEmail='+encodeURIComponent(oldEmail)+'&newEmail='+encodeURIComponent(newEmail)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok){ admLog('Reviewer updated: '+oldEmail+' -> '+newEmail); admLoadReviewers(); }
+    else { admLog('Failed: '+((d&&d.error)||'unknown error')); admLoadReviewers(); }
+  });
+}
+
+// ── Remove: in-page confirm instead of native confirm() ──
+function admRemoveReviewer(email, btn){
+  var chip=btn?btn.closest('.rv-chip'):null;
+  if(chip && !chip.dataset.confirming){
+    chip.dataset.confirming='1';
+    var origHtml=chip.innerHTML;
+    chip.innerHTML='<span style="color:#c62828">Remove '+esc(email)+'?</span>'
+      +'<button onclick="_admDoRemove(&quot;'+esc(email)+'&quot;)" style="background:none;border:none;color:#c62828;font-weight:700;cursor:pointer;padding:0 4px">Yes</button>'
+      +'<button onclick="admLoadReviewers()" style="background:none;border:none;color:#6B7280;cursor:pointer;padding:0 4px">No</button>';
+    return;
+  }
+  _admDoRemove(email);
+}
+function _admDoRemove(email){
   var pwd=_admPwd();
   _cmCall('?action=committeeRemoveReviewer&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
     if(d&&d.ok){ admLog('Reviewer removed: '+email); admLoadReviewers(); }
@@ -2392,7 +2441,8 @@ function admRemoveReviewer(email){
 // ── Admin Password ────────────────────────────────────────────
 function admShowModal(){var modal=document.getElementById('adminModal');if(!modal)return;if(Date.now()<ADMIN_LOCKED_UNTIL){var s=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);var lk=document.getElementById('adminLockMsg');if(lk){lk.style.display='block';lk.textContent='Locked. Try again in '+s+'s.';}}else{var e=document.getElementById('adminPwdErr');if(e)e.style.display='none';var lk2=document.getElementById('adminLockMsg');if(lk2)lk2.style.display='none';}modal.style.display='flex';setTimeout(function(){var inp=document.getElementById('adminPwdInput');if(inp){inp.value='';inp.focus();}},100);}
 function admCloseModal(){var modal=document.getElementById('adminModal');if(modal)modal.style.display='none';if(!ADMIN_UNLOCKED){var ov=document.querySelector('nav a.active');navTo('overview',ov);}}
-function admCheckPwd(){if(Date.now()<ADMIN_LOCKED_UNTIL){var s=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);admShowPwdErr('Locked. Try again in '+s+'s.');return;}var inp=document.getElementById('adminPwdInput');if(!inp)return;var entered=inp.value;if(!entered){admShowPwdErr('Please enter the password.');return;}if(btoa(entered)===ADMIN_PWD_B64){ADMIN_UNLOCKED=true;ADMIN_ATTEMPTS=0;var modal=document.getElementById('adminModal');if(modal)modal.style.display='none';document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});var pg=document.getElementById('page-admin');if(pg)pg.classList.add('active');document.getElementById('ptitle').textContent='Admin Controls';_adminPageInit();}else{ADMIN_ATTEMPTS++;var rem=ADMIN_MAX-ADMIN_ATTEMPTS;if(ADMIN_ATTEMPTS>=ADMIN_MAX){ADMIN_LOCKED_UNTIL=Date.now()+60000;ADMIN_ATTEMPTS=0;admShowPwdErr('Too many attempts. Locked 60 seconds.');}else{admShowPwdErr('Incorrect password. '+rem+' attempt'+(rem===1?'':'s')+' remaining.');}inp.value='';inp.focus();}}
+var ADMIN_SESSION_PWD='';
+function admCheckPwd(){if(Date.now()<ADMIN_LOCKED_UNTIL){var s=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);admShowPwdErr('Locked. Try again in '+s+'s.');return;}var inp=document.getElementById('adminPwdInput');if(!inp)return;var entered=inp.value;if(!entered){admShowPwdErr('Please enter the password.');return;}if(btoa(entered)===ADMIN_PWD_B64){ADMIN_UNLOCKED=true;ADMIN_ATTEMPTS=0;ADMIN_SESSION_PWD=entered;var modal=document.getElementById('adminModal');if(modal)modal.style.display='none';document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});var pg=document.getElementById('page-admin');if(pg)pg.classList.add('active');document.getElementById('ptitle').textContent='Admin Controls';_adminPageInit();}else{ADMIN_ATTEMPTS++;var rem=ADMIN_MAX-ADMIN_ATTEMPTS;if(ADMIN_ATTEMPTS>=ADMIN_MAX){ADMIN_LOCKED_UNTIL=Date.now()+60000;ADMIN_ATTEMPTS=0;admShowPwdErr('Too many attempts. Locked 60 seconds.');}else{admShowPwdErr('Incorrect password. '+rem+' attempt'+(rem===1?'':'s')+' remaining.');}inp.value='';inp.focus();}}
 function admShowPwdErr(msg){var el=document.getElementById('adminPwdErr');if(!el)return;el.textContent=msg;el.style.display='block';var inp=document.getElementById('adminPwdInput');if(inp){inp.style.borderColor='var(--rd)';setTimeout(function(){inp.style.borderColor='var(--border)';},1500);}}
 
 // ── i18n Dictionary ───────────────────────────────────────────
