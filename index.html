@@ -777,7 +777,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
           <div class="ch">&#9878; LFI Committee — Global Reviewers</div>
           <div style="font-size:11px;color:#6B7280;margin-bottom:10px">
             Reviewers listed here can approve ANY closeout, regardless of cluster/discipline.
-            Cluster-specific committee members are still managed in the "LFI Committee Roster" sheet.
+            Cluster/discipline-specific members (Chair, HSE Lead) are managed in the card below.
           </div>
           <div id="reviewerList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
             <span style="color:#6B7280;font-size:12px">Loading...</span>
@@ -787,6 +787,37 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
               style="flex:1;min-width:220px;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">
             <button class="adm-btn" onclick="admAddReviewer()">&#10133; Add Reviewer</button>
             <button class="adm-btn" onclick="admLoadReviewers()">&#8635; Refresh List</button>
+          </div>
+        </div>
+
+        <div class="cc" style="grid-column:1/-1">
+          <div class="ch">&#128101; LFI Committee Roster — Cluster / Discipline Members</div>
+          <div style="font-size:11px;color:#6B7280;margin-bottom:10px">
+            Site Manager = Chair, Site HSE Lead = HSE Lead, per cluster and discipline.
+            Routes new-LFI review emails and gates Committee tab access.
+          </div>
+          <div id="rosterList" style="margin-bottom:12px">
+            <span style="color:#6B7280;font-size:12px">Loading...</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:8px">
+            <input id="newMemberCluster" type="text" placeholder="Cluster (e.g. ODC-GB)" list="clusterOptions"
+              style="padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">
+            <datalist id="clusterOptions"><option>External / Non ATNM</option><option>MISFA</option><option>MUSCAT</option>
+              <option>ODC-AMAL</option><option>ODC-GB</option><option>ODC-MML PROJ</option><option>ODC-MML WD</option>
+              <option>ODC-NIMR</option><option>SALALAH</option><option>SOHAR</option></datalist>
+            <input id="newMemberDiscipline" type="text" placeholder="Discipline" list="disciplineOptions"
+              style="padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">
+            <datalist id="disciplineOptions"><option>Civil</option><option>Electrical</option>
+              <option>Instrumentation</option><option>Mechanical</option><option>Other</option></datalist>
+            <select id="newMemberRole" style="padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">
+              <option>Chair</option><option>HSE Lead</option><option>Member</option>
+            </select>
+            <input id="newMemberEmail" type="text" placeholder="name@altasnim.com"
+              style="padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="adm-btn" onclick="admAddRosterMember()">&#10133; Add Member</button>
+            <button class="adm-btn" onclick="admLoadRoster()">&#8635; Refresh List</button>
           </div>
         </div>
         <div class="cc" style="grid-column:1/-1">
@@ -2354,10 +2385,100 @@ function admRetryPending(){admLog('Checking pending LFIs...');_admCall('retryPen
 function admClearScriptCache(){admLog('Clearing script cache...');_admCall('clearCache',function(d){admLog(d.status==='OK'?'OK: '+d.message:'Error: '+d.message);});}
 function admGetSystemLog(){admLog('Fetching System Log...');_admCall('getLog',function(d){if(d.status==='OK'&&d.logs){admLog('--- System Log (last '+d.logs.length+') ---');d.logs.forEach(function(r){admLog('['+r.ts+'] '+r.fn+' | '+r.st+' | '+r.msg);});admLog('--- End ---');}else{admLog('Error: '+(d.message||'unknown'));}});}
 function _admCall(cmd,cb){var cbN='admCb'+Date.now(),script=document.createElement('script'),done=false;var tid=setTimeout(function(){if(done)return;done=true;delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);admLog('TIMEOUT. Sign into altasnim.com and retry.');},12000);window[cbN]=function(d){if(done)return;done=true;clearTimeout(tid);delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);if(cb)cb(d);};script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbN];admLog('FAIL: Script load error.');};script.src=API_BASE+'?action=admin&cmd='+encodeURIComponent(cmd)+'&callback='+cbN;document.head.appendChild(script);}
-function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');admLoadReviewers();}
+function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');admLoadReviewers();admLoadRoster();}
 
 // ── Admin: Global Reviewer management ────────────────────────
 function _admPwd(){ return ADMIN_SESSION_PWD || (function(){var el=document.getElementById('adminPwdInput');return el?el.value:'';})(); }
+// ── Admin: LFI Committee Roster (cluster/discipline members) ──
+function admLoadRoster(){
+  var el=document.getElementById('rosterList');
+  el.innerHTML='<span style="color:#6B7280;font-size:12px">Loading...</span>';
+  _cmCall('?action=committeeListRosterMembers&pwd='+encodeURIComponent(_admPwd()), function(d){
+    if(!d||!d.ok){ el.innerHTML='<span style="color:#c62828;font-size:12px">Failed to load: '+esc((d&&d.error)||'unknown')+'</span>'; return; }
+    if(!d.members.length){ el.innerHTML='<span style="color:#6B7280;font-size:12px">No cluster members set yet.</span>'; return; }
+    // Group by Cluster > Discipline for readability
+    var groups={};
+    d.members.forEach(function(m){
+      var k=m.cluster+' \u2014 '+m.discipline;
+      (groups[k]=groups[k]||[]).push(m);
+    });
+    el.innerHTML=Object.keys(groups).sort().map(function(k){
+      var rows=groups[k].map(function(m){
+        var roleColor=m.role==='Chair'?'#21409a':(m.role==='HSE Lead'?'#f58220':'#6B7280');
+        return '<div class="rm-row" data-cluster="'+esc(m.cluster)+'" data-discipline="'+esc(m.discipline)+'" data-email="'+esc(m.email)+'" '
+          +'style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #F4F6FB">'
+          +'<span style="background:'+roleColor+';color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;min-width:62px;text-align:center">'+esc(m.role)+'</span>'
+          +'<span class="rm-email" style="flex:1;font-size:12px">'+esc(m.name)+' &lt;'+esc(m.email)+'&gt;</span>'
+          +'<button onclick="admEditMemberStart(this)" style="background:none;border:none;color:#21409a;cursor:pointer" title="Edit">&#9998;</button>'
+          +'<button onclick="admRemoveRosterMember(this)" style="background:none;border:none;color:#c62828;cursor:pointer;font-weight:700" title="Remove">&#10005;</button>'
+          +'</div>';
+      }).join('');
+      return '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:#4d555b;margin-bottom:3px">'+esc(k)+'</div>'+rows+'</div>';
+    }).join('');
+  });
+}
+
+function admAddRosterMember(){
+  var cluster=document.getElementById('newMemberCluster').value.trim();
+  var discipline=document.getElementById('newMemberDiscipline').value.trim();
+  var role=document.getElementById('newMemberRole').value;
+  var email=document.getElementById('newMemberEmail').value.trim();
+  if(!cluster||!discipline||!email){ admLog('Cluster, Discipline and Email are all required.'); return; }
+  if(!/^[^\s@]+@altasnim\.com$/i.test(email)){ admLog('Not a valid @altasnim.com address.'); return; }
+  var pwd=_admPwd();
+  _cmCall('?action=committeeAddRosterMember&cluster='+encodeURIComponent(cluster)+'&discipline='+encodeURIComponent(discipline)
+    +'&role='+encodeURIComponent(role)+'&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok){
+      admLog('Member added: '+email+' ('+role+', '+cluster+' / '+discipline+')');
+      document.getElementById('newMemberCluster').value='';
+      document.getElementById('newMemberDiscipline').value='';
+      document.getElementById('newMemberEmail').value='';
+      admLoadRoster();
+    } else admLog('Failed: '+((d&&d.error)||'unknown error'));
+  });
+}
+
+function admEditMemberStart(btn){
+  var row=btn.closest('.rm-row');
+  var cluster=row.dataset.cluster, discipline=row.dataset.discipline, oldEmail=row.dataset.email;
+  row.innerHTML='<input class="rm-edit-input" type="text" value="'+esc(oldEmail)+'" style="flex:1;padding:4px 6px;border:1px solid #21409a;border-radius:4px;font-size:12px">'
+    +'<button onclick="admEditMemberSave(this,&quot;'+esc(cluster)+'&quot;,&quot;'+esc(discipline)+'&quot;,&quot;'+esc(oldEmail)+'&quot;)" style="background:none;border:none;color:#28a745;cursor:pointer;font-weight:700" title="Save">&#10003;</button>'
+    +'<button onclick="admLoadRoster()" style="background:none;border:none;color:#6B7280;cursor:pointer" title="Cancel">&#10005;</button>';
+  var inp=row.querySelector('.rm-edit-input'); if(inp){ inp.focus(); inp.select(); }
+}
+function admEditMemberSave(btn, cluster, discipline, oldEmail){
+  var row=btn.closest('.rm-row');
+  var newEmail=row.querySelector('.rm-edit-input').value.trim();
+  if(!/^[^\s@]+@altasnim\.com$/i.test(newEmail)){ admLog('Not a valid @altasnim.com address.'); return; }
+  var pwd=_admPwd();
+  _cmCall('?action=committeeUpdateRosterMember&cluster='+encodeURIComponent(cluster)+'&discipline='+encodeURIComponent(discipline)
+    +'&oldEmail='+encodeURIComponent(oldEmail)+'&newEmail='+encodeURIComponent(newEmail)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok) admLog('Member updated: '+oldEmail+' -> '+newEmail); else admLog('Failed: '+((d&&d.error)||'unknown error'));
+    admLoadRoster();
+  });
+}
+
+function admRemoveRosterMember(btn){
+  var row=btn.closest('.rm-row');
+  var cluster=row.dataset.cluster, discipline=row.dataset.discipline, email=row.dataset.email;
+  if(!row.dataset.confirming){
+    row.dataset.confirming='1';
+    row.innerHTML='<span style="color:#c62828;font-size:12px;flex:1">Remove '+esc(email)+' from '+esc(cluster)+' / '+esc(discipline)+'?</span>'
+      +'<button onclick="_admDoRemoveMember(&quot;'+esc(cluster)+'&quot;,&quot;'+esc(discipline)+'&quot;,&quot;'+esc(email)+'&quot;)" style="background:none;border:none;color:#c62828;font-weight:700;cursor:pointer">Yes</button>'
+      +'<button onclick="admLoadRoster()" style="background:none;border:none;color:#6B7280;cursor:pointer">No</button>';
+    return;
+  }
+  _admDoRemoveMember(cluster,discipline,email);
+}
+function _admDoRemoveMember(cluster,discipline,email){
+  var pwd=_admPwd();
+  _cmCall('?action=committeeRemoveRosterMember&cluster='+encodeURIComponent(cluster)+'&discipline='+encodeURIComponent(discipline)
+    +'&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok) admLog('Member removed: '+email); else admLog('Failed: '+((d&&d.error)||'unknown error'));
+    admLoadRoster();
+  });
+}
+
 function admLoadReviewers(){
   var el=document.getElementById('reviewerList');
   el.innerHTML='<span style="color:#6B7280;font-size:12px">Loading...</span>';
