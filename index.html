@@ -774,6 +774,22 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
           </div>
         </div>
         <div class="cc" style="grid-column:1/-1">
+          <div class="ch">&#9878; LFI Committee — Global Reviewers</div>
+          <div style="font-size:11px;color:#6B7280;margin-bottom:10px">
+            Reviewers listed here can approve ANY closeout, regardless of cluster/discipline.
+            Cluster-specific committee members are still managed in the "LFI Committee Roster" sheet.
+          </div>
+          <div id="reviewerList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+            <span style="color:#6B7280;font-size:12px">Loading...</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="newReviewerEmail" type="text" placeholder="name@altasnim.com"
+              style="flex:1;min-width:220px;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">
+            <button class="adm-btn" onclick="admAddReviewer()">&#10133; Add Reviewer</button>
+            <button class="adm-btn" onclick="admLoadReviewers()">&#8635; Refresh List</button>
+          </div>
+        </div>
+        <div class="cc" style="grid-column:1/-1">
           <div class="ch" style="display:flex;justify-content:space-between">
             <span>Output / Log</span>
             <button onclick="document.getElementById('admOut').textContent=''" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px">&#128465; Clear</button>
@@ -823,7 +839,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
           <thead><tr style="text-align:left;color:#6B7280;font-size:11px;text-transform:uppercase">
             <th style="padding:8px">ATR ID</th><th style="padding:8px">LFI ID</th><th style="padding:8px">Action</th>
             <th style="padding:8px">Owner</th><th style="padding:8px">Due</th><th style="padding:8px">Priority</th>
-            <th style="padding:8px">Status</th><th style="padding:8px">Evidence</th>
+            <th style="padding:8px">Status</th><th style="padding:8px">Evidence</th><th style="padding:8px">Action</th>
           </tr></thead>
           <tbody id="atrTableBody"></tbody>
         </table>
@@ -902,7 +918,7 @@ function navTo(page,el){
   var T={overview:'Overview Dashboard',lfi:'LFI Hub \u2014 Flashcards & Videos',videos:'LFI Hub \u2014 Flashcards & Videos',admin:'Admin Controls',committee:'LFI Committee \u2014 Barriers & Action Tracking'};
   document.getElementById('ptitle').textContent=T[page]||'Dashboard';
   // Page-specific actions
-  if(page==='committee'){renderCommitteePage();}
+  if(page==='committee'){checkCommitteeAccess();}
   if(page==='lfi'){
     if(!RAW||!RAW.length){
       // Data not loaded yet — trigger refresh (will call renderFC when data arrives)
@@ -1182,6 +1198,7 @@ function renderFC(){
     var actionRow='<div class="fc-action-row">'
       +'<button class="fc-act-btn ppt-act" onclick="_fcOpenPpt('+idx+')"'+(hasPpt?'':' disabled')+'>&#128218; '+t('ppt_preview')+'</button>'
       +'<button class="fc-act-btn vid-act" onclick="openCveModal('+idx+')"'+(hasDesc?'':' disabled')+'>&#127909; LFI Video</button>'
+      +'<button class="fc-act-btn" style="background:#8e44ad;color:#fff" onclick="event.stopPropagation();openCommitteeActionForm(&quot;'+esc(r.id)+'&quot;)">&#9878;</button>'
       +'</div>';
 
     html+='<div class="fc" style="border-top:3px solid '+accent+'">'+
@@ -1254,6 +1271,16 @@ function fdLang(l){
   var r=null;if(RAW){for(var i=0;i<RAW.length;i++){if(RAW[i].id===entry.id){r=RAW[i];break;}}}
   if(r)_renderFcDetail(r);
 }
+function _recurrenceBadge(r){
+  if(!r.barrierType) return '';
+  var hit=BARRIER_TOP_CACHE.find(function(x){return x[0]===r.barrierType;});
+  var count=hit?hit[1]:0;
+  if(count<2) return '';
+  return '<div style="margin:6px 0"><button onclick="openBarrierDrilldown(&quot;'+esc(r.barrierType)+'&quot;)" '
+    + 'style="background:#ffebee;color:#c62828;border:1px solid #c62828;padding:4px 10px;border-radius:14px;font-size:11px;font-weight:700;cursor:pointer">'
+    + '&#8635; Recurring Barrier: '+esc(r.barrierType)+' ('+count+'x) — click to view</button></div>';
+}
+
 function _renderFcDetail(r){
   var lang=_FD.lang||LANG;
   var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
@@ -1264,6 +1291,7 @@ function _renderFcDetail(r){
     +'<div><span class="fd-id">'+esc(r.id)+'</span> '+mkbadge(r.st)+'<div class="fd-cat" style="color:'+accent+'">'+esc(r.cat)+'</div></div>'
     +'<button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div>'
     +'<div class="fd-meta"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span><span>&#127959; '+esc(r.div)+'</span><span>&#128100; '+esc(r.by)+'</span></div>'
+    +_recurrenceBadge(r)
     +_fcImgStrip(r)
     +'<div class="fd-lbar">'
     +'<button class="lb'+(lang==='en'?' active':'')+'" onclick="fdLang(&quot;en&quot;)">&#127468;&#127463; EN</button>'
@@ -1280,12 +1308,188 @@ function _renderFcDetail(r){
     +'<div class="fd-actions">'
     +'<button class="fc-act-btn ppt-act" onclick="_fcOpenPpt('+_FD.idx+')"'+(r.pptLink?'':' disabled')+'>&#128218; Slides</button>'
     +'<button class="fc-act-btn vid-act" onclick="closeFcDetail();openCveModal('+_FD.idx+')">&#127909; LFI Video</button>'
+    +'<button class="fc-act-btn" style="background:#8e44ad;color:#fff" onclick="openCommitteeActionForm(&quot;'+esc(r.id)+'&quot;)">&#9878; LFI Committee Action</button>'
     +'</div>';
   body.innerHTML=h;
 }
 
 // ── LFI Committee page: Barrier analytics + ATR register ───────
-var COMMITTEE_CACHE = { atr: null, barrier: null, loaded: false };
+var COMMITTEE_CACHE = { atr: null, barrier: null, loaded: false, formUrls: null, identity: null };
+
+// Opens the Action Form pre-filled with the LFI ID. Fetches form
+// URLs once, caches them for the session.
+// ── In-page modal: Log Committee Action ─────────────────────
+function openCommitteeActionForm(lfiId){
+  _cmEmailPrompt(function(email){
+    var h = '<div class="fd-head" style="border-bottom:2px solid #21409a">'
+      + '<div><span class="fd-id">Log Committee Action</span><div class="fd-cat" style="color:#21409a">LFI '+esc(lfiId)+'</div></div>'
+      + '<button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div>'
+      + '<div class="fd-content" style="padding-top:6px">'
+      + '<div class="fd-sec"><label>Action Description *</label><textarea id="cmDesc" rows="3" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-family:inherit;font-size:13px" placeholder="e.g. Revise work method statement for rotating equipment guarding"></textarea></div>'
+      + '<div class="fd-sec"><label>Action Type *</label><select id="cmType" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">'
+      + ['Work Methodology Review','Procedure Revision','Engineering Control','Training / Competency','Supervision / Oversight','Other'].map(function(t){return '<option>'+t+'</option>';}).join('')
+      + '</select></div>'
+      + '<div style="display:flex;gap:10px">'
+      + '<div class="fd-sec" style="flex:1"><label>Owner (name) *</label><input id="cmOwner" type="text" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px"></div>'
+      + '<div class="fd-sec" style="flex:1"><label>Due Date *</label><input id="cmDue" type="date" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px"></div>'
+      + '</div>'
+      + '<div class="fd-sec"><label>Priority</label><select id="cmPriority" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px"><option>Medium</option><option>High</option><option>Low</option></select></div>'
+      + '<div id="cmActionMsg" style="font-size:12px;color:#c62828;min-height:16px"></div>'
+      + '</div><div class="fd-actions"><button class="fc-act-btn" style="background:#21409a;color:#fff" onclick="_cmSubmitAction(\''+esc(lfiId)+'\',\''+esc(email)+'\')">Log Action</button></div>';
+    document.getElementById('fdBody').innerHTML=h;
+    document.getElementById('fdModal').classList.add('vis');
+  });
+}
+function _cmSubmitAction(lfiId, email){
+  var desc=document.getElementById('cmDesc').value.trim();
+  var type=document.getElementById('cmType').value;
+  var owner=document.getElementById('cmOwner').value.trim();
+  var due=document.getElementById('cmDue').value;
+  var priority=document.getElementById('cmPriority').value;
+  var msgEl=document.getElementById('cmActionMsg');
+  if(!desc||!owner||!due){ msgEl.textContent='Description, Owner and Due Date are required.'; return; }
+  msgEl.style.color='#6B7280'; msgEl.textContent='Submitting...';
+  var qs='?action=committeeLogActionWeb&lfiId='+encodeURIComponent(lfiId)+'&actionDesc='+encodeURIComponent(desc)+
+    '&actionType='+encodeURIComponent(type)+'&owner='+encodeURIComponent(owner)+'&due='+encodeURIComponent(due)+
+    '&priority='+encodeURIComponent(priority)+'&email='+encodeURIComponent(email);
+  _cmCall(qs, function(d){
+    if(d && d.ok){
+      msgEl.style.color='#2e7d32'; msgEl.textContent='Logged: '+d.atrId+'.';
+      COMMITTEE_CACHE.loaded=false;
+      if(document.getElementById('page-committee').classList.contains('active')) renderCommitteePage();
+      var again=confirm('Action logged: '+d.atrId+'\n\nLog another action for this same LFI ('+lfiId+')?');
+      if(again){
+        document.getElementById('cmDesc').value='';
+        document.getElementById('cmOwner').value='';
+        document.getElementById('cmDue').value='';
+        msgEl.textContent='Ready for the next action.';
+      } else {
+        closeFcDetail();
+      }
+    } else { msgEl.style.color='#c62828'; msgEl.textContent=(d&&d.error)||'Submission failed — try again.'; }
+  });
+}
+
+// ── Shared: prompt once per session for the committee member's email ──
+function _cmEmailPrompt(onReady){
+  if(COMMITTEE_CACHE.identity && COMMITTEE_CACHE.identity.ok && COMMITTEE_CACHE.identity.email){ onReady(COMMITTEE_CACHE.identity.email); return; }
+  var email=prompt('Enter your @altasnim.com email to continue (checked against the committee roster):');
+  if(!email) return;
+  email=email.trim();
+  if(!/@altasnim\.com$/i.test(email)){ alert('Only @altasnim.com email addresses are accepted.'); return; }
+  COMMITTEE_CACHE.identity={ok:true,email:email};
+  onReady(email);
+}
+
+// ── Shared: fire a GET+JSONP write call, parse the JSON response ──
+function _cmCall(qs, onDone){
+  var cb='_cm'+Date.now(), script=document.createElement('script'), done=false;
+  var tid=setTimeout(function(){ if(done)return; done=true; delete window[cb]; if(script.parentNode)script.parentNode.removeChild(script); onDone({ok:false,error:'Timed out — check your connection.'}); },20000);
+  window[cb]=function(d){ if(done)return; done=true; clearTimeout(tid); delete window[cb]; if(script.parentNode)script.parentNode.removeChild(script); onDone(d); };
+  script.onerror=function(){ if(done)return; done=true; clearTimeout(tid); delete window[cb]; onDone({ok:false,error:'Network error.'}); };
+  script.src=API_BASE+qs+'&callback='+cb;
+  document.head.appendChild(script);
+}
+
+// ── In-page modal: Submit Closeout Evidence ──────────────────
+function openSubmitEvidenceForm(atrId){
+  _cmEmailPrompt(function(email){
+    var h = '<div class="fd-head" style="border-bottom:2px solid #f9a825">'
+      + '<div><span class="fd-id">Submit Closeout Evidence</span><div class="fd-cat" style="color:#f9a825">'+esc(atrId)+'</div></div>'
+      + '<button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div>'
+      + '<div class="fd-content" style="padding-top:6px">'
+      + '<div class="fd-sec"><button class="fc-act-btn" style="background:#eef1fa;color:#21409a" onclick="_cmOpenEvidenceFolder(\''+esc(atrId)+'\')">&#128193; Open Evidence Folder for this LFI</button></div>'
+      + '<div class="fd-sec"><label>Evidence Link *</label><input id="cmEvLink" type="text" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px" placeholder="Paste the Drive link after uploading"></div>'
+      + '<div class="fd-sec"><label>Closeout Notes — what was verified or changed *</label><textarea id="cmEvNotes" rows="3" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-family:inherit;font-size:13px"></textarea></div>'
+      + '<div id="cmEvMsg" style="font-size:12px;color:#c62828;min-height:16px"></div>'
+      + '</div><div class="fd-actions"><button class="fc-act-btn" style="background:#f9a825;color:#fff" onclick="_cmSubmitEvidence(\''+esc(atrId)+'\',\''+esc(email)+'\')">Submit Evidence</button></div>';
+    document.getElementById('fdBody').innerHTML=h;
+    document.getElementById('fdModal').classList.add('vis');
+  });
+}
+function _cmOpenEvidenceFolder(atrId){
+  var row=(COMMITTEE_CACHE.atr&&COMMITTEE_CACHE.atr.rows||[]).find(function(r){return r.atrId===atrId;});
+  var lfiId=row?row.lfiId:'';
+  if(!lfiId){ alert('Could not determine the linked LFI ID.'); return; }
+  _cmCall('?action=committeeEvidenceFolder&lfiId='+encodeURIComponent(lfiId), function(d){
+    if(d&&d.ok&&d.url) window.open(d.url,'_blank');
+    else alert((d&&d.error)||'Could not open the evidence folder.');
+  });
+}
+function _cmSubmitEvidence(atrId, email){
+  var link=document.getElementById('cmEvLink').value.trim();
+  var notes=document.getElementById('cmEvNotes').value.trim();
+  var msgEl=document.getElementById('cmEvMsg');
+  if(!link||!notes){ msgEl.textContent='Evidence link and closeout notes are both required.'; return; }
+  msgEl.style.color='#6B7280'; msgEl.textContent='Submitting...';
+  var qs='?action=committeeSubmitEvidenceWeb&atrId='+encodeURIComponent(atrId)+'&evidenceLink='+encodeURIComponent(link)+
+    '&notes='+encodeURIComponent(notes)+'&email='+encodeURIComponent(email);
+  _cmCall(qs, function(d){
+    if(d&&d.ok){ msgEl.style.color='#2e7d32'; msgEl.textContent='Evidence submitted — awaiting reviewer approval. Closing...';
+      setTimeout(function(){ closeFcDetail(); COMMITTEE_CACHE.loaded=false; renderCommitteePage(); },1200);
+    } else { msgEl.style.color='#c62828'; msgEl.textContent=(d&&d.error)||'Submission failed.'; }
+  });
+}
+
+// ── In-page modal: Approve/Reject Closeout ───────────────────
+function openApproveCloseoutForm(atrId){
+  _cmEmailPrompt(function(email){
+    var h = '<div class="fd-head" style="border-bottom:2px solid #8e44ad">'
+      + '<div><span class="fd-id">Approve Closeout</span><div class="fd-cat" style="color:#8e44ad">'+esc(atrId)+'</div></div>'
+      + '<button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div>'
+      + '<div class="fd-content" style="padding-top:6px">'
+      + '<div class="fd-sec"><label>Decision *</label><select id="cmDecision" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px"><option>Approve — Close Action</option><option>Reject — Needs More Work</option></select></div>'
+      + '<div class="fd-sec"><label>Reviewer Comment (required if rejecting)</label><textarea id="cmDecComment" rows="3" style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-family:inherit;font-size:13px"></textarea></div>'
+      + '<div id="cmDecMsg" style="font-size:12px;color:#c62828;min-height:16px"></div>'
+      + '</div><div class="fd-actions"><button class="fc-act-btn" style="background:#8e44ad;color:#fff" onclick="_cmSubmitDecision(\''+esc(atrId)+'\',\''+esc(email)+'\')">Submit Decision</button></div>';
+    document.getElementById('fdBody').innerHTML=h;
+    document.getElementById('fdModal').classList.add('vis');
+  });
+}
+function _cmSubmitDecision(atrId, email){
+  var decision=document.getElementById('cmDecision').value;
+  var comment=document.getElementById('cmDecComment').value.trim();
+  var msgEl=document.getElementById('cmDecMsg');
+  if(decision.indexOf('Reject')===0 && !comment){ msgEl.textContent='A comment is required when rejecting.'; return; }
+  msgEl.style.color='#6B7280'; msgEl.textContent='Submitting...';
+  var qs='?action=committeeApproveCloseoutWeb&atrId='+encodeURIComponent(atrId)+'&decision='+encodeURIComponent(decision)+
+    '&comment='+encodeURIComponent(comment)+'&email='+encodeURIComponent(email);
+  _cmCall(qs, function(d){
+    if(d&&d.ok){ msgEl.style.color='#2e7d32'; msgEl.textContent=(d.status==='Closed'?'Closed successfully.':'Reverted to Pending Evidence.')+' Closing...';
+      setTimeout(function(){ closeFcDetail(); COMMITTEE_CACHE.loaded=false; renderCommitteePage(); },1200);
+    } else { msgEl.style.color='#c62828'; msgEl.textContent=(d&&d.error)||'Submission failed.'; }
+  });
+}
+
+// ── LFI Committee tab identity gate — no password. Checks the
+// entered email against the live roster via checkCommitteeMember. ──
+function _fetchCommitteeIdentity(email, onDone){
+  var cb='_cid'+Date.now(), script=document.createElement('script'), done=false;
+  var tid=setTimeout(function(){ if(done)return; done=true; delete window[cb]; if(script.parentNode)script.parentNode.removeChild(script); onDone({ok:false,error:'timeout'}); },15000);
+  window[cb]=function(d){
+    if(done)return; done=true; clearTimeout(tid); delete window[cb];
+    if(script.parentNode)script.parentNode.removeChild(script);
+    onDone(d);
+  };
+  script.onerror=function(){ if(done)return; done=true; clearTimeout(tid); delete window[cb]; onDone({ok:false,error:'network'}); };
+  script.src=API_BASE+'?action=checkCommitteeMember&email='+encodeURIComponent(email)+'&callback='+cb;
+  document.head.appendChild(script);
+}
+function checkCommitteeAccess(){
+  if(COMMITTEE_CACHE.identity && COMMITTEE_CACHE.identity.ok){ _showCommitteeGate(false); renderCommitteePage(); return; }
+  var email=prompt('LFI Committee Access\n\nEnter your @altasnim.com email to continue.\nYour access is checked against the committee roster — no password needed.');
+  if(!email){ navTo('overview'); return; }
+  _fetchCommitteeIdentity(email.trim(), function(d){
+    COMMITTEE_CACHE.identity=d;
+    if(d.ok){ _showCommitteeGate(false); renderCommitteePage(); }
+    else { alert('Access denied.\n\n'+email+' is not on the active LFI Committee roster for any cluster/discipline.\nContact your HSE department if this is incorrect.'); navTo('overview'); }
+  });
+}
+function _showCommitteeGate(show){
+  var el=document.getElementById('page-committee');
+  if(el) el.style.opacity = show?'0.3':'1';
+}
+
 
 function renderCommitteePage(){
   if(!COMMITTEE_CACHE.loaded){
@@ -1362,6 +1566,12 @@ function _renderAtrTable(d){
   var stColor={Open:'#21409a','In Progress':'#f9a825','Pending Evidence':'#e67e22','Pending Closeout Approval':'#8e44ad',Closed:'#28a745',Overdue:'#c62828'};
   tb.innerHTML=d.rows.map(function(r){
     var sc=stColor[r.status]||'#6B7280';
+    var actionBtn='';
+    if(r.status==='Open'||r.status==='In Progress'||r.status==='Overdue'||r.status==='Pending Evidence'){
+      actionBtn='<button onclick="openSubmitEvidenceForm(&quot;'+esc(r.atrId)+'&quot;)" style="background:#f9a825;color:#fff;border:none;padding:4px 10px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer">Submit Evidence</button>';
+    } else if(r.status==='Pending Closeout Approval'){
+      actionBtn='<button onclick="openApproveCloseoutForm(&quot;'+esc(r.atrId)+'&quot;)" style="background:#8e44ad;color:#fff;border:none;padding:4px 10px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer">Approve/Reject</button>';
+    }
     return '<tr style="border-top:1px solid #EEF1FA">'+
       '<td style="padding:8px;font-weight:600">'+esc(r.atrId)+'</td>'+
       '<td style="padding:8px;font-size:11px">'+esc(r.lfiId)+'</td>'+
@@ -1371,6 +1581,7 @@ function _renderAtrTable(d){
       '<td style="padding:8px">'+esc(r.priority)+'</td>'+
       '<td style="padding:8px"><span style="background:'+sc+';color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">'+esc(r.status)+'</span></td>'+
       '<td style="padding:8px">'+(r.evidence?'<a href="'+esc(r.evidence)+'" target="_blank" style="color:#21409a">&#128206; View</a>':'<span style="color:#c0c4cc">&#8212;</span>')+'</td>'+
+      '<td style="padding:8px">'+actionBtn+'</td>'+
       '</tr>';
   }).join('');
 }
@@ -1378,18 +1589,55 @@ function _renderAtrTable(d){
 function _renderBarrierChart(d){
   if(!d)return;
   document.getElementById('barrierPendingAi').textContent=d.pendingAiReview||0;
+  BARRIER_TOP_CACHE=d.barrierTop||[];
   var el=document.getElementById('barrierChart'), empty=document.getElementById('barrierEmpty');
   if(!d.barrierTop||!d.barrierTop.length){ el.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
   var max=Math.max.apply(null,d.barrierTop.map(function(x){return x[1];}));
   el.innerHTML=d.barrierTop.map(function(x){
     var pct=Math.round(x[1]/max*100);
-    return '<div style="display:flex;align-items:center;gap:10px;margin:8px 0">'+
-      '<div style="width:190px;font-size:12px;color:#1A1F2B;flex-shrink:0">'+esc(x[0])+'</div>'+
+    var recurring=x[1]>=2;
+    return '<div style="display:flex;align-items:center;gap:10px;margin:8px 0;cursor:pointer" onclick="openBarrierDrilldown(&quot;'+esc(x[0])+'&quot;)" title="Click to see all LFIs with this barrier">'+
+      '<div style="width:190px;font-size:12px;color:#1A1F2B;flex-shrink:0">'+esc(x[0])+(recurring?' <span style="color:#c62828;font-weight:700">&#8635;</span>':'')+'</div>'+
       '<div style="flex:1;background:#EEF1FA;border-radius:6px;height:20px;position:relative">'+
-      '<div style="width:'+pct+'%;background:#21409a;height:100%;border-radius:6px"></div></div>'+
-      '<div style="width:28px;font-size:12px;font-weight:700;color:#21409a;text-align:right">'+x[1]+'</div></div>';
+      '<div style="width:'+pct+'%;background:'+(recurring?'#c62828':'#21409a')+';height:100%;border-radius:6px"></div></div>'+
+      '<div style="width:28px;font-size:12px;font-weight:700;color:'+(recurring?'#c62828':'#21409a')+';text-align:right">'+x[1]+'</div></div>';
   }).join('');
+}
+var BARRIER_TOP_CACHE=[];
+
+// ── Recurrence drilldown — glassmorph table, linked to LFI slides ──
+function openBarrierDrilldown(barrierType){
+  _cmCall('?action=barrierDrilldown&barrier='+encodeURIComponent(barrierType), function(d){
+    if(!d||!d.ok){ alert((d&&d.error)||'Could not load recurrence data.'); return; }
+    var rows=d.rows||[];
+    var h = '<div class="fd-head" style="border-bottom:2px solid #c62828">'
+      + '<div><span class="fd-id">Recurrence: '+esc(barrierType)+'</span>'
+      + '<div class="fd-cat" style="color:#c62828">'+rows.length+' LFI(s) with this confirmed barrier</div></div>'
+      + '<button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div>'
+      + '<div class="fd-content" style="padding-top:10px">'
+      + '<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      + '<thead><tr style="text-align:left;color:#6B7280;font-size:10px;text-transform:uppercase;border-bottom:2px solid #EEF1FA">'
+      + '<th style="padding:6px 8px">LFI ID</th><th style="padding:6px 8px">Date</th><th style="padding:6px 8px">Category</th>'
+      + '<th style="padding:6px 8px">Location</th><th style="padding:6px 8px">Division</th><th style="padding:6px 8px">Status</th>'
+      + '<th style="padding:6px 8px"></th></tr></thead><tbody>'
+      + rows.map(function(r){
+          return '<tr style="border-bottom:1px solid #F4F6FB">'
+            + '<td style="padding:6px 8px;font-weight:600">'+esc(r.id)+'</td>'
+            + '<td style="padding:6px 8px">'+esc(r.date)+'</td>'
+            + '<td style="padding:6px 8px">'+esc(r.category)+'</td>'
+            + '<td style="padding:6px 8px">'+esc(r.location)+'</td>'
+            + '<td style="padding:6px 8px">'+esc(r.division)+'</td>'
+            + '<td style="padding:6px 8px">'+esc(r.status)+'</td>'
+            + '<td style="padding:6px 8px">'+(r.pptLink?'<a href="'+esc(r.pptLink)+'" target="_blank" style="color:#21409a;font-weight:600">View Slides &#8594;</a>':'<span style="color:#c0c4cc">&#8212;</span>')+'</td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>'
+      + (rows.length===0?'<p style="color:#6B7280;text-align:center;padding:20px">No matching LFIs found.</p>':'')
+      + '</div>';
+    document.getElementById('fdBody').innerHTML=h;
+    document.getElementById('fdModal').classList.add('vis');
+  });
 }
 
 // ── PPT SLIDE NAVIGATOR ───────────────────────────────────────
@@ -2067,7 +2315,40 @@ function admRetryPending(){admLog('Checking pending LFIs...');_admCall('retryPen
 function admClearScriptCache(){admLog('Clearing script cache...');_admCall('clearCache',function(d){admLog(d.status==='OK'?'OK: '+d.message:'Error: '+d.message);});}
 function admGetSystemLog(){admLog('Fetching System Log...');_admCall('getLog',function(d){if(d.status==='OK'&&d.logs){admLog('--- System Log (last '+d.logs.length+') ---');d.logs.forEach(function(r){admLog('['+r.ts+'] '+r.fn+' | '+r.st+' | '+r.msg);});admLog('--- End ---');}else{admLog('Error: '+(d.message||'unknown'));}});}
 function _admCall(cmd,cb){var cbN='admCb'+Date.now(),script=document.createElement('script'),done=false;var tid=setTimeout(function(){if(done)return;done=true;delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);admLog('TIMEOUT. Sign into altasnim.com and retry.');},12000);window[cbN]=function(d){if(done)return;done=true;clearTimeout(tid);delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);if(cb)cb(d);};script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbN];admLog('FAIL: Script load error.');};script.src=API_BASE+'?action=admin&cmd='+encodeURIComponent(cmd)+'&callback='+cbN;document.head.appendChild(script);}
-function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');}
+function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');admLoadReviewers();}
+
+// ── Admin: Global Reviewer management ────────────────────────
+function _admPwd(){ var el=document.getElementById('adminPwdInput'); return el?el.value:''; }
+function admLoadReviewers(){
+  var el=document.getElementById('reviewerList');
+  el.innerHTML='<span style="color:#6B7280;font-size:12px">Loading...</span>';
+  _cmCall('?action=committeeListReviewers', function(d){
+    if(!d||!d.ok){ el.innerHTML='<span style="color:#c62828;font-size:12px">Failed to load.</span>'; return; }
+    if(!d.reviewers.length){ el.innerHTML='<span style="color:#6B7280;font-size:12px">No global reviewers set yet.</span>'; return; }
+    el.innerHTML=d.reviewers.map(function(r){
+      return '<span style="background:#EEF1FA;color:#21409a;padding:5px 8px 5px 12px;border-radius:14px;font-size:12px;display:inline-flex;align-items:center;gap:6px">'
+        +esc(r.email)
+        +'<button onclick="admRemoveReviewer(&quot;'+esc(r.email)+'&quot;)" style="background:none;border:none;color:#c62828;cursor:pointer;font-weight:700;padding:0 2px" title="Remove">&#10005;</button></span>';
+    }).join('');
+  });
+}
+function admAddReviewer(){
+  var email=document.getElementById('newReviewerEmail').value.trim();
+  if(!email){ admLog('Enter an email first.'); return; }
+  var pwd=_admPwd();
+  _cmCall('?action=committeeAddReviewer&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok){ admLog('Reviewer added: '+email); document.getElementById('newReviewerEmail').value=''; admLoadReviewers(); }
+    else admLog('Failed: '+((d&&d.error)||'unknown error'));
+  });
+}
+function admRemoveReviewer(email){
+  if(!confirm('Remove '+email+' as a global reviewer?')) return;
+  var pwd=_admPwd();
+  _cmCall('?action=committeeRemoveReviewer&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok){ admLog('Reviewer removed: '+email); admLoadReviewers(); }
+    else admLog('Failed: '+((d&&d.error)||'unknown error'));
+  });
+}
 
 // ── Admin Password ────────────────────────────────────────────
 function admShowModal(){var modal=document.getElementById('adminModal');if(!modal)return;if(Date.now()<ADMIN_LOCKED_UNTIL){var s=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);var lk=document.getElementById('adminLockMsg');if(lk){lk.style.display='block';lk.textContent='Locked. Try again in '+s+'s.';}}else{var e=document.getElementById('adminPwdErr');if(e)e.style.display='none';var lk2=document.getElementById('adminLockMsg');if(lk2)lk2.style.display='none';}modal.style.display='flex';setTimeout(function(){var inp=document.getElementById('adminPwdInput');if(inp){inp.value='';inp.focus();}},100);}
@@ -2885,6 +3166,9 @@ document.addEventListener('DOMContentLoaded',function(){
   try{refresh(true);}catch(e){console.error('refresh() failed on load:',e);}
   // Start persistent retry loop in case cold start exceeds 28s timeout
   _startAutoRetry();
+  // Background prefetch so recurrence badges work in LFI Hub without
+  // requiring a visit to the Committee tab first
+  try{ _fetchBarrierStats(); }catch(e){}
 });
 
 // Also refresh when user returns to tab (handles Apps Script session expiry)
