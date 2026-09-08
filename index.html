@@ -1480,10 +1480,19 @@ function openSubmitEvidenceForm(atrId){
 function _cmOpenEvidenceFolder(atrId){
   var row=(COMMITTEE_CACHE.atr&&COMMITTEE_CACHE.atr.rows||[]).find(function(r){return r.atrId===atrId;});
   var lfiId=row?row.lfiId:'';
-  if(!lfiId){ alert('Could not determine the linked LFI ID.'); return; }
-  _cmCall('?action=committeeEvidenceFolder&lfiId='+encodeURIComponent(lfiId), function(d){
-    if(d&&d.ok&&d.url) window.open(d.url,'_blank');
-    else alert((d&&d.error)||'Could not open the evidence folder.');
+  var msgEl=document.getElementById('cmEvMsg');
+  if(!lfiId){ if(msgEl){msgEl.style.color='#c62828';msgEl.textContent='Could not determine the linked LFI ID.';} return; }
+  if(msgEl){ msgEl.style.color='#6B7280'; msgEl.textContent='Opening/creating folder...'; }
+  // Nested LFI > ATR folder — groups all evidence for this LFI together,
+  // while keeping each action's evidence in its own subfolder.
+  _cmCall('?action=committeeEvidenceFolder&lfiId='+encodeURIComponent(lfiId)+'&atrId='+encodeURIComponent(atrId), function(d){
+    if(d&&d.ok&&d.url){
+      window.open(d.url,'_blank');
+      // Auto-fill the Evidence Link field — no manual copy/paste needed
+      var linkEl=document.getElementById('cmEvLink');
+      if(linkEl) linkEl.value=d.url;
+      if(msgEl){ msgEl.style.color='#2e7d32'; msgEl.textContent='Folder opened and link filled in below.'; }
+    } else if(msgEl){ msgEl.style.color='#c62828'; msgEl.textContent=(d&&d.error)||'Could not open the evidence folder.'; }
   });
 }
 function _cmSubmitEvidence(atrId, email){
