@@ -1354,18 +1354,16 @@ function _cmSubmitAction(lfiId, email){
     '&priority='+encodeURIComponent(priority)+'&email='+encodeURIComponent(email);
   _cmCall(qs, function(d){
     if(d && d.ok){
-      msgEl.style.color='#2e7d32'; msgEl.textContent='Logged: '+d.atrId+'.';
       COMMITTEE_CACHE.loaded=false;
       if(document.getElementById('page-committee').classList.contains('active')) renderCommitteePage();
-      var again=confirm('Action logged: '+d.atrId+'\n\nLog another action for this same LFI ('+lfiId+')?');
-      if(again){
-        document.getElementById('cmDesc').value='';
-        document.getElementById('cmOwner').value='';
-        document.getElementById('cmDue').value='';
-        msgEl.textContent='Ready for the next action.';
-      } else {
-        closeFcDetail();
-      }
+      var body=document.getElementById('fdBody');
+      body.innerHTML = '<div class="fd-content" style="text-align:center;padding:20px 10px">'
+        + '<p style="color:#2e7d32;font-weight:700;font-size:14px">&#10004; Logged: '+esc(d.atrId)+'</p>'
+        + '<p style="color:#4d555b;font-size:13px;margin-top:6px">Log another action for this same LFI ('+esc(lfiId)+')?</p>'
+        + '<div style="display:flex;gap:10px;justify-content:center;margin-top:16px">'
+        + '<button class="fc-act-btn" style="background:#eef1fa;color:#21409a" onclick="closeFcDetail()">No, close</button>'
+        + '<button class="fc-act-btn" style="background:#21409a;color:#fff" onclick="openCommitteeActionForm(&quot;'+esc(lfiId)+'&quot;)">Yes, log another</button>'
+        + '</div></div>';
     } else { msgEl.style.color='#c62828'; msgEl.textContent=(d&&d.error)||'Submission failed — try again.'; }
   });
 }
@@ -1373,12 +1371,29 @@ function _cmSubmitAction(lfiId, email){
 // ── Shared: prompt once per session for the committee member's email ──
 function _cmEmailPrompt(onReady){
   if(COMMITTEE_CACHE.identity && COMMITTEE_CACHE.identity.ok && COMMITTEE_CACHE.identity.email){ onReady(COMMITTEE_CACHE.identity.email); return; }
-  var email=prompt('Enter your @altasnim.com email to continue (checked against the committee roster):');
-  if(!email) return;
-  email=email.trim();
-  if(!/@altasnim\.com$/i.test(email)){ alert('Only @altasnim.com email addresses are accepted.'); return; }
+  // In-page modal — never window.prompt(), which browsers can silently
+  // block inside embedded iframes (e.g. the Google Sites embed).
+  var h = '<div class="fd-head" style="border-bottom:2px solid #21409a">'
+    + '<div><span class="fd-id">Confirm Your Email</span><div class="fd-cat" style="color:#21409a">Required to log Committee actions</div></div>'
+    + '<button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div>'
+    + '<div class="fd-content" style="padding-top:10px">'
+    + '<div class="fd-sec"><label>Your @altasnim.com email</label>'
+    + '<input id="cmPreEmail" type="text" placeholder="name@altasnim.com" style="width:100%;padding:9px;border:1px solid #dce1ee;border-radius:6px;font-size:13px" onkeydown="if(event.key===&quot;Enter&quot;)_cmPreEmailSubmit()"></div>'
+    + '<div id="cmPreMsg" style="font-size:12px;color:#c62828;min-height:16px"></div>'
+    + '</div><div class="fd-actions"><button class="fc-act-btn" style="background:#21409a;color:#fff" onclick="_cmPreEmailSubmit()">Continue</button></div>';
+  document.getElementById('fdBody').innerHTML=h;
+  document.getElementById('fdModal').classList.add('vis');
+  window._cmPendingOnReady=onReady;
+  setTimeout(function(){ var el=document.getElementById('cmPreEmail'); if(el) el.focus(); },100);
+}
+function _cmPreEmailSubmit(){
+  var email=document.getElementById('cmPreEmail').value.trim();
+  var msgEl=document.getElementById('cmPreMsg');
+  if(!email){ msgEl.textContent='Enter your email to continue.'; return; }
+  if(!/@altasnim\.com$/i.test(email)){ msgEl.textContent='Only @altasnim.com email addresses are accepted.'; return; }
   COMMITTEE_CACHE.identity={ok:true,email:email};
-  onReady(email);
+  var cb=window._cmPendingOnReady; window._cmPendingOnReady=null;
+  if(cb) cb(email);
 }
 
 // ── Shared: fire a GET+JSONP write call, parse the JSON response ──
@@ -1477,12 +1492,36 @@ function _fetchCommitteeIdentity(email, onDone){
 }
 function checkCommitteeAccess(){
   if(COMMITTEE_CACHE.identity && COMMITTEE_CACHE.identity.ok){ _showCommitteeGate(false); renderCommitteePage(); return; }
-  var email=prompt('LFI Committee Access\n\nEnter your @altasnim.com email to continue.\nYour access is checked against the committee roster — no password needed.');
-  if(!email){ navTo('overview'); return; }
-  _fetchCommitteeIdentity(email.trim(), function(d){
+  // In-page modal instead of window.prompt() — native browser dialogs are
+  // frequently blocked silently inside embedded iframes (e.g. Google Sites),
+  // which would otherwise make this tab look like it does nothing.
+  var h = '<div class="fd-head" style="border-bottom:2px solid #21409a">'
+    + '<div><span class="fd-id">LFI Committee Access</span><div class="fd-cat" style="color:#21409a">Identity check — no password needed</div></div>'
+    + '<button class="fd-x" onclick="closeFcDetail();navTo(&quot;overview&quot;)">&#10005;</button></div>'
+    + '<div class="fd-content" style="padding-top:10px">'
+    + '<div class="fd-sec"><label>Your @altasnim.com email</label>'
+    + '<input id="cmGateEmail" type="text" placeholder="name@altasnim.com" style="width:100%;padding:9px;border:1px solid #dce1ee;border-radius:6px;font-size:13px" onkeydown="if(event.key===&quot;Enter&quot;)_cmGateSubmit()"></div>'
+    + '<p style="font-size:11px;color:#6B7280">Checked against the live committee roster for your cluster/discipline.</p>'
+    + '<div id="cmGateMsg" style="font-size:12px;color:#c62828;min-height:16px"></div>'
+    + '</div><div class="fd-actions"><button class="fc-act-btn" style="background:#21409a;color:#fff" onclick="_cmGateSubmit()">Continue</button></div>';
+  document.getElementById('fdBody').innerHTML=h;
+  document.getElementById('fdModal').classList.add('vis');
+  setTimeout(function(){ var el=document.getElementById('cmGateEmail'); if(el) el.focus(); },100);
+}
+function _cmGateSubmit(){
+  var email=document.getElementById('cmGateEmail').value.trim();
+  var msgEl=document.getElementById('cmGateMsg');
+  if(!email){ msgEl.textContent='Enter your email to continue.'; return; }
+  if(!/@altasnim\.com$/i.test(email)){ msgEl.textContent='Only @altasnim.com email addresses are accepted.'; return; }
+  msgEl.style.color='#6B7280'; msgEl.textContent='Checking roster...';
+  _fetchCommitteeIdentity(email, function(d){
     COMMITTEE_CACHE.identity=d;
-    if(d.ok){ _showCommitteeGate(false); renderCommitteePage(); }
-    else { alert('Access denied.\n\n'+email+' is not on the active LFI Committee roster for any cluster/discipline.\nContact your HSE department if this is incorrect.'); navTo('overview'); }
+    if(d.ok){
+      closeFcDetail(); _showCommitteeGate(false); renderCommitteePage();
+    } else {
+      msgEl.style.color='#c62828';
+      msgEl.textContent=email+' is not on the active LFI Committee roster for any cluster/discipline. Contact your HSE department if this is incorrect.';
+    }
   });
 }
 function _showCommitteeGate(show){
