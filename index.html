@@ -774,6 +774,30 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
           </div>
         </div>
         <div class="cc" style="grid-column:1/-1">
+          <div class="ch">&#128203; Dropdown Master Control</div>
+          <div style="font-size:11px;color:#6B7280;margin-bottom:10px">
+            Single source of truth for Division, LFI Category, Cluster and Discipline. Lives in the
+            "Dropdown Master" sheet tab. After editing: run <strong>LFI Tools &gt; LFI Committee &gt;
+            Apply Master Dropdown Validation</strong> once so the LFI Register's own dropdowns pick it up live,
+            and <strong>Sync Form Dropdowns from Master</strong> to push changes to the submission Form too.
+            Approval Status and Committee Role are intentionally not editable here — the workflow code
+            depends on those exact values.
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+            <select id="mdmField" onchange="admRenderMasterList()" style="padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">
+              <option>Division</option><option>LFI Category</option><option>Cluster</option><option>Discipline</option>
+            </select>
+            <input id="mdmNewValue" type="text" placeholder="Add new value..."
+              style="flex:1;min-width:200px;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">
+            <button class="adm-btn" onclick="admAddMasterValue()">&#10133; Add</button>
+            <button class="adm-btn" onclick="admLoadDisciplineOptions()">&#8635; Refresh</button>
+          </div>
+          <div id="mdmList" style="display:flex;flex-wrap:wrap;gap:4px">
+            <span style="color:#6B7280;font-size:12px">Select a field above and click Refresh to load.</span>
+          </div>
+        </div>
+
+        <div class="cc" style="grid-column:1/-1">
           <div class="ch">&#9878; LFI Committee — Global Reviewers</div>
           <div style="font-size:11px;color:#6B7280;margin-bottom:10px">
             Reviewers listed here can approve ANY closeout, regardless of cluster/discipline.
@@ -2385,11 +2409,70 @@ function admRetryPending(){admLog('Checking pending LFIs...');_admCall('retryPen
 function admClearScriptCache(){admLog('Clearing script cache...');_admCall('clearCache',function(d){admLog(d.status==='OK'?'OK: '+d.message:'Error: '+d.message);});}
 function admGetSystemLog(){admLog('Fetching System Log...');_admCall('getLog',function(d){if(d.status==='OK'&&d.logs){admLog('--- System Log (last '+d.logs.length+') ---');d.logs.forEach(function(r){admLog('['+r.ts+'] '+r.fn+' | '+r.st+' | '+r.msg);});admLog('--- End ---');}else{admLog('Error: '+(d.message||'unknown'));}});}
 function _admCall(cmd,cb){var cbN='admCb'+Date.now(),script=document.createElement('script'),done=false;var tid=setTimeout(function(){if(done)return;done=true;delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);admLog('TIMEOUT. Sign into altasnim.com and retry.');},12000);window[cbN]=function(d){if(done)return;done=true;clearTimeout(tid);delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);if(cb)cb(d);};script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbN];admLog('FAIL: Script load error.');};script.src=API_BASE+'?action=admin&cmd='+encodeURIComponent(cmd)+'&callback='+cbN;document.head.appendChild(script);}
-function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');admLoadReviewers();admLoadRoster();}
+function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');admLoadReviewers();admLoadRoster();admLoadDisciplineOptions();}
 
 // ── Admin: Global Reviewer management ────────────────────────
 function _admPwd(){ return ADMIN_SESSION_PWD || (function(){var el=document.getElementById('adminPwdInput');return el?el.value:'';})(); }
 // ── Admin: LFI Committee Roster (cluster/discipline members) ──
+// ── Admin: load live Discipline list into the datalist ──
+// ── Admin: master lists power the Roster card's Cluster/Discipline
+// datalists (autocomplete hints, kept live) AND the dedicated
+// Dropdown Master Control card below. ──
+var MASTER_FIELD_TO_DATALIST = { 'Cluster':'clusterOptions', 'Discipline':'disciplineOptions' };
+function admLoadDisciplineOptions(){
+  _cmCall('?action=dropdownMasterList&pwd='+encodeURIComponent(_admPwd()), function(d){
+    if(!d||!d.ok||!d.lists) return;
+    Object.keys(MASTER_FIELD_TO_DATALIST).forEach(function(field){
+      var list=d.lists[field]; var dl=document.getElementById(MASTER_FIELD_TO_DATALIST[field]);
+      if(dl && list && list.length) dl.innerHTML=list.map(function(x){return '<option>'+esc(x)+'</option>';}).join('');
+    });
+    MASTER_LIST_CACHE=d.lists;
+    if(document.getElementById('mdmField')) admRenderMasterList();
+  });
+}
+
+// ── Admin: Dropdown Master Control card ──────────────────────
+var MASTER_LIST_CACHE={};
+function admRenderMasterList(){
+  var field=document.getElementById('mdmField').value;
+  var list=(MASTER_LIST_CACHE[field]||[]).slice().sort();
+  var el=document.getElementById('mdmList');
+  if(!list.length){ el.innerHTML='<span style="color:#6B7280;font-size:12px">No values yet.</span>'; return; }
+  el.innerHTML=list.map(function(v){
+    return '<span class="mdm-chip" data-field="'+esc(field)+'" data-value="'+esc(v)+'" style="background:#EEF1FA;color:#21409a;padding:5px 6px 5px 12px;border-radius:14px;font-size:12px;display:inline-flex;align-items:center;gap:4px;margin:3px">'
+      +esc(v)
+      +'<button onclick="admRemoveMasterValue(this)" style="background:none;border:none;color:#c62828;cursor:pointer;font-weight:700;padding:0 4px" title="Remove">&#10005;</button></span>';
+  }).join('');
+}
+function admAddMasterValue(){
+  var field=document.getElementById('mdmField').value;
+  var value=document.getElementById('mdmNewValue').value.trim();
+  if(!value){ admLog('Enter a value first.'); return; }
+  var pwd=_admPwd();
+  _cmCall('?action=dropdownMasterAdd&field='+encodeURIComponent(field)+'&value='+encodeURIComponent(value)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok){ admLog('Added to '+field+': '+value); document.getElementById('mdmNewValue').value=''; admLoadDisciplineOptions(); }
+    else admLog('Failed: '+((d&&d.error)||'unknown error'));
+  });
+}
+function admRemoveMasterValue(btn){
+  var chip=btn.closest('.mdm-chip'); var field=chip.dataset.field, value=chip.dataset.value;
+  if(!chip.dataset.confirming){
+    chip.dataset.confirming='1';
+    chip.innerHTML='<span style="color:#c62828">Remove?</span>'
+      +'<button onclick="_admDoRemoveMasterValue(&quot;'+esc(field)+'&quot;,&quot;'+esc(value)+'&quot;)" style="background:none;border:none;color:#c62828;font-weight:700;cursor:pointer;padding:0 4px">Yes</button>'
+      +'<button onclick="admRenderMasterList()" style="background:none;border:none;color:#6B7280;cursor:pointer;padding:0 4px">No</button>';
+    return;
+  }
+  _admDoRemoveMasterValue(field,value);
+}
+function _admDoRemoveMasterValue(field,value){
+  var pwd=_admPwd();
+  _cmCall('?action=dropdownMasterRemove&field='+encodeURIComponent(field)+'&value='+encodeURIComponent(value)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok){ admLog('Removed from '+field+': '+value); admLoadDisciplineOptions(); }
+    else { admLog('Failed: '+((d&&d.error)||'unknown error')); admRenderMasterList(); }
+  });
+}
+
 function admLoadRoster(){
   var el=document.getElementById('rosterList');
   el.innerHTML='<span style="color:#6B7280;font-size:12px">Loading...</span>';
