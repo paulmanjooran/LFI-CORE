@@ -1550,7 +1550,7 @@ function _fetchAtrList(){
     COMMITTEE_CACHE.atr=d; _renderAtrTable(d);
   };
   script.onerror=function(){ if(done)return; done=true; clearTimeout(tid); delete window[cb]; };
-  script.src=API_BASE+'?action=atrList&callback='+cb;
+  script.src=API_BASE+'?action=atrList&email='+encodeURIComponent((COMMITTEE_CACHE.identity&&COMMITTEE_CACHE.identity.email)||'')+'&callback='+cb;
   document.head.appendChild(script);
 }
 
@@ -1563,7 +1563,7 @@ function _fetchBarrierStats(){
     COMMITTEE_CACHE.barrier=d; _renderBarrierChart(d);
   };
   script.onerror=function(){ if(done)return; done=true; clearTimeout(tid); delete window[cb]; };
-  script.src=API_BASE+'?action=barrierStats&callback='+cb;
+  script.src=API_BASE+'?action=barrierStats&email='+encodeURIComponent((COMMITTEE_CACHE.identity&&COMMITTEE_CACHE.identity.email)||'')+'&callback='+cb;
   document.head.appendChild(script);
   // Taxonomy is small + static per session — piggyback same trip pattern
   var cb2='_btx'+Date.now(), script2=document.createElement('script'), done2=false;
@@ -1579,7 +1579,7 @@ function _fetchBarrierStats(){
     }
   };
   script2.onerror=function(){ if(done2)return; done2=true; clearTimeout(tid2); delete window[cb2]; };
-  script2.src=API_BASE+'?action=barrierTaxonomy&callback='+cb2;
+  script2.src=API_BASE+'?action=barrierTaxonomy&email='+encodeURIComponent((COMMITTEE_CACHE.identity&&COMMITTEE_CACHE.identity.email)||'')+'&callback='+cb2;
   document.head.appendChild(script2);
 }
 
@@ -2361,7 +2361,7 @@ function _admPwd(){ return ADMIN_SESSION_PWD || (function(){var el=document.getE
 function admLoadReviewers(){
   var el=document.getElementById('reviewerList');
   el.innerHTML='<span style="color:#6B7280;font-size:12px">Loading...</span>';
-  _cmCall('?action=committeeListReviewers', function(d){
+  _cmCall('?action=committeeListReviewers&pwd='+encodeURIComponent(_admPwd()), function(d){
     if(!d||!d.ok){ el.innerHTML='<span style="color:#c62828;font-size:12px">Failed to load.</span>'; return; }
     if(!d.reviewers.length){ el.innerHTML='<span style="color:#6B7280;font-size:12px">No global reviewers set yet.</span>'; return; }
     el.innerHTML=d.reviewers.map(function(r){
