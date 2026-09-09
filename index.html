@@ -798,6 +798,24 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         </div>
 
         <div class="cc" style="grid-column:1/-1">
+          <div class="ch">&#128274; Admin Users — Per-Row Delete Access</div>
+          <div style="font-size:11px;color:#6B7280;margin-bottom:10px">
+            These emails see a delete button next to every ATR action in the LFI Committee tab,
+            without needing the shared Admin panel password. Deletion is re-verified server-side
+            regardless of what the browser shows.
+          </div>
+          <div id="adminUserList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+            <span style="color:#6B7280;font-size:12px">Loading...</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="newAdminUserEmail" type="text" placeholder="name@altasnim.com"
+              style="flex:1;min-width:220px;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:13px">
+            <button class="adm-btn" onclick="admAddAdminUser()">&#10133; Add Admin User</button>
+            <button class="adm-btn" onclick="admLoadAdminUsers()">&#8635; Refresh List</button>
+          </div>
+        </div>
+
+        <div class="cc" style="grid-column:1/-1">
           <div class="ch">&#9878; LFI Committee — Global Reviewers</div>
           <div style="font-size:11px;color:#6B7280;margin-bottom:10px">
             Reviewers listed here can approve ANY closeout, regardless of cluster/discipline.
@@ -856,6 +874,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     </div>
 
     <div class="page" id="page-committee">
+      <div id="cmDebug" style="background:#1A1F2B;color:#0f0;font-family:monospace;font-size:11px;padding:8px 12px;margin-bottom:10px;border-radius:6px;white-space:pre-wrap"></div>
       <div class="cc" style="margin-bottom:16px;border-left:4px solid #21409a">
         <div style="font-size:13px;color:#4d555b;line-height:1.5">
           <strong>Failed Barrier classification</strong> is confirmed only by the LFI Committee. AI-suggested
@@ -894,7 +913,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
           <thead><tr style="text-align:left;color:#6B7280;font-size:11px;text-transform:uppercase">
             <th style="padding:8px">ATR ID</th><th style="padding:8px">LFI ID</th><th style="padding:8px">Action</th>
             <th style="padding:8px">Action Party</th><th style="padding:8px">Due</th><th style="padding:8px">Priority</th>
-            <th style="padding:8px">Status</th><th style="padding:8px">Evidence</th><th style="padding:8px">Action</th>
+            <th style="padding:8px">Status</th><th style="padding:8px">Evidence</th><th style="padding:8px">Action</th><th style="padding:8px" id="atrDelHeader"></th>
           </tr></thead>
           <tbody id="atrTableBody"></tbody>
         </table>
@@ -1446,9 +1465,10 @@ function _cmPreEmailSubmit(){
   var msgEl=document.getElementById('cmPreMsg');
   if(!email){ msgEl.textContent='Enter your email to continue.'; return; }
   if(!/@altasnim\.com$/i.test(email)){ msgEl.textContent='Only @altasnim.com email addresses are accepted.'; return; }
-  COMMITTEE_CACHE.identity={ok:true,email:email};
-  var cb=window._cmPendingOnReady; window._cmPendingOnReady=null;
-  if(cb) cb(email);
+  _cmVerifyAndSetIdentity(email, msgEl, function(){
+    var cb=window._cmPendingOnReady; window._cmPendingOnReady=null;
+    if(cb) cb(email);
+  });
 }
 
 // ── Shared: fire a GET+JSONP write call, parse the JSON response ──
@@ -1555,6 +1575,7 @@ function _fetchCommitteeIdentity(email, onDone){
   document.head.appendChild(script);
 }
 function checkCommitteeAccess(){
+  _cmDebugPrint2('checkCommitteeAccess called');
   if(COMMITTEE_CACHE.identity && COMMITTEE_CACHE.identity.ok){ _showCommitteeGate(false); renderCommitteePage(); return; }
   // In-page modal instead of window.prompt() — native browser dialogs are
   // frequently blocked silently inside embedded iframes (e.g. Google Sites),
@@ -1572,20 +1593,30 @@ function checkCommitteeAccess(){
   document.getElementById('fdModal').classList.add('vis');
   setTimeout(function(){ var el=document.getElementById('cmGateEmail'); if(el) el.focus(); },100);
 }
+// Shared by both identity entry points (Committee tab gate, and the
+// pre-check before opening an action modal from a flashcard) so
+// COMMITTEE_CACHE.identity always has the SAME shape: {ok, email,
+// seats, isAdmin} — regardless of which path a person used first.
+function _cmVerifyAndSetIdentity(email, msgEl, onSuccess){
+  if(msgEl){ msgEl.style.color='#6B7280'; msgEl.textContent='Checking roster...'; }
+  _fetchCommitteeIdentity(email, function(d){
+    var isAdmin = d.ok && d.seats && d.seats.some(function(s){ return s.role==='AdminUser'; });
+    COMMITTEE_CACHE.identity = { ok: d.ok, email: email, seats: d.seats||[], isAdmin: !!isAdmin };
+    if(d.ok){ onSuccess(); }
+    else if(msgEl){
+      msgEl.style.color='#c62828';
+      msgEl.textContent=email+' is not on the active LFI Committee roster for any cluster/discipline. Contact your HSE department if this is incorrect.';
+    }
+  });
+}
+
 function _cmGateSubmit(){
   var email=document.getElementById('cmGateEmail').value.trim();
   var msgEl=document.getElementById('cmGateMsg');
   if(!email){ msgEl.textContent='Enter your email to continue.'; return; }
   if(!/@altasnim\.com$/i.test(email)){ msgEl.textContent='Only @altasnim.com email addresses are accepted.'; return; }
-  msgEl.style.color='#6B7280'; msgEl.textContent='Checking roster...';
-  _fetchCommitteeIdentity(email, function(d){
-    COMMITTEE_CACHE.identity=d;
-    if(d.ok){
-      closeFcDetail(); _showCommitteeGate(false); renderCommitteePage();
-    } else {
-      msgEl.style.color='#c62828';
-      msgEl.textContent=email+' is not on the active LFI Committee roster for any cluster/discipline. Contact your HSE department if this is incorrect.';
-    }
+  _cmVerifyAndSetIdentity(email, msgEl, function(){
+    closeFcDetail(); _showCommitteeGate(false); renderCommitteePage();
   });
 }
 function _showCommitteeGate(show){
@@ -1594,7 +1625,19 @@ function _showCommitteeGate(show){
 }
 
 
+function _cmDebugPrint2(where){ console.log('[Committee Debug] '+where, JSON.parse(JSON.stringify(COMMITTEE_CACHE||{}))); }
+function _cmDebugPrint(where){
+  var el=document.getElementById('cmDebug'); if(!el) return;
+  el.textContent = 'DEBUG @ '+where+'\n'
+    +'identity: '+(COMMITTEE_CACHE.identity?JSON.stringify(COMMITTEE_CACHE.identity):'NOT SET')+'\n'
+    +'loaded: '+COMMITTEE_CACHE.loaded+'\n'
+    +'atr rows cached: '+(COMMITTEE_CACHE.atr&&COMMITTEE_CACHE.atr.rows?COMMITTEE_CACHE.atr.rows.length:'null')+'\n'
+    +'atrTableBody rows in DOM: '+document.querySelectorAll('#atrTableBody tr').length+'\n'
+    +'page-committee has .active: '+document.getElementById('page-committee').classList.contains('active');
+}
+
 function renderCommitteePage(){
+  _cmDebugPrint('renderCommitteePage start');
   if(!COMMITTEE_CACHE.loaded){
     _fetchAtrList();
     _fetchBarrierStats();
@@ -1603,6 +1646,7 @@ function renderCommitteePage(){
     _renderAtrTable(COMMITTEE_CACHE.atr);
     _renderBarrierChart(COMMITTEE_CACHE.barrier);
   }
+  setTimeout(function(){_cmDebugPrint('renderCommitteePage end (async fetch may still be pending)');}, 50);
 }
 
 function _fetchAtrList(){
@@ -1647,7 +1691,27 @@ function _fetchBarrierStats(){
   document.head.appendChild(script2);
 }
 
+// ── Admin-only: delete a single ATR row, in-page confirm ─────
+function atrDeleteRowStart(btn, atrId){
+  var td = btn.closest('td');
+  if(!td.dataset.confirming){
+    td.dataset.confirming='1';
+    td.innerHTML = '<button onclick="_atrDoDelete(&quot;'+esc(atrId)+'&quot;)" style="background:none;border:none;color:#c62828;font-weight:700;cursor:pointer;font-size:11px">Yes</button>'
+      +' / <button onclick="renderCommitteePage()" style="background:none;border:none;color:#6B7280;cursor:pointer;font-size:11px">No</button>';
+    return;
+  }
+  _atrDoDelete(atrId);
+}
+function _atrDoDelete(atrId){
+  var email=(COMMITTEE_CACHE.identity&&COMMITTEE_CACHE.identity.email)||'';
+  _cmCall('?action=committeeDeleteAtrRowWeb&atrId='+encodeURIComponent(atrId)+'&email='+encodeURIComponent(email), function(d){
+    if(d&&d.ok){ COMMITTEE_CACHE.loaded=false; renderCommitteePage(); }
+    else alert((d&&d.error)||'Delete failed.'); // admin-only action, low iframe-embed risk, but consider replacing later
+  });
+}
+
 function _renderAtrTable(d){
+  console.log('_renderAtrTable called with:', d);
   if(!d||!d.rows)return;
   var open=0, overdue=0, closed=0, pendingEvidence=0;
   d.rows.forEach(function(r){
@@ -1675,7 +1739,11 @@ function _renderAtrTable(d){
     } else if(r.status==='Pending Closeout Approval'){
       actionBtn='<button onclick="openApproveCloseoutForm(&quot;'+esc(r.atrId)+'&quot;)" style="background:#8e44ad;color:#fff;border:none;padding:4px 10px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer">Approve/Reject</button>';
     }
-    return '<tr style="border-top:1px solid #EEF1FA">'+
+    var isAdmin = COMMITTEE_CACHE.identity && COMMITTEE_CACHE.identity.isAdmin;
+    var delBtn = isAdmin
+      ? '<button onclick="atrDeleteRowStart(this,&quot;'+esc(r.atrId)+'&quot;)" style="background:none;border:none;color:#c62828;cursor:pointer;font-size:14px" title="Delete (Admin only)">&#128465;</button>'
+      : '';
+    return '<tr style="border-top:1px solid #EEF1FA" data-atrid="'+esc(r.atrId)+'">'+
       '<td style="padding:8px;font-weight:600">'+esc(r.atrId)+'</td>'+
       '<td style="padding:8px;font-size:11px">'+esc(r.lfiId)+'</td>'+
       '<td style="padding:8px;max-width:280px">'+esc(r.action)+'</td>'+
@@ -1685,6 +1753,7 @@ function _renderAtrTable(d){
       '<td style="padding:8px"><span style="background:'+sc+';color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">'+esc(r.status)+'</span></td>'+
       '<td style="padding:8px">'+(r.evidence?'<a href="'+esc(r.evidence)+'" target="_blank" style="color:#21409a">&#128206; View</a>':'<span style="color:#c0c4cc">&#8212;</span>')+'</td>'+
       '<td style="padding:8px">'+actionBtn+'</td>'+
+      '<td style="padding:8px;text-align:center">'+delBtn+'</td>'+
       '</tr>';
   }).join('');
 }
@@ -2418,7 +2487,7 @@ function admRetryPending(){admLog('Checking pending LFIs...');_admCall('retryPen
 function admClearScriptCache(){admLog('Clearing script cache...');_admCall('clearCache',function(d){admLog(d.status==='OK'?'OK: '+d.message:'Error: '+d.message);});}
 function admGetSystemLog(){admLog('Fetching System Log...');_admCall('getLog',function(d){if(d.status==='OK'&&d.logs){admLog('--- System Log (last '+d.logs.length+') ---');d.logs.forEach(function(r){admLog('['+r.ts+'] '+r.fn+' | '+r.st+' | '+r.msg);});admLog('--- End ---');}else{admLog('Error: '+(d.message||'unknown'));}});}
 function _admCall(cmd,cb){var cbN='admCb'+Date.now(),script=document.createElement('script'),done=false;var tid=setTimeout(function(){if(done)return;done=true;delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);admLog('TIMEOUT. Sign into altasnim.com and retry.');},12000);window[cbN]=function(d){if(done)return;done=true;clearTimeout(tid);delete window[cbN];if(script.parentNode)script.parentNode.removeChild(script);if(cb)cb(d);};script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbN];admLog('FAIL: Script load error.');};script.src=API_BASE+'?action=admin&cmd='+encodeURIComponent(cmd)+'&callback='+cbN;document.head.appendChild(script);}
-function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');admLoadReviewers();admLoadRoster();admLoadDisciplineOptions();}
+function _adminPageInit(){var mode=typeof google!=='undefined'&&google.script&&google.script.run?'Apps Script':'GitHub Pages (JSONP)';admStat('js',true,mode);admStat('data',RAW!==null,RAW?RAW.length+' LFIs':'Not loaded');admStat('rows',RAW&&RAW.length>0,RAW?RAW.length+' records':'0');admStat('api',null,'Not tested');admStat('sheet',null,'Not tested');admRefreshVoiceStatus();admLog('Admin panel ready. Mode: '+mode+'.');admLoadReviewers();admLoadRoster();admLoadDisciplineOptions();admLoadAdminUsers();}
 
 // ── Admin: Global Reviewer management ────────────────────────
 function _admPwd(){ return ADMIN_SESSION_PWD || (function(){var el=document.getElementById('adminPwdInput');return el?el.value:'';})(); }
@@ -2568,6 +2637,49 @@ function _admDoRemoveMember(cluster,discipline,email){
     +'&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
     if(d&&d.ok) admLog('Member removed: '+email); else admLog('Failed: '+((d&&d.error)||'unknown error'));
     admLoadRoster();
+  });
+}
+
+// ── Admin: Admin Users (per-row delete access) ─────────────────
+function admLoadAdminUsers(){
+  var el=document.getElementById('adminUserList');
+  el.innerHTML='<span style="color:#6B7280;font-size:12px">Loading...</span>';
+  _cmCall('?action=committeeListAdminUsers&pwd='+encodeURIComponent(_admPwd()), function(d){
+    if(!d||!d.ok){ el.innerHTML='<span style="color:#c62828;font-size:12px">Failed to load: '+esc((d&&d.error)||'unknown')+'</span>'; return; }
+    if(!d.adminUsers.length){ el.innerHTML='<span style="color:#6B7280;font-size:12px">No admin users set yet.</span>'; return; }
+    el.innerHTML=d.adminUsers.map(function(u){
+      return '<span style="background:#FFF3E0;color:#c26b00;padding:5px 6px 5px 12px;border-radius:14px;font-size:12px;display:inline-flex;align-items:center;gap:4px">'
+        +esc(u.email)
+        +'<button onclick="admRemoveAdminUser(&quot;'+esc(u.email)+'&quot;,this)" style="background:none;border:none;color:#c62828;cursor:pointer;font-weight:700;padding:0 4px" title="Remove">&#10005;</button></span>';
+    }).join('');
+  });
+}
+function admAddAdminUser(){
+  var email=document.getElementById('newAdminUserEmail').value.trim();
+  if(!email){ admLog('Enter an email first.'); return; }
+  if(!/^[^\s@]+@altasnim\.com$/i.test(email)){ admLog('Not a valid @altasnim.com address.'); return; }
+  var pwd=_admPwd();
+  _cmCall('?action=committeeAddAdminUser&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok){ admLog('Admin user added: '+email); document.getElementById('newAdminUserEmail').value=''; admLoadAdminUsers(); }
+    else admLog('Failed: '+((d&&d.error)||'unknown error'));
+  });
+}
+function admRemoveAdminUser(email, btn){
+  var chip=btn.closest('span');
+  if(!chip.dataset.confirming){
+    chip.dataset.confirming='1';
+    chip.innerHTML='<span style="color:#c62828">Remove '+esc(email)+'?</span>'
+      +'<button onclick="_admDoRemoveAdminUser(&quot;'+esc(email)+'&quot;)" style="background:none;border:none;color:#c62828;font-weight:700;cursor:pointer;padding:0 4px">Yes</button>'
+      +'<button onclick="admLoadAdminUsers()" style="background:none;border:none;color:#6B7280;cursor:pointer;padding:0 4px">No</button>';
+    return;
+  }
+  _admDoRemoveAdminUser(email);
+}
+function _admDoRemoveAdminUser(email){
+  var pwd=_admPwd();
+  _cmCall('?action=committeeRemoveAdminUser&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd), function(d){
+    if(d&&d.ok){ admLog('Admin user removed: '+email); admLoadAdminUsers(); }
+    else admLog('Failed: '+((d&&d.error)||'unknown error'));
   });
 }
 
