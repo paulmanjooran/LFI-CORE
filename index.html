@@ -874,7 +874,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     </div>
 
     <div class="page" id="page-committee">
-      <div id="cmDebug" style="background:#1A1F2B;color:#0f0;font-family:monospace;font-size:11px;padding:8px 12px;margin-bottom:10px;border-radius:6px;white-space:pre-wrap"></div>
+      <div id="cmDebug" style="display:none;background:#1A1F2B;color:#0f0;font-family:monospace;font-size:11px;padding:8px 12px;margin-bottom:10px;border-radius:6px;white-space:pre-wrap"></div>
       <div class="cc" style="margin-bottom:16px;border-left:4px solid #21409a">
         <div style="font-size:13px;color:#4d555b;line-height:1.5">
           <strong>Failed Barrier classification</strong> is confirmed only by the LFI Committee. AI-suggested
@@ -1628,6 +1628,9 @@ function _showCommitteeGate(show){
 function _cmDebugPrint2(where){ console.log('[Committee Debug] '+where, JSON.parse(JSON.stringify(COMMITTEE_CACHE||{}))); }
 function _cmDebugPrint(where){
   var el=document.getElementById('cmDebug'); if(!el) return;
+  var isAdmin = COMMITTEE_CACHE.identity && COMMITTEE_CACHE.identity.isAdmin;
+  if(!isAdmin){ el.style.display='none'; el.textContent=''; return; }
+  el.style.display='block';
   el.textContent = 'DEBUG @ '+where+'\n'
     +'identity: '+(COMMITTEE_CACHE.identity?JSON.stringify(COMMITTEE_CACHE.identity):'NOT SET')+'\n'
     +'loaded: '+COMMITTEE_CACHE.loaded+'\n'
