@@ -861,6 +861,21 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
             <button class="adm-btn" onclick="admAddRosterMember()">&#10133; Add Member</button>
             <button class="adm-btn" onclick="admLoadRoster()">&#8635; Refresh List</button>
           </div>
+
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid #EEF1FA">
+            <div style="font-size:12px;font-weight:700;color:#4d555b;margin-bottom:4px">&#128194; Bulk Import (Roster)</div>
+            <div style="font-size:11px;color:#6B7280;margin-bottom:8px">
+              Paste rows as <code>cluster,discipline,role,name,email</code> — one per line, no header row.
+              Each row is added the same way as a single Add — same validation, same admin password.
+            </div>
+            <textarea id="bulkRosterInput" rows="4" placeholder="ODC-AMAL,Mechanical,Member,AMAR JEET,mechanical.amal@altasnim.com"
+              style="width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-size:11px;font-family:monospace;resize:vertical"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+              <button class="adm-btn" onclick="admBulkImportRoster()">&#11014; Import All Rows</button>
+              <span id="bulkImportProgress" style="font-size:11px;color:#6B7280"></span>
+            </div>
+            <div id="bulkImportLog" style="max-height:140px;overflow-y:auto;font-size:10.5px;font-family:monospace;margin-top:8px;color:#4d555b"></div>
+          </div>
         </div>
         <div class="cc" style="grid-column:1/-1">
           <div class="ch" style="display:flex;justify-content:space-between">
@@ -2580,6 +2595,48 @@ function admLoadRoster(){
       return '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:#4d555b;margin-bottom:3px">'+esc(k)+'</div>'+rows+'</div>';
     }).join('');
   });
+}
+
+// ── Admin: Bulk Import Roster — parses pasted CSV rows and imports
+// each one sequentially through the SAME single-row endpoint used by
+// the manual Add form. No new backend surface, same validation,
+// same admin password check on every single row server-side.
+function admBulkImportRoster(){
+  var raw = document.getElementById('bulkRosterInput').value.trim();
+  if(!raw){ admLog('Paste at least one row first.'); return; }
+  var lines = raw.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+  var pwd = _admPwd();
+  var logEl = document.getElementById('bulkImportLog');
+  var progEl = document.getElementById('bulkImportProgress');
+  logEl.innerHTML = '';
+  var ok=0, fail=0, i=0;
+
+  function next(){
+    if(i >= lines.length){
+      progEl.textContent = 'Done: ' + ok + ' imported, ' + fail + ' failed.';
+      admLoadRoster();
+      return;
+    }
+    var parts = lines[i].split(',').map(function(p){return p.trim();});
+    i++;
+    progEl.textContent = 'Importing ' + i + ' / ' + lines.length + '...';
+    if(parts.length < 5){
+      fail++;
+      logEl.innerHTML += '<div style="color:#c62828">Row '+i+': expected 5 fields, got '+parts.length+' — skipped</div>';
+      next(); return;
+    }
+    var cluster=parts[0], discipline=parts[1], role=parts[2], name=parts[3], email=parts.slice(4).join(',');
+    var qs = '?action=committeeAddRosterMember&cluster='+encodeURIComponent(cluster)
+      +'&discipline='+encodeURIComponent(discipline)+'&role='+encodeURIComponent(role)
+      +'&name='+encodeURIComponent(name)+'&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd);
+    _cmCall(qs, function(d){
+      if(d && d.ok){ ok++; logEl.innerHTML += '<div style="color:#2e7d32">Row '+i+': '+esc(email)+' — added</div>'; }
+      else { fail++; logEl.innerHTML += '<div style="color:#c62828">Row '+i+': '+esc(email)+' — '+esc((d&&d.error)||'failed')+'</div>'; }
+      logEl.scrollTop = logEl.scrollHeight;
+      setTimeout(next, 250); // gentle pacing, same spirit as server-side batch tools
+    });
+  }
+  next();
 }
 
 function admAddRosterMember(){
