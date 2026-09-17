@@ -591,8 +591,8 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
   </div>
   <nav>
     <div class="sb-sec" data-i18n="sb_sec_dash">Dashboard</div>
-    <a onclick="navTo('lfi',this)" style="position:relative"><span class="ni">&#127909;</span><span>LFI Hub</span><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(245,130,32,.25);color:var(--or);font-size:9px;font-weight:800;padding:1px 7px;border-radius:8px;border:1px solid rgba(245,130,32,.4)" id="sbVidCount"></span></a>
-    <a class="active" onclick="navTo('overview',this)"><span class="ni">&#128200;</span><span data-i18n="sb_overview">Overview</span></a>
+    <a class="active" onclick="navTo('lfi',this)" style="position:relative"><span class="ni">&#127909;</span><span>LFI Hub</span><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(245,130,32,.25);color:var(--or);font-size:9px;font-weight:800;padding:1px 7px;border-radius:8px;border:1px solid rgba(245,130,32,.4)" id="sbVidCount"></span></a>
+    <a onclick="navTo('overview',this)"><span class="ni">&#128200;</span><span data-i18n="sb_overview">Overview</span></a>
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform?usp=dialog" target="_blank" rel="noopener noreferrer"
        style="background:linear-gradient(135deg,var(--or),#d46d16);color:#fff;border-left-color:transparent;margin:8px 4px 10px;border-radius:9px;justify-content:center;font-weight:700;flex-shrink:0;box-shadow:0 4px 12px rgba(245,130,32,.3)">
       <span class="ni">&#128221;</span><span data-i18n="sb_submit">+ Submit New LFI</span>
@@ -606,7 +606,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 <div id="main">
   <div class="grad"></div>
   <div id="topbar">
-    <div id="ptitle">Overview Dashboard</div>
+    <div id="ptitle">LFI Register — Flashcards</div>
     <div class="ltgl">
       <button class="lbt active" onclick="setLang('en',this)">&#127468;&#127463; EN</button>
       <button class="lbt" onclick="setLang('hi',this)">&#127470;&#127475; &#2361;&#2367;</button>
@@ -660,7 +660,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     <span id="frc"></span>
   </div>
   <div id="content">
-    <div class="page active" id="page-overview">
+    <div class="page" id="page-overview">
       <div class="krow">
         <div class="kc headline" style="--accent:#21409a" id="kc0" onclick="clearDrill()">
           <div class="ki-wrap"><div class="ki">&#128203;</div><div class="kbadge" data-i18n="kl_alltime">All Time</div></div>
@@ -696,7 +696,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         <div class="cc" id="heatmapCard"><div class="ch">&#128293; Repeat Incident Categories <span style="font-size:11px;color:var(--muted);font-weight:400">— Frequency &amp; systemic risk</span></div><div id="heatmapBody" style="padding:10px 14px;max-height:230px;overflow-y:auto"></div></div>
       </div>
     </div>
-    <div class="page" id="page-lfi">
+    <div class="page active" id="page-lfi">
       <div class="vsbar" id="voiceStatusBar">
         <span style="font-weight:700;color:var(--dg);flex-shrink:0" data-role="voice-label">&#128266; Audio Voices:</span>
         <span class="vtag loading" id="vtEN">&#8987; EN</span>
@@ -967,7 +967,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 var API_BASE='https://script.google.com/macros/s/AKfycbwHNUh4hVsh-0Hce7tAs8CD7FzxQOf9hrWgXeY05JnrhDt5G9ys_25xGWiO6-zVoENPIw/exec';
 var ADMIN_PWD_B64=btoa('ATNM@2026');
 var ADMIN_UNLOCKED=false,ADMIN_ATTEMPTS=0,ADMIN_MAX=3,ADMIN_LOCKED_UNTIL=0;
-var LANG='en',DRILL=null,RAW=null,CH={},CUR_PAGE='overview';
+var LANG='en',DRILL=null,RAW=null,CH={},CUR_PAGE='lfi';
 var PAL=['#21409a','#f58220','#28a745','#dc3545','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#e83e8c'];
 var SPEAKING_BTN=null;
 var CURRENT_AUDIO=null;
@@ -1007,7 +1007,7 @@ function navTo(page,el){
   // Mobile bottom nav sync
   document.querySelectorAll('.mn-tab').forEach(function(t){t.classList.toggle('active',t.dataset&&t.dataset.page===page);});
   // Page titles
-  var T={overview:'Overview Dashboard',lfi:'LFI Hub \u2014 Flashcards & Videos',videos:'LFI Hub \u2014 Flashcards & Videos',admin:'Admin Controls',committee:'LFI Committee \u2014 Barriers & Action Tracking'};
+  var T={overview:'Overview Dashboard',lfi:'LFI Hub — Flashcards & Videos',videos:'LFI Hub — Flashcards & Videos',admin:'Admin Controls',committee:'LFI Committee \u2014 Barriers & Action Tracking'};
   document.getElementById('ptitle').textContent=T[page]||'Dashboard';
   // Page-specific actions
   if(page==='committee'){checkCommitteeAccess();}
@@ -1601,7 +1601,7 @@ function checkCommitteeAccess(){
   // which would otherwise make this tab look like it does nothing.
   var h = '<div class="fd-head" style="border-bottom:2px solid #21409a">'
     + '<div><span class="fd-id">LFI Committee Access</span><div class="fd-cat" style="color:#21409a">Identity check — no password needed</div></div>'
-    + '<button class="fd-x" onclick="closeFcDetail();navTo(&quot;overview&quot;)">&#10005;</button></div>'
+    + '<button class="fd-x" onclick="closeFcDetail();navTo(&quot;lfi&quot;)">&#10005;</button></div>'
     + '<div class="fd-content" style="padding-top:10px">'
     + '<div class="fd-sec"><label>Your @altasnim.com email</label>'
     + '<input id="cmGateEmail" type="text" placeholder="name@altasnim.com" style="width:100%;padding:9px;border:1px solid #dce1ee;border-radius:6px;font-size:13px" onkeydown="if(event.key===&quot;Enter&quot;)_cmGateSubmit()"></div>'
@@ -2862,7 +2862,7 @@ function _admDoRemove(email){
 
 // ── Admin Password ────────────────────────────────────────────
 function admShowModal(){var modal=document.getElementById('adminModal');if(!modal)return;if(Date.now()<ADMIN_LOCKED_UNTIL){var s=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);var lk=document.getElementById('adminLockMsg');if(lk){lk.style.display='block';lk.textContent='Locked. Try again in '+s+'s.';}}else{var e=document.getElementById('adminPwdErr');if(e)e.style.display='none';var lk2=document.getElementById('adminLockMsg');if(lk2)lk2.style.display='none';}modal.style.display='flex';setTimeout(function(){var inp=document.getElementById('adminPwdInput');if(inp){inp.value='';inp.focus();}},100);}
-function admCloseModal(){var modal=document.getElementById('adminModal');if(modal)modal.style.display='none';if(!ADMIN_UNLOCKED){var ov=document.querySelector('nav a.active');navTo('overview',ov);}}
+function admCloseModal(){var modal=document.getElementById('adminModal');if(modal)modal.style.display='none';if(!ADMIN_UNLOCKED){var ov=document.querySelector('nav a.active');navTo('lfi',ov);}}
 var ADMIN_SESSION_PWD='';
 function admCheckPwd(){if(Date.now()<ADMIN_LOCKED_UNTIL){var s=Math.ceil((ADMIN_LOCKED_UNTIL-Date.now())/1000);admShowPwdErr('Locked. Try again in '+s+'s.');return;}var inp=document.getElementById('adminPwdInput');if(!inp)return;var entered=inp.value;if(!entered){admShowPwdErr('Please enter the password.');return;}if(btoa(entered)===ADMIN_PWD_B64){ADMIN_UNLOCKED=true;ADMIN_ATTEMPTS=0;ADMIN_SESSION_PWD=entered;var modal=document.getElementById('adminModal');if(modal)modal.style.display='none';document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});var pg=document.getElementById('page-admin');if(pg)pg.classList.add('active');document.getElementById('ptitle').textContent='Admin Controls';_adminPageInit();}else{ADMIN_ATTEMPTS++;var rem=ADMIN_MAX-ADMIN_ATTEMPTS;if(ADMIN_ATTEMPTS>=ADMIN_MAX){ADMIN_LOCKED_UNTIL=Date.now()+60000;ADMIN_ATTEMPTS=0;admShowPwdErr('Too many attempts. Locked 60 seconds.');}else{admShowPwdErr('Incorrect password. '+rem+' attempt'+(rem===1?'':'s')+' remaining.');}inp.value='';inp.focus();}}
 function admShowPwdErr(msg){var el=document.getElementById('adminPwdErr');if(!el)return;el.textContent=msg;el.style.display='block';var inp=document.getElementById('adminPwdInput');if(inp){inp.style.borderColor='var(--rd)';setTimeout(function(){inp.style.borderColor='var(--border)';},1500);}}
@@ -3695,11 +3695,11 @@ window.addEventListener('focus',function(){
 <!-- MOBILE BOTTOM NAVIGATION -->
 <nav id="mobileNav" aria-label="Mobile navigation">
   <div class="mn-inner">
-    <button class="mn-tab active" onclick="navTo('overview',this)" data-page="overview">
+    <button class="mn-tab" onclick="navTo('overview',this)" data-page="overview">
       <span class="mn-tab-icon">&#128200;</span>
       <span class="mn-tab-label">Overview</span>
     </button>
-    <button class="mn-tab" onclick="navTo('lfi',this)" data-page="lfi">
+    <button class="mn-tab active" onclick="navTo('lfi',this)" data-page="lfi">
       <span class="mn-tab-icon">&#128203;</span>
       <span class="mn-tab-label">Register</span>
     </button>
