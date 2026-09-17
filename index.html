@@ -900,6 +900,9 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         </div>
       </div>
 
+      <div style="display:flex;justify-content:flex-end;margin-bottom:6px">
+        <span id="cmLastSynced" style="font-size:11px;color:#6B7280"></span>
+      </div>
       <div class="krow" id="committeeKpiRow" style="grid-template-columns:repeat(5,1fr)">
         <div class="kc headline" style="--accent:#21409a"><div class="ki-wrap"><div class="ki">&#128203;</div></div>
           <div class="kv" id="atrOpen">&#8212;</div><div class="kl">Open Actions</div></div>
@@ -1654,6 +1657,38 @@ function _cmDebugPrint(where){
     +'page-committee has .active: '+document.getElementById('page-committee').classList.contains('active');
 }
 
+var CM_POLL_TIMER = null;
+var CM_POLL_INTERVAL_MS = 45000; // background sync — near-real-time without a persistent connection
+
+function _cmStampSynced(){
+  var el = document.getElementById('cmLastSynced');
+  if(el) el.textContent = 'Last synced: ' + new Date().toLocaleTimeString();
+}
+
+function _cmSilentRefresh(){
+  // Silent background poll — does NOT reset COMMITTEE_CACHE.loaded, does NOT
+  // touch any open modal. Only re-fetches and re-renders the table/chart in
+  // place, so changes made by OTHER committee members appear automatically
+  // instead of requiring a manual page reload.
+  if(!document.getElementById('page-committee').classList.contains('active')) return;
+  _fetchAtrList();
+  _fetchBarrierStats();
+}
+
+function _cmStartPolling(){
+  if(CM_POLL_TIMER) return; // already running
+  CM_POLL_TIMER = setInterval(_cmSilentRefresh, CM_POLL_INTERVAL_MS);
+}
+
+// Catch up immediately when the user switches back to this browser tab —
+// don't make them wait for the next poll tick after being away.
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden && document.getElementById('page-committee') &&
+     document.getElementById('page-committee').classList.contains('active')){
+    _cmSilentRefresh();
+  }
+});
+
 function renderCommitteePage(){
   _cmDebugPrint('renderCommitteePage start');
   if(!COMMITTEE_CACHE.loaded){
@@ -1664,6 +1699,7 @@ function renderCommitteePage(){
     _renderAtrTable(COMMITTEE_CACHE.atr);
     _renderBarrierChart(COMMITTEE_CACHE.barrier);
   }
+  _cmStartPolling();
   setTimeout(function(){_cmDebugPrint('renderCommitteePage end (async fetch may still be pending)');}, 50);
 }
 
@@ -1673,7 +1709,7 @@ function _fetchAtrList(){
   window[cb]=function(d){
     if(done)return; done=true; clearTimeout(tid); delete window[cb];
     if(script.parentNode)script.parentNode.removeChild(script);
-    COMMITTEE_CACHE.atr=d; _renderAtrTable(d);
+    COMMITTEE_CACHE.atr=d; _renderAtrTable(d); _cmStampSynced();
   };
   script.onerror=function(){ if(done)return; done=true; clearTimeout(tid); delete window[cb]; };
   script.src=API_BASE+'?action=atrList&email='+encodeURIComponent((COMMITTEE_CACHE.identity&&COMMITTEE_CACHE.identity.email)||'')+'&callback='+cb;
