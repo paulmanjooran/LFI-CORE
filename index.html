@@ -672,11 +672,11 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     </a>
     <div class="sb-sec" style="margin-top:4px" data-i18n="sb_sec_gov">Governance</div>
     <a onclick="navTo('committee',this)"><span class="ni">&#9878;</span><span data-i18n="sb_committee">LFI Committee</span></a>
-    <div class="sb-sec" style="margin-top:4px" data-i18n="sb_sec_bbs">BBS</div>
-    <a id="nav-bbsobs" onclick="navTo('bbsobs',this)"><span class="ni">&#128065;</span><span data-i18n="sb_bbs_obs">Observations</span></a>
-    <a id="nav-bbsnm" onclick="navTo('bbsnm',this)"><span class="ni">&#9889;</span><span data-i18n="sb_bbs_nm">Near Misses</span></a>
-    <a id="nav-bbsrev" onclick="navTo('bbsrev',this)"><span class="ni">&#9989;</span><span data-i18n="sb_bbs_rev">Review &amp; Actions</span></a>
-    <a id="nav-bbsperf" onclick="navTo('bbsperf',this)"><span class="ni">&#128200;</span><span data-i18n="sb_bbs_perf">Performance</span></a>
+    <div class="sb-sec" data-bbs="1" style="margin-top:4px;display:none" data-i18n="sb_sec_bbs">BBS</div>
+    <a id="nav-bbsobs" data-bbs="1" style="display:none" onclick="navTo('bbsobs',this)"><span class="ni">&#128065;</span><span data-i18n="sb_bbs_obs">Observations</span></a>
+    <a id="nav-bbsnm" data-bbs="1" style="display:none" onclick="navTo('bbsnm',this)"><span class="ni">&#9889;</span><span data-i18n="sb_bbs_nm">Near Misses</span></a>
+    <a id="nav-bbsrev" data-bbs="1" style="display:none" onclick="navTo('bbsrev',this)"><span class="ni">&#9989;</span><span data-i18n="sb_bbs_rev">Review &amp; Actions</span></a>
+    <a id="nav-bbsperf" data-bbs="1" style="display:none" onclick="navTo('bbsperf',this)"><span class="ni">&#128200;</span><span data-i18n="sb_bbs_perf">Performance</span></a>
     <div class="sb-sec" style="margin-top:4px" data-i18n="sb_sec_sys">System</div>
     <a onclick="navTo('admin',this)" style="font-size:11px;color:rgba(255,255,255,.55)"><span class="ni">&#9881;</span><span data-i18n="sb_admin">Admin Controls</span></a>
   </nav>
@@ -1664,6 +1664,12 @@ function _cmDebugPrint(where){
 
 // ── BBS section: Observations, Near Misses, Review & Actions, Performance ──────────────
 // Separate from LFI data. Identity = Al Tasnim Google sign-in (enforced by the server).
+// ── BBS switch ─────────────────────────────────────────────────────────────
+// BBS is fully built but switched OFF until it is rolled out. To switch it on, set this to true
+// here AND set BBS_ENABLED = true in Code.gs, then redeploy both (see the BBS steps).
+var BBS_ENABLED = false;
+function bbsApplyFlag() { var els = document.querySelectorAll('[data-bbs]'); for (var i = 0; i < els.length; i++) els[i].style.display = BBS_ENABLED ? '' : 'none'; }
+function bbsOffMsg(rootId) { var el = document.getElementById(rootId); if (el) el.innerHTML = '<div class="cc" style="padding:30px;text-align:center;color:#6B7280">BBS is not enabled yet.</div>'; }
 var BBS = { view: 'showcase', canAll: false, obs: { rows: null, f: { period: '90d' } }, nm: { rows: null, f: { period: '90d' } }, queue: null, acts: null, shown: { obs: [], nm: [] }, rep: { obs: null, nm: null }, CH: {}, perf: {} };
 var BBS_PAL = ['#21409a', '#f58220', '#2e7d32', '#c62828', '#8e44ad', '#00897b', '#6B7280', '#f9a825', '#5c6bc0', '#26a69a'];
 var BBS_THRESH = { green: 90, amber: 70 };   // safe-score bands per behaviour (editable)
@@ -1777,6 +1783,7 @@ function bbsHeader(form, title) {
   return h + '</div>';
 }
 function bbsLoad(form) {
+  if (!BBS_ENABLED) { bbsOffMsg(form === 'obs' ? 'bbsobsRoot' : 'bbsnmRoot'); return; }
   var root = bbsId(form === 'obs' ? 'bbsobsRoot' : 'bbsnmRoot'); if (root && !BBS[form].rows) root.innerHTML = '<div class="cc" style="padding:30px;text-align:center;color:#6B7280">Loading...</div>';
   _cmCall('?action=bbsData&form=' + form + '&view=' + BBS.view, function (d) {
     if (!d || !d.ok) { root.innerHTML = '<div class="cc" style="padding:24px;color:#c62828">' + esc((d && d.error) || 'Could not load BBS data.') + '</div>'; return; }
@@ -1844,6 +1851,7 @@ function bbsRepeatModal(form) {
 
 // ── Review & Actions ───────────────────────────────────────────────────────────────────
 function bbsRevLoad() {
+  if (!BBS_ENABLED) { bbsOffMsg('bbsrevRoot'); return; }
   var root = bbsId('bbsrevRoot'); if (!BBS.queue) root.innerHTML = '<div class="cc" style="padding:30px;text-align:center;color:#6B7280">Loading...</div>';
   _cmCall('?action=bbsActionList', function (a) {
     if (!a || !a.ok) { root.innerHTML = '<div class="cc" style="padding:24px;color:#c62828">' + esc((a && a.error) || 'Could not load actions.') + '</div>'; return; }
@@ -1930,6 +1938,7 @@ function bbsCloseout(i, decision) {
 
 // ── Performance ────────────────────────────────────────────────────────────────────────
 function bbsPerfLoad() {
+  if (!BBS_ENABLED) { bbsOffMsg('bbsperfRoot'); return; }
   var root = bbsId('bbsperfRoot'); root.innerHTML = '<div class="cc" style="padding:30px;text-align:center;color:#6B7280">Loading...</div>';
   var view = BBS.view;
   _cmCall('?action=bbsData&form=obs&view=' + view, function (o) {
@@ -1971,6 +1980,7 @@ function bbsPerfRender() {
 }
 // Committee: read-only summary card (BBS data is never edited from the Committee page)
 function bbsCommitteeCard() {
+  if (!BBS_ENABLED) return;
   var el = bbsId('bbsCommitteeCard'); if (!el) return;
   _cmCall('?action=bbsPending', function (q) {
     if (!q || !q.ok) { el.innerHTML = ''; return; }
@@ -4254,6 +4264,7 @@ function _startAutoRetry(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
+  try{bbsApplyFlag();}catch(e){}
   try{var _sv=localStorage.getItem('lfi_lang');if(_sv==='hi'||_sv==='ar'){setLang(_sv,document.querySelectorAll('.lbt')[_sv==='hi'?1:2]);}}catch(e){}
   // Register PPT slide navigator keyboard/touch events now that DOM is ready
   try{_initPptNavEvents();}catch(e){console.error('_initPptNavEvents() failed:',e);}
