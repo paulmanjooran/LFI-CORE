@@ -578,6 +578,79 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 .fd-content.rtl{direction:rtl;text-align:right}
 .fd-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
 @media(max-width:640px){#fdCard{max-width:100%}#fdModal{padding:14px 8px}}
+/* ══ LFI Hub: whole card opens the popup; audio is the one button on the card ══ */
+.fc{cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative}
+.fc:focus-visible{outline:3px solid #f58220;outline-offset:2px}
+.fc:active{transform:scale(.996)}
+.fc-thumb-wrap{cursor:inherit!important}
+.fc .fch{cursor:inherit;padding-top:10px}
+.fc-audio{padding:10px 14px 0}
+.fc-listen{width:100%;min-height:46px;border:none;border-radius:12px;background:linear-gradient(135deg,#f58220,#d46d16);color:#fff;font-size:14px;font-weight:800;letter-spacing:.2px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 3px 10px rgba(245,130,32,.35);transition:filter .15s}
+.fc-listen:hover{filter:brightness(1.06)}
+.fc-listen:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.fc-listen.loading{background:#856404;animation:spkpulse 1.2s ease-in-out infinite}
+.fc-listen.playing{background:#c62828;animation:spkpulse 1.2s ease-in-out infinite}
+.fc-listen.paused{background:#21409a}
+.fc-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.fc-count{font-size:12px;color:var(--muted);font-weight:600}
+.fc-playall{min-height:44px;padding:0 18px;border:none;border-radius:22px;background:linear-gradient(135deg,#21409a,#18316E);color:#fff;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 3px 10px rgba(33,64,154,.3)}
+.fc-more{display:block;margin:16px auto 6px;min-height:46px;padding:0 24px;border:1.5px solid #21409a;border-radius:23px;background:rgba(255,255,255,.7);color:#21409a;font-size:13px;font-weight:800;cursor:pointer}
+/* ══ Popup: sticky header + audio bar, big touch targets, full screen on phones ══ */
+.fd-sticky{position:sticky;top:0;z-index:6;background:rgba(255,255,255,.97);margin:-20px -22px 12px;padding:16px 22px 10px;border-bottom:1px solid rgba(0,0,0,.06);border-radius:20px 20px 0 0}
+.fd-sticky .fd-head{margin-bottom:8px;padding-bottom:10px}
+.fd-x{width:44px;height:44px;font-size:17px}
+.fdl-langs{display:flex;gap:8px}
+.fdl-l{flex:1;min-height:48px;border:2px solid #cfd6e4;background:#fff;border-radius:12px;font-size:14px;font-weight:800;color:#21409a;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 4px}
+.fdl-l.active{border-color:#f58220;background:#fff6ec}
+.fdl-l.on{background:linear-gradient(135deg,#f58220,#d46d16);border-color:#d46d16;color:#fff}
+.fdl-strip{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.fdl-b{width:44px;height:44px;border:none;border-radius:50%;background:#21409a;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0}
+.fdl-b.stop{background:#c62828}
+.fdl-bar{flex:1;min-width:110px;height:12px;border-radius:6px;background:#e3e8f4;cursor:pointer;direction:ltr;overflow:hidden}
+.fdl-fill{height:100%;width:0;background:linear-gradient(90deg,#f58220,#d46d16)}
+.fdl-rate{min-width:54px;min-height:40px;padding:0 10px;border:1.5px solid #cfd6e4;border-radius:20px;background:#fff;font-size:12px;font-weight:800;color:#21409a;cursor:pointer}
+.fdl-info{font-size:11px;color:#6B7280;width:100%}
+.fdl-err{font-size:12px;color:#c62828;margin-top:6px}
+.fd-sec.reading{background:rgba(245,130,32,.12);border-left:4px solid #f58220;padding:6px 10px;border-radius:8px}
+.fd-content.rtl .fd-sec.reading{border-left:none;border-right:4px solid #f58220}
+.fd-actions .fc-act-btn{min-height:44px}
+@media(max-width:640px){
+  #fdModal{padding:0}
+  #fdCard{max-width:100%;min-height:100vh;border-radius:0}
+  #fdBody{padding:0 14px calc(18px + env(safe-area-inset-bottom))}
+  .fd-head{padding-top:14px}
+  .fd-sticky{margin:0 -14px 10px;padding:0 14px 8px;border-radius:0}
+  .fd-actions .fc-act-btn{min-height:48px;font-size:12px}
+}
+@supports(height:100dvh){@media(max-width:640px){#fdCard{min-height:100dvh}}}
+@media(min-width:1024px){#fdCard{max-width:760px}}
+/* ══ Play all (toolbox talk) ══ */
+.lfa-pl{display:none;position:fixed;inset:0;z-index:9200;background:rgba(8,12,24,.96);color:#fff;flex-direction:column}
+.lfa-pl.vis{display:flex}
+.lfa-pl-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top))}
+.lfa-pl-top b{font-size:15px}
+.lfa-pl-top span{display:block;font-size:12px;opacity:.75}
+.lfa-pl-x{width:44px;height:44px;border:none;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:18px;cursor:pointer}
+.lfa-pl-main{flex:1;overflow-y:auto;padding:4px 18px 18px;max-width:820px;width:100%;margin:0 auto}
+.lfa-pl-cat{font-size:20px;font-weight:800;margin:6px 0 2px}
+.lfa-pl-meta{font-size:12px;opacity:.75;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.lfa-pl-sec{padding:10px 14px;margin:10px 0;border-radius:12px;background:rgba(255,255,255,.07);border-left:4px solid transparent;font-size:17px;line-height:1.55}
+.lfa-pl-sec label{display:block;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;opacity:.7;margin-bottom:4px}
+.lfa-pl-sec.reading{background:rgba(245,130,32,.22);border-left-color:#f58220}
+.lfa-pl-sec.rtl{direction:rtl;text-align:right;border-left:none;border-right:4px solid transparent}
+.lfa-pl-sec.rtl.reading{border-right-color:#f58220}
+.lfa-pl-done{text-align:center;padding:40px 10px;font-size:20px;font-weight:800}
+.lfa-pl-bar{padding:12px 18px;padding-bottom:calc(12px + env(safe-area-inset-bottom));background:rgba(255,255,255,.07);border-top:1px solid rgba(255,255,255,.12)}
+.lfa-pl-prog{height:8px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden;margin-bottom:10px;direction:ltr}
+.lfa-pl-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f58220,#ffb066)}
+.lfa-pl-ctl{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.lfa-pl-ctl button{min-width:48px;min-height:48px;border:none;border-radius:24px;background:rgba(255,255,255,.14);color:#fff;font-size:18px;cursor:pointer;padding:0 14px}
+.lfa-pl-ctl button.main{background:linear-gradient(135deg,#f58220,#d46d16);min-width:68px;min-height:56px;border-radius:28px;font-size:22px}
+.lfa-pl-langs{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.lfa-pl-langs button{min-height:40px;padding:0 16px;border:1.5px solid rgba(255,255,255,.3);border-radius:20px;background:transparent;color:#fff;font-weight:800;font-size:13px;cursor:pointer}
+.lfa-pl-langs button.active{background:#fff;color:#21409a;border-color:#fff}
+.lfa-pl-info{text-align:center;font-size:11px;opacity:.7;margin-top:8px}
+@media(min-width:900px){.lfa-pl-sec{font-size:20px}}
 </style>
 </head>
 
@@ -599,6 +672,11 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
     </a>
     <div class="sb-sec" style="margin-top:4px" data-i18n="sb_sec_gov">Governance</div>
     <a onclick="navTo('committee',this)"><span class="ni">&#9878;</span><span data-i18n="sb_committee">LFI Committee</span></a>
+    <div class="sb-sec" style="margin-top:4px" data-i18n="sb_sec_bbs">BBS</div>
+    <a id="nav-bbsobs" onclick="navTo('bbsobs',this)"><span class="ni">&#128065;</span><span data-i18n="sb_bbs_obs">Observations</span></a>
+    <a id="nav-bbsnm" onclick="navTo('bbsnm',this)"><span class="ni">&#9889;</span><span data-i18n="sb_bbs_nm">Near Misses</span></a>
+    <a id="nav-bbsrev" onclick="navTo('bbsrev',this)"><span class="ni">&#9989;</span><span data-i18n="sb_bbs_rev">Review &amp; Actions</span></a>
+    <a id="nav-bbsperf" onclick="navTo('bbsperf',this)"><span class="ni">&#128200;</span><span data-i18n="sb_bbs_perf">Performance</span></a>
     <div class="sb-sec" style="margin-top:4px" data-i18n="sb_sec_sys">System</div>
     <a onclick="navTo('admin',this)" style="font-size:11px;color:rgba(255,255,255,.55)"><span class="ni">&#9881;</span><span data-i18n="sb_admin">Admin Controls</span></a>
   </nav>
@@ -710,7 +788,9 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
         <div id="fc-sort-label" style="font-size:12px;color:var(--muted);font-weight:500">Sorted by incident date &#8212; newest first. Click a card to expand.</div>
         <span id="fc-newest-badge" style="font-size:10px;background:var(--bl);color:#fff;padding:3px 10px;border-radius:10px;font-weight:700;white-space:nowrap;flex-shrink:0">&#8595; Newest First</span>
       </div>
+      <div id="fcToolbar"></div>
       <div class="fcg" id="fcGrid"></div>
+      <div id="fcMore"></div>
     </div>
 
     <!-- ═══════════════════════════════════════════ VIDEO LIBRARY PAGE -->
@@ -888,7 +968,13 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
       </div>
     </div>
 
+    <div class="page" id="page-bbsobs"><div id="bbsobsRoot"></div></div>
+    <div class="page" id="page-bbsnm"><div id="bbsnmRoot"></div></div>
+    <div class="page" id="page-bbsrev"><div id="bbsrevRoot"></div></div>
+    <div class="page" id="page-bbsperf"><div id="bbsperfRoot"></div></div>
+
     <div class="page" id="page-committee">
+      <div id="bbsCommitteeCard"></div>
       <div id="cmDebug" style="display:none;background:#1A1F2B;color:#0f0;font-family:monospace;font-size:11px;padding:8px 12px;margin-bottom:10px;border-radius:6px;white-space:pre-wrap"></div>
       <div class="cc" style="margin-bottom:16px;border-left:4px solid #21409a">
         <div style="font-size:13px;color:#4d555b;line-height:1.5">
@@ -1007,10 +1093,14 @@ function navTo(page,el){
   // Mobile bottom nav sync
   document.querySelectorAll('.mn-tab').forEach(function(t){t.classList.toggle('active',t.dataset&&t.dataset.page===page);});
   // Page titles
-  var T={overview:'Overview Dashboard',lfi:'LFI Hub — Flashcards & Videos',videos:'LFI Hub — Flashcards & Videos',admin:'Admin Controls',committee:'LFI Committee \u2014 Barriers & Action Tracking'};
+  var T={overview:'Overview Dashboard',lfi:'LFI Hub — Flashcards & Videos',videos:'LFI Hub — Flashcards & Videos',admin:'Admin Controls',bbsobs:'BBS \u2014 Observations',bbsnm:'BBS \u2014 Near Misses',bbsrev:'BBS \u2014 Review & Actions',bbsperf:'BBS \u2014 Performance',committee:'LFI Committee \u2014 Barriers & Action Tracking'};
   document.getElementById('ptitle').textContent=T[page]||'Dashboard';
   // Page-specific actions
   if(page==='committee'){checkCommitteeAccess();}
+  if(page==='bbsobs'){bbsLoad('obs');}
+  if(page==='bbsnm'){bbsLoad('nm');}
+  if(page==='bbsrev'){bbsRevLoad();}
+  if(page==='bbsperf'){bbsPerfLoad();}
   if(page==='lfi'){
     if(!RAW||!RAW.length){
       // Data not loaded yet — trigger refresh (will call renderFC when data arrives)
@@ -1247,87 +1337,6 @@ function renderCategoryHeatmap(rows){
 
 // ── Flashcards ───────────────────────────────────────────────
 function gc(r,lang){return{desc:lang==='ar'?r.descAR:(lang==='hi'?r.descHI:r.descEN),find:lang==='ar'?r.findAR:(lang==='hi'?r.findHI:r.findEN),learn:lang==='ar'?r.learnAR:(lang==='hi'?r.learnHI:r.learnEN)};}
-function _spkLabel(lang,key){
-  var L={
-    read:   {en:'&#128266; Read Aloud',hi:'&#128266; &#2346;&#2397;&#2375;&#2306;',ar:'&#128266; &#1602;&#1585;&#1575;&#1569;&#1577;'},
-    stop:   {en:'&#9209; Stop',        hi:'&#9209; &#2352;&#2379;&#2325;&#2375;&#2306;',ar:'&#9209; &#1573;&#1610;&#1602;&#1575;&#1601;'},
-    loading:{en:'&#8987; Loading...',  hi:'&#8987; &#2354;&#2379;&#2337; ...',          ar:'&#8987; &#1578;&#1581;&#1605;&#1610;&#1604;...'}
-  };
-  return (L[key]&&(L[key][lang]||L[key].en))||'';
-}
-
-function renderFC(){
-  var rows=getF();var grid=document.getElementById('fcGrid');if(!grid)return;
-  if(!RAW){grid.innerHTML='<div class="empty"><div class="eicon">&#128203;</div><p>'+t('fc_empty_nodata')+'</p><div class="esub">'+t('fc_empty_nodata_sub')+'</div></div>';return;}
-  if(!rows.length){grid.innerHTML='<div class="empty"><div class="eicon">&#128203;</div><p>'+t('fc_empty_filter')+'</p><div class="esub">'+t('fc_empty_filter_sub')+'</div></div>';return;}
-  var sorted=rows.slice().sort(function(a,b){
-    var da=a.dateObj?a.dateObj.getTime():0,db=b.dateObj?b.dateObj.getTime():0;return db-da;
-  });
-  window._FC_PPT=[];
-  var html='';
-  sorted.forEach(function(r,idx){
-    try{
-    var lang=LANG,c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
-    var enc;try{enc=JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');}catch(je){enc='{}';}
-    window._FC_PPT.push({link:r.pptLink||'',id:r.id||''});
-    var hasPpt=!!(r.pptLink),hasThumb=!!(r.thumb),hasDesc=!!(r.descEN||r.descHI||r.descAR);
-    var accent=catColor(r.cat||'');
-
-    // THUMBNAIL — clickable for PPT
-    var thumbHtml = hasThumb
-      ? '<div class="fc-thumb-wrap" style="cursor:'+(hasPpt?'pointer':'default')+'" '
-          +(hasPpt?'onclick="event.stopPropagation();_fcOpenPpt('+idx+')"':'')
-          +' title="'+(hasPpt?'View slides':'')+'"><img src="'+esc(r.thumb)+'" alt="" loading="lazy" '
-          +'onerror="this.parentElement.innerHTML=\'<div class=&quot;fc-thumb-placeholder&quot; style=&quot;background:linear-gradient(145deg,'+accent+',#080c14)&quot;><div class=&quot;tpi&quot;>&#128203;</div></div>\'">'
-          +(hasPpt?'<div class="fc-thumb-badge">&#128218; Slides EN &middot; &#2361;&#2367; &middot; &#1593;</div>':'')
-          +'</div>'
-      : '<div class="fc-thumb-wrap" style="background:linear-gradient(145deg,'+accent+',#080c14);cursor:'+(hasPpt?'pointer':'default')+'" '
-          +(hasPpt?'onclick="event.stopPropagation();_fcOpenPpt('+idx+')"':'')+'>'
-          +'<div class="fc-thumb-placeholder"><div class="tpi">&#128203;</div><span>'+(r.ppt?'Preview pending':t('ppt_pending'))+'</span></div></div>';
-
-    // ACTION ROW — two main CTAs
-    var isApproved=(r.st==='Reviewed & Approved'||r.st==='Historic Data Input');
-    var actionRow='<div class="fc-action-row">'
-      +'<button class="fc-act-btn ppt-act" onclick="_fcOpenPpt('+idx+')"'+(hasPpt?'':' disabled')+'>&#128218; '+t('ppt_preview')+'</button>'
-      +'<button class="fc-act-btn vid-act" onclick="openCveModal('+idx+')"'+(hasDesc?'':' disabled')+'>&#127909; LFI Video</button>'
-      +'<button class="fc-act-btn" style="background:#8e44ad;color:#fff" onclick="event.stopPropagation();openCommitteeActionForm(&quot;'+esc(r.id)+'&quot;)">&#9878;</button>'
-      +'</div>';
-
-    html+='<div class="fc" style="border-top:3px solid '+accent+'">'+
-      thumbHtml+
-      actionRow+
-      '<div class="fch" onclick="stopSpeech();openFcDetail('+idx+')">'+
-        '<div class="fct"><span class="fid">'+esc(r.id)+'</span>'+mkbadge(r.st)+'<span style="font-size:12px;color:var(--muted)">&#9660;</span></div>'+
-        '<div class="fcv">'+esc(r.cat)+'</div>'+
-        '<div class="fcm"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span></div>'+
-      '</div>'+
-      '<div class="fcb">'+
-        _fcImgStrip(r)+
-        '<div class="lbar">'+
-          '<button class="lb'+(lang==='en'?' active':'')+'" onclick="sclang(this,\'en\')">&#127468;&#127463; EN</button>'+
-          '<button class="lb'+(lang==='hi'?' active':'')+'" onclick="sclang(this,\'hi\')">&#127470;&#127475; &#2361;&#2367;</button>'+
-          '<button class="lb'+(lang==='ar'?' active':'')+'" onclick="sclang(this,\'ar\')">&#127462;&#127466; &#1593;</button>'+
-          '<button class="spk" onclick="speakCard(this)">'+_spkLabel(lang,'read')+'</button>'+
-        '</div>'+
-        '<div class="fcc'+(dir==='rtl'?' rtl':'')+'" data-row=\''+enc+'\' data-lang="'+lang+'">'+
-          '<div class="fcs"><label>'+t('fc_desc')+'</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
-          '<div class="fcs"><label>'+t('fc_find')+'</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
-          '<div class="fcs"><label>'+t('fc_learn')+'</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
-        '</div>'+
-        '<div class="fps"><span class="fp">'+esc(r.div)+'</span><span class="fp">'+esc(r.by)+'</span>'+
-          (r.ppt?'<span class="fp ok">'+t('ppt_done')+'</span>':'<span class="fp pnd">'+t('ppt_pending')+'</span>')+
-        '</div>'+
-      '</div></div>';
-    }catch(rowErr){
-      console.error('renderFC row '+idx+' error:',rowErr,r);
-      // Still add a placeholder card so user sees which LFI failed
-      html+='<div class="fc" style="border-top:3px solid #dc3545;opacity:.6">'+
-        '<div class="fch"><div class="fct"><span class="fid">'+(r&&r.id?r.id:'Row '+idx)+'</span></div>'+
-        '<div class="fcm" style="color:#dc3545">Render error: '+String(rowErr)+'</div></div></div>';
-    }
-  });
-  grid.innerHTML=html;
-}
 
 // ── Safe/Unsafe image strip for flashcards ───────────────────
 function _fcImgStrip(r){
@@ -1378,24 +1387,17 @@ function _renderFcDetail(r){
   var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
   var accent=catColor(r.cat||'');
   var body=document.getElementById('fdBody');
-  var isApproved=(r.st==='Reviewed & Approved'||r.st==='Historic Data Input');
-  var h='<div class="fd-head" style="border-bottom:2px solid '+accent+'">'
+  var h='<div class="fd-sticky"><div class="fd-head" style="border-bottom:2px solid '+accent+'">'
     +'<div><span class="fd-id">'+esc(r.id)+'</span> '+mkbadge(r.st)+'<div class="fd-cat" style="color:'+accent+'">'+esc(r.cat)+'</div></div>'
-    +'<button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div>'
+    +'<button class="fd-x" aria-label="Close" onclick="closeFcDetail()">&#10005;</button></div>'
+    +'<div class="fd-listen" id="fdListen"></div></div>'
     +'<div class="fd-meta"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span><span>&#127959; '+esc(r.div)+'</span><span>&#128100; '+esc(r.by)+'</span></div>'
     +_recurrenceBadge(r)
     +_fcImgStrip(r)
-    +'<div class="fd-lbar">'
-    +'<button class="lb'+(lang==='en'?' active':'')+'" onclick="fdLang(&quot;en&quot;)">&#127468;&#127463; EN</button>'
-    +'<button class="lb'+(lang==='hi'?' active':'')+'" onclick="fdLang(&quot;hi&quot;)">&#127470;&#127475; &#2361;&#2367;</button>'
-    +'<button class="lb'+(lang==='ar'?' active':'')+'" onclick="fdLang(&quot;ar&quot;)">&#127462;&#127466; &#1593;</button>'
-    +'<button class="spk" style="margin-left:auto" onclick="speakCard(this)">'+_spkLabel(lang,'read')+'</button>'
-    +'</div>'
-    +'<div class="fd-tts" style="display:none" data-lang="'+lang+'" data-row=\''+(function(){try{return JSON.stringify(r).replace(/'/g,'&#39;').replace(/</g,'&lt;');}catch(je){return '{}';}})()+'\'></div>'
     +'<div class="fd-content'+(dir==='rtl'?' rtl':'')+'">'
-    +'<div class="fd-sec"><label>'+t('fc_desc')+'</label><p>'+(esc(c.desc)||'<em>Not yet translated</em>')+'</p></div>'
-    +'<div class="fd-sec"><label>'+t('fc_find')+'</label><p>'+(esc(c.find)||'<em>Not yet translated</em>')+'</p></div>'
-    +'<div class="fd-sec"><label>'+t('fc_learn')+'</label><p>'+(esc(c.learn)||'<em>Not yet translated</em>')+'</p></div>'
+    +'<div class="fd-sec" data-k="desc"><label>'+t('fc_desc')+'</label><p>'+(esc(c.desc)||'<em>Not yet translated</em>')+'</p></div>'
+    +'<div class="fd-sec" data-k="find"><label>'+t('fc_find')+'</label><p>'+(esc(c.find)||'<em>Not yet translated</em>')+'</p></div>'
+    +'<div class="fd-sec" data-k="learn"><label>'+t('fc_learn')+'</label><p>'+(esc(c.learn)||'<em>Not yet translated</em>')+'</p></div>'
     +'</div>'
     +'<div class="fd-actions">'
     +'<button class="fc-act-btn ppt-act" onclick="_fcOpenPpt('+_FD.idx+')"'+(r.pptLink?'':' disabled')+'>&#128218; Slides</button>'
@@ -1403,6 +1405,8 @@ function _renderFcDetail(r){
     +'<button class="fc-act-btn" style="background:#8e44ad;color:#fff" onclick="openCommitteeActionForm(&quot;'+esc(r.id)+'&quot;)">&#9878; LFI Committee Action</button>'
     +'</div>';
   body.innerHTML=h;
+  var host=document.getElementById('fdListen');if(host)host._k='';
+  lfaRenderPopup();
 }
 
 // ── LFI Committee page: Barrier analytics + ATR register ───────
@@ -1658,6 +1662,323 @@ function _cmDebugPrint(where){
     +'page-committee has .active: '+document.getElementById('page-committee').classList.contains('active');
 }
 
+// ── BBS section: Observations, Near Misses, Review & Actions, Performance ──────────────
+// Separate from LFI data. Identity = Al Tasnim Google sign-in (enforced by the server).
+var BBS = { view: 'showcase', canAll: false, obs: { rows: null, f: { period: '90d' } }, nm: { rows: null, f: { period: '90d' } }, queue: null, acts: null, shown: { obs: [], nm: [] }, rep: { obs: null, nm: null }, CH: {}, perf: {} };
+var BBS_PAL = ['#21409a', '#f58220', '#2e7d32', '#c62828', '#8e44ad', '#00897b', '#6B7280', '#f9a825', '#5c6bc0', '#26a69a'];
+var BBS_THRESH = { green: 90, amber: 70 };   // safe-score bands per behaviour (editable)
+var BBS_LUCK = 'Nothing - luck';
+var BBS_DIMS = {
+  obs: [
+    { k: 'res', t: 'Safe vs Unsafe', chart: 1, sel: 1, g: function (r) { return [r.res]; }, col: { Safe: '#2e7d32', Unsafe: '#c62828' } },
+    { k: 'kind', t: 'Act vs Condition', chart: 1, g: function (r) { return [r.kind]; } },
+    { k: 'cause', t: 'Root causes (unsafe)', chart: 1, g: function (r) { return r.res === 'Unsafe' ? r.causes : []; } },
+    { k: 'activity', t: 'Work activity', chart: 1, sel: 1, g: function (r) { return [r.activity || '(condition)']; } },
+    { k: 'beh', t: 'Behaviour / condition', sel: 1, g: function (r) { return [r.beh]; } },
+    { k: 'cluster', t: 'Cluster', chart: 1, sel: 1, g: function (r) { return [r.cluster]; } },
+    { k: 'company', t: 'Company', chart: 1, sel: 1, g: function (r) { return [r.company]; } },
+    { k: 'reporter', t: 'Reporter', sel: 1, rev: 1, g: function (r) { return [r.reporter]; } }],
+  nm: [
+    { k: 'pot', t: 'Potential severity', chart: 1, sel: 1, g: function (r) { return [r.pot]; }, col: { Minor: '#f9a825', Serious: '#e65100', Fatal: '#c62828' } },
+    { k: 'type', t: 'Event type', chart: 1, sel: 1, g: function (r) { return [r.type]; } },
+    { k: 'aff', t: 'Nearly harmed', chart: 1, g: function (r) { return [r.aff]; } },
+    { k: 'bar', t: 'Safeguard gaps', chart: 1, g: function (r) { return r.bars; } },
+    { k: 'saved', t: 'What stopped it', chart: 1, sel: 1, g: function (r) { return [r.saved]; }, col: { 'Nothing - luck': '#c62828' } },
+    { k: 'cluster', t: 'Cluster', chart: 1, sel: 1, g: function (r) { return [r.cluster]; } },
+    { k: 'company', t: 'Company', chart: 1, sel: 1, g: function (r) { return [r.company]; } },
+    { k: 'reporter', t: 'Reporter', sel: 1, rev: 1, g: function (r) { return [r.reporter]; } }]
+};
+function bbsA(s) { return esc(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+function bbsId(id) { return document.getElementById(id); }
+function bbsWeight(r) { return (r.kind === 'Act' && r.people) ? +r.people : 1; }
+function bbsSafeScore(rows) { var s = 0, t = 0; rows.forEach(function (r) { if (r.res !== 'Safe' && r.res !== 'Unsafe') return; var w = bbsWeight(r); t += w; if (r.res === 'Safe') s += w; }); return t ? Math.round(1000 * s / t) / 10 : null; }
+function bbsCut(p) { var d = { '30d': 30, '90d': 90, '12m': 365 }[p]; return d ? Date.now() - d * 864e5 : 0; }
+function bbsKpi(label, val, sub, accent, onclick) {
+  return '<div class="kc" style="--accent:' + accent + ';' + (onclick ? 'cursor:pointer' : '') + '"' + (onclick ? ' onclick="' + onclick + '"' : '') + '><div class="kv">' + val + '</div><div class="kl">' + esc(label) + '</div>' + (sub ? '<div style="font-size:10px;color:#6B7280;margin-top:2px">' + sub + '</div>' : '') + '</div>';
+}
+function bbsRows(form) {
+  var S = BBS[form], f = S.f, cut = bbsCut(f.period), dims = BBS_DIMS[form];
+  return (S.rows || []).filter(function (r) {
+    if (cut && r.ts < cut) return false;
+    if (BBS.view === 'all') { var st = f.status || 'valid'; if (st === 'valid' && r.status !== 'Approved' && r.status !== 'Accepted') return false; if (st === 'approved' && r.status !== 'Approved') return false; if (st === 'unreviewed' && r.status !== 'Submitted') return false; }
+    for (var i = 0; i < dims.length; i++) { var d = dims[i], v = f[d.k]; if (v && d.g(r).indexOf(v) < 0) return false; }
+    return true;
+  });
+}
+function bbsOptions(form, k) {
+  var d = BBS_DIMS[form].filter(function (x) { return x.k === k; })[0], seen = {};
+  (BBS[form].rows || []).forEach(function (r) { d.g(r).forEach(function (v) { if (v) seen[v] = 1; }); });
+  return Object.keys(seen).sort();
+}
+function bbsCount(rows, dim) {
+  var c = {}; rows.forEach(function (r) { dim.g(r).forEach(function (v) { if (v) c[v] = (c[v] || 0) + 1; }); });
+  var arr = Object.keys(c).map(function (k) { return [k, c[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+  if (arr.length > 8) { var rest = arr.slice(8).reduce(function (s, x) { return s + x[1]; }, 0); arr = arr.slice(0, 8); arr.push(['Other', rest]); }
+  return arr;
+}
+// repeat = same cluster + area + (behaviour | event type) again within 30 days
+function bbsRepeats(form, rows) {
+  var groups = {}, DAY30 = 30 * 864e5;
+  rows.forEach(function (r) {
+    if (form === 'obs' && r.res !== 'Unsafe') return;
+    var key = [r.cluster, r.area, form === 'obs' ? r.beh : r.type].join('|'); (groups[key] = groups[key] || []).push(r);
+  });
+  var out = [], recs = 0;
+  Object.keys(groups).forEach(function (k) {
+    var g = groups[k].slice().sort(function (a, b) { return a.ts - b.ts; }), flag = [];
+    g.forEach(function (r, i) { var near = (i > 0 && r.ts - g[i - 1].ts <= DAY30) || (i < g.length - 1 && g[i + 1].ts - r.ts <= DAY30); if (near) flag.push(r); });
+    if (flag.length >= 2) { recs += flag.length; out.push({ label: form === 'obs' ? flag[0].beh : flag[0].type, cluster: flag[0].cluster, area: flag[0].area, items: flag }); }
+  });
+  out.sort(function (a, b) { return b.items.length - a.items.length; });
+  return { groups: out, records: recs };
+}
+function bbsDoughnut(form, d, rows) {
+  var arr = bbsCount(rows, d), labels = arr.map(function (x) { return x[0]; }), data = arr.map(function (x) { return x[1]; }), tot = data.reduce(function (s, x) { return s + x; }, 0);
+  var colors = labels.map(function (l, i) { return (d.col && d.col[l]) || BBS_PAL[i % BBS_PAL.length]; });
+  var cv = bbsId('bbsc_' + form + '_' + d.k); if (!cv) return;
+  if (BBS.CH[cv.id]) BBS.CH[cv.id].destroy();
+  BBS.CH[cv.id] = new Chart(cv.getContext('2d'), { type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderWidth: 1, borderColor: '#fff', hoverOffset: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '58%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+      tooltip: { callbacks: { label: function (c) { return c.label + ': ' + c.raw + ' (' + (tot ? Math.round(100 * c.raw / tot) : 0) + '%)'; } } } },
+      onClick: function (e, els) { if (els && els.length) { var l = labels[els[0].index]; if (l !== 'Other') bbsSet(form, d.k, l); } } } });
+}
+function bbsTrend(form, rows) {
+  var months = {}, series = form === 'obs' ? ['Safe', 'Unsafe'] : ['Minor', 'Serious', 'Fatal'], cols = form === 'obs' ? ['#2e7d32', '#c62828'] : ['#f9a825', '#e65100', '#c62828'];
+  rows.forEach(function (r) { var m = (r.date || '').slice(0, 7); if (!m) return; months[m] = months[m] || {}; var s = form === 'obs' ? r.res : r.pot; months[m][s] = (months[m][s] || 0) + 1; });
+  var ks = Object.keys(months).sort(), cv = bbsId('bbsc_' + form + '_trend'); if (!cv) return;
+  if (BBS.CH[cv.id]) BBS.CH[cv.id].destroy();
+  BBS.CH[cv.id] = new Chart(cv.getContext('2d'), { type: 'bar', data: { labels: ks, datasets: series.map(function (s, i) { return { label: s, data: ks.map(function (k) { return months[k][s] || 0; }), backgroundColor: cols[i] }; }) },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } } } });
+}
+function bbsBehBars(rows) {
+  var by = {}; rows.forEach(function (r) { if (r.kind !== 'Act' || (r.res !== 'Safe' && r.res !== 'Unsafe')) return; var o = by[r.beh] = by[r.beh] || { s: 0, t: 0, n: 0 }; var w = bbsWeight(r); o.t += w; o.n++; if (r.res === 'Safe') o.s += w; });
+  var arr = Object.keys(by).filter(function (k) { return by[k].n >= 3; }).map(function (k) { return [k, Math.round(1000 * by[k].s / by[k].t) / 10, by[k].n]; }).sort(function (a, b) { return b[2] - a[2]; }).slice(0, 10);
+  BBS.behBars = arr; var cv = bbsId('bbsc_obs_beh'); if (!cv) return;
+  if (BBS.CH[cv.id]) BBS.CH[cv.id].destroy();
+  BBS.CH[cv.id] = new Chart(cv.getContext('2d'), { type: 'bar', data: { labels: arr.map(function (x) { return x[0] + ' (n=' + x[2] + ')'; }), datasets: [{ label: 'Safe score %', data: arr.map(function (x) { return x[1]; }), backgroundColor: arr.map(function (x) { return x[1] >= BBS_THRESH.green ? '#2e7d32' : x[1] >= BBS_THRESH.amber ? '#f9a825' : '#c62828'; }) }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { min: 0, max: 100 } }, plugins: { legend: { display: false } } } });
+}
+function bbsSelect(form, k, label, opts, cur) {
+  return '<select onchange="bbsSet(\'' + form + '\',\'' + k + '\',this.value)" style="padding:7px 8px;border:1px solid #dce1ee;border-radius:6px;font-size:12px;max-width:190px">' +
+    opts.map(function (o) { return '<option value="' + bbsA(o[0]) + '"' + (o[0] === cur ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select>';
+}
+function bbsHeader(form, title) {
+  var S = BBS[form], f = S.f, dims = BBS_DIMS[form], h = '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">';
+  h += '<div><div style="font-size:12px;color:#6B7280">' + (BBS.view === 'all' ? 'Full view: every valid record in your review scope, including unreviewed.' : 'Showcase: reviewed and approved reports only.') + '</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
+  if (BBS.canAll) h += '<button class="adm-btn" onclick="bbsSetView(\'' + (BBS.view === 'all' ? 'showcase' : 'all') + '\')">' + (BBS.view === 'all' ? 'Switch to Showcase view' : 'Switch to Full view') + '</button>';
+  h += '<span style="font-size:11px;color:#6B7280">Synced ' + esc(BBS.ts || '') + '</span><button class="adm-btn" onclick="bbsLoad(\'' + form + '\')">&#8635; Refresh</button></div></div>';
+  h += '<div class="cc" style="padding:12px;margin-bottom:12px"><div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">';
+  h += bbsSelect(form, 'period', '', [['30d', 'Last 30 days'], ['90d', 'Last 90 days'], ['12m', 'Last 12 months'], ['all', 'All time']], f.period);
+  dims.forEach(function (d) { if (!d.sel || (d.rev && BBS.view !== 'all')) return; h += bbsSelect(form, d.k, d.t, [['', d.t + ': all']].concat(bbsOptions(form, d.k).map(function (v) { return [v, v]; })), f[d.k] || ''); });
+  if (BBS.view === 'all') h += bbsSelect(form, 'status', '', [['valid', 'Valid (approved + accepted)'], ['approved', 'Approved only'], ['unreviewed', 'Awaiting review']], f.status || 'valid');
+  h += '<button class="adm-btn" id="bbsReset_' + form + '" onclick="bbsReset(\'' + form + '\')">&#10005; Reset filters</button></div>';
+  var chips = dims.filter(function (d) { return f[d.k]; }).map(function (d) { return '<span onclick="bbsSet(\'' + form + '\',\'' + d.k + '\',\'\')" style="cursor:pointer;background:#eef1fa;color:#21409a;border-radius:12px;padding:3px 10px;font-size:11px;font-weight:600">' + esc(d.t) + ': ' + esc(f[d.k]) + ' &#10005;</span>'; });
+  if (chips.length) h += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">' + chips.join('') + '</div>';
+  return h + '</div>';
+}
+function bbsLoad(form) {
+  var root = bbsId(form === 'obs' ? 'bbsobsRoot' : 'bbsnmRoot'); if (root && !BBS[form].rows) root.innerHTML = '<div class="cc" style="padding:30px;text-align:center;color:#6B7280">Loading...</div>';
+  _cmCall('?action=bbsData&form=' + form + '&view=' + BBS.view, function (d) {
+    if (!d || !d.ok) { root.innerHTML = '<div class="cc" style="padding:24px;color:#c62828">' + esc((d && d.error) || 'Could not load BBS data.') + '</div>'; return; }
+    BBS.canAll = !!d.canAll; BBS.ts = d.ts; BBS[form].rows = d.rows; bbsRender(form);
+  });
+}
+function bbsSetView(v) { BBS.view = v; BBS.obs.rows = null; BBS.nm.rows = null; var pg = CUR_PAGE; if (pg === 'bbsobs') bbsLoad('obs'); else if (pg === 'bbsnm') bbsLoad('nm'); else if (pg === 'bbsperf') bbsPerfLoad(); }
+function bbsSet(form, k, v) { BBS[form].f[k] = v; bbsRender(form); }
+function bbsReset(form) { BBS[form].f = { period: '90d' }; bbsRender(form); }
+function bbsRender(form) {
+  var root = bbsId(form === 'obs' ? 'bbsobsRoot' : 'bbsnmRoot'), rows = bbsRows(form), all = BBS.view === 'all', h = bbsHeader(form), rep = bbsRepeats(form, rows), k = '';
+  BBS.rep[form] = rep;
+  if (form === 'obs') {
+    var unsafe = rows.filter(function (r) { return r.res === 'Unsafe'; }).length, sc = bbsSafeScore(rows), keys = {}; rows.forEach(function (r) { if (r.reporterKey) keys[r.reporterKey] = 1; });
+    k += bbsKpi('Observations', rows.length, '', '#21409a') + bbsKpi('Safe score', sc === null ? '-' : sc + '%', 'safe / total, weighted by people', '#2e7d32') + bbsKpi('Unsafe', unsafe, '', '#c62828') +
+      bbsKpi('Repeats (30 days)', rep.records, rep.groups.length + ' repeat groups', '#f58220', 'bbsRepeatModal(\'obs\')') + bbsKpi('Active reporters', all ? Object.keys(keys).length : '-', all ? '' : 'visible in Full view', '#8e44ad');
+  } else {
+    var high = rows.filter(function (r) { return r.high; }).length, luck = rows.filter(function (r) { return r.saved === BBS_LUCK; }).length, sf = rows.filter(function (r) { return r.pot === 'Serious' || r.pot === 'Fatal'; }).length, lfi = rows.filter(function (r) { return r.lfiRef; }).length;
+    k += bbsKpi('Near misses', rows.length, '', '#c62828') + bbsKpi('High potential', high, 'Fatal potential or luck', '#c62828') + bbsKpi('Saved by luck', luck, 'no working barrier', '#e65100') +
+      bbsKpi('Serious or fatal', rows.length ? Math.round(100 * sf / rows.length) + '%' : '-', 'of near misses', '#f58220') + bbsKpi('Repeats (30 days)', rep.records, rep.groups.length + ' repeat groups', '#f58220', 'bbsRepeatModal(\'nm\')') + bbsKpi('Linked to an LFI', lfi, '', '#21409a');
+  }
+  h += '<div class="krow" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">' + k + '</div>';
+  if (!rows.length) h += '<div class="cc" style="margin-top:14px;padding:30px;text-align:center;color:#6B7280">No records match these filters.</div>';
+  else {
+    h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">';
+    BBS_DIMS[form].filter(function (d) { return d.chart; }).forEach(function (d) { h += '<div class="cc"><div class="ch">' + esc(d.t) + '</div><div style="height:250px"><canvas id="bbsc_' + form + '_' + d.k + '"></canvas></div></div>'; });
+    h += '<div class="cc" style="grid-column:1/-1"><div class="ch">Monthly trend</div><div style="height:240px"><canvas id="bbsc_' + form + '_trend"></canvas></div></div>';
+    if (form === 'obs') h += '<div class="cc" style="grid-column:1/-1"><div class="ch">Safe score by behaviour (n of 3 or more) &middot; green &ge; ' + BBS_THRESH.green + '% (candidate to retire if sustained)</div><div style="height:300px"><canvas id="bbsc_obs_beh"></canvas></div></div>';
+    h += '</div>';
+    BBS.shown[form] = rows.slice(0, 12);
+    h += '<div class="cc" style="margin-top:14px"><div class="ch">Latest records</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:640px"><thead><tr style="text-align:left;color:#6B7280;font-size:11px;text-transform:uppercase"><th style="padding:6px">Date</th><th style="padding:6px">ID</th><th style="padding:6px">' + (form === 'obs' ? 'Result / behaviour' : 'Event / potential') + '</th><th style="padding:6px">Cluster / area</th>' + (all ? '<th style="padding:6px">Status</th><th style="padding:6px">Reporter</th>' : '<th style="padding:6px">Company</th>') + '</tr></thead><tbody>' +
+      BBS.shown[form].map(function (r, i) {
+        var sum = form === 'obs' ? '<b style="color:' + (r.res === 'Safe' ? '#2e7d32' : '#c62828') + '">' + esc(r.res) + '</b> ' + esc(r.beh) : esc(r.type) + ' &middot; <b style="color:' + (r.pot === 'Fatal' ? '#c62828' : '#e65100') + '">' + esc(r.pot) + '</b>' + (r.high ? ' &#9888;' : '');
+        return '<tr onclick="bbsDetail(\'' + form + '\',' + i + ')" style="border-top:1px solid #EEF1FA;cursor:pointer"><td style="padding:6px">' + esc(r.date) + '</td><td style="padding:6px;font-size:11px">' + esc(r.id) + '</td><td style="padding:6px">' + sum + '</td><td style="padding:6px">' + esc(r.cluster) + '<div style="font-size:10px;color:#6B7280">' + esc(r.area) + '</div></td>' + (all ? '<td style="padding:6px">' + esc(r.status) + '</td><td style="padding:6px">' + esc(r.reporter) + '</td>' : '<td style="padding:6px">' + esc(r.company) + '</td>') + '</tr>';
+      }).join('') + '</tbody></table></div></div>';
+    if (all) h += bbsRecognition(form, rows);
+  }
+  root.innerHTML = h;
+  if (rows.length) { BBS_DIMS[form].filter(function (d) { return d.chart; }).forEach(function (d) { bbsDoughnut(form, d, rows); }); bbsTrend(form, rows); if (form === 'obs') bbsBehBars(rows); }
+}
+// recognition: quality-weighted (approved share), reviewers only, no ranking of low reporters
+function bbsRecognition(form, rows) {
+  var by = {}; rows.forEach(function (r) { if (!r.reporter) return; var o = by[r.reporterKey] = by[r.reporterKey] || { n: r.reporter, t: 0, a: 0, c: r.company }; o.t++; if (r.status === 'Approved') o.a++; });
+  var arr = Object.keys(by).map(function (k) { return by[k]; }).filter(function (o) { return o.a > 0; }).sort(function (x, y) { return y.a - x.a || (y.a / y.t) - (x.a / x.t); }).slice(0, 8);
+  if (!arr.length) return '';
+  return '<div class="cc" style="margin-top:14px"><div class="ch">Recognition candidates (approved reports; visible to reviewers only)</div><div style="font-size:11px;color:#6B7280;margin-bottom:6px">Recognition is based on approved quality, not on how many reports someone files.</div><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="text-align:left;color:#6B7280;font-size:11px"><th style="padding:6px">Reporter</th><th style="padding:6px">Company</th><th style="padding:6px">Reports</th><th style="padding:6px">Approved</th><th style="padding:6px">Approved share</th></tr></thead><tbody>' +
+    arr.map(function (o) { return '<tr style="border-top:1px solid #EEF1FA"><td style="padding:6px">' + esc(o.n) + '</td><td style="padding:6px">' + esc(o.c) + '</td><td style="padding:6px">' + o.t + '</td><td style="padding:6px">' + o.a + '</td><td style="padding:6px">' + Math.round(100 * o.a / o.t) + '%</td></tr>'; }).join('') + '</tbody></table></div>';
+}
+function bbsOpenModal(h) { bbsId('fdBody').innerHTML = h; bbsId('fdModal').classList.add('vis'); }
+function bbsRow(l, v) { return '<div class="fd-sec"><label>' + esc(l) + '</label><div style="font-size:13px;white-space:pre-wrap">' + (v === '' || v === null || v === undefined ? '&#8212;' : esc(v)) + '</div></div>'; }
+function bbsLinks(list) { return (list || []).filter(function (u) { return /^https:\/\/(drive|docs)\.google\.com\//.test(u); }).map(function (u, n) { return '<a href="' + bbsA(u) + '" target="_blank" rel="noopener" style="color:#21409a;margin-right:10px">Photo ' + (n + 1) + ' &#8599;</a>'; }).join('') || '<span style="color:#6B7280">None attached</span>'; }
+function bbsDetail(form, i) {
+  var r = BBS.shown[form][i]; if (!r) return;
+  var body = form === 'obs' ? bbsRow('Result', r.res + ' ' + (r.kind || '').toLowerCase()) + bbsRow('Activity', r.activity) + bbsRow('Behaviour / condition', r.beh) + bbsRow('Root causes', r.causes.join(', ')) + bbsRow('Action taken', r.action + (r.days ? ' (due in ' + r.days + ' days)' : '')) + bbsRow('People observed', r.kind === 'Act' ? r.people : '')
+    : bbsRow('Event', r.type) + bbsRow('Could have caused', r.pot) + bbsRow('Nearly harmed', r.aff) + bbsRow('Safeguard gaps', r.bars.join(', ')) + bbsRow('Stopped by', r.saved) + bbsRow('Immediate action', r.imm) + bbsRow('Linked LFI', r.lfiRef);
+  bbsOpenModal('<div class="fd-head" style="border-bottom:2px solid ' + (form === 'obs' ? '#21409a' : '#c62828') + '"><div><span class="fd-id">' + esc(r.id) + '</span><div class="fd-cat">' + esc(r.cluster) + ' &middot; ' + esc(r.area) + ' &middot; ' + esc(r.stamp) + '</div></div><button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div><div class="fd-content" style="padding-top:6px">' + body +
+    bbsRow('Note', r.note) + bbsRow('Company', r.company) + (BBS.view === 'all' ? bbsRow('Reporter', r.reporter + (r.repEmail ? ' - ' + r.repEmail : '') + (r.contact ? ' - ' + r.contact : '') + ' - ' + r.verif) + bbsRow('Status', r.status) : '') + '<div class="fd-sec"><label>Photos</label><div style="font-size:13px">' + bbsLinks(r.photos) + '</div></div></div>');
+}
+function bbsRepeatModal(form) {
+  var rep = BBS.rep[form]; if (!rep) return;
+  bbsOpenModal('<div class="fd-head" style="border-bottom:2px solid #f58220"><div><span class="fd-id">Repeats within 30 days</span><div class="fd-cat">Same cluster + area + ' + (form === 'obs' ? 'unsafe behaviour or condition' : 'event type') + '</div></div><button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div><div class="fd-content" style="padding-top:6px">' +
+    (rep.groups.length ? '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="text-align:left;color:#6B7280;font-size:11px"><th style="padding:6px">' + (form === 'obs' ? 'Behaviour / condition' : 'Event') + '</th><th style="padding:6px">Cluster / area</th><th style="padding:6px">Times</th><th style="padding:6px">First to last</th><th style="padding:6px">IDs</th></tr></thead><tbody>' +
+      rep.groups.map(function (g) { return '<tr style="border-top:1px solid #EEF1FA"><td style="padding:6px">' + esc(g.label) + '</td><td style="padding:6px">' + esc(g.cluster) + '<div style="font-size:10px;color:#6B7280">' + esc(g.area) + '</div></td><td style="padding:6px"><b>' + g.items.length + '</b></td><td style="padding:6px">' + esc(g.items[0].date) + ' to ' + esc(g.items[g.items.length - 1].date) + '</td><td style="padding:6px;font-size:10px">' + g.items.map(function (x) { return esc(x.id); }).join('<br>') + '</td></tr>'; }).join('') + '</tbody></table>' : '<p style="color:#6B7280">No repeats in the current filter.</p>') + '</div>');
+}
+
+// ── Review & Actions ───────────────────────────────────────────────────────────────────
+function bbsRevLoad() {
+  var root = bbsId('bbsrevRoot'); if (!BBS.queue) root.innerHTML = '<div class="cc" style="padding:30px;text-align:center;color:#6B7280">Loading...</div>';
+  _cmCall('?action=bbsActionList', function (a) {
+    if (!a || !a.ok) { root.innerHTML = '<div class="cc" style="padding:24px;color:#c62828">' + esc((a && a.error) || 'Could not load actions.') + '</div>'; return; }
+    BBS.acts = a;
+    if (!a.isReviewer) { BBS.queue = { ok: true, counts: null, queue: [] }; bbsRevRender(); return; }
+    _cmCall('?action=bbsPending', function (q) { BBS.queue = (q && q.ok) ? q : { ok: true, counts: null, queue: [], error: q && q.error }; bbsRevRender(); });
+  });
+}
+function bbsRevRender() {
+  var root = bbsId('bbsrevRoot'), a = BBS.acts, q = BBS.queue, acts = a.actions || [];
+  var open = acts.filter(function (x) { return x.status === 'Open'; }).length, over = acts.filter(function (x) { return x.overdue; }).length, pend = acts.filter(function (x) { return x.status === 'Pending Closeout Approval'; }).length;
+  var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;color:#6B7280">' + (a.isReviewer ? 'You review reports and approve closeouts in your cluster scope. You also see actions assigned to you.' : 'You see the actions assigned to you.') + '</span><span><span style="font-size:11px;color:#6B7280;margin-right:8px">Synced ' + esc(a.ts) + '</span><button class="adm-btn" onclick="BBS.queue=null;bbsRevLoad()">&#8635; Refresh</button></span></div>';
+  if (q.error) h += '<div class="cc" style="color:#c62828;margin-bottom:10px">' + esc(q.error) + '</div>';
+  h += '<div class="krow" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">' + (a.isReviewer ? bbsKpi('To review', (q.queue || []).length, 'observations + near misses', '#f58220') : '') + bbsKpi('Open actions', open, '', '#21409a') + bbsKpi('Overdue', over, '', '#c62828') + bbsKpi('Pending closeout', pend, 'awaiting approval', '#8e44ad') + '</div>';
+  if (a.isReviewer) {
+    h += '<div class="cc" style="margin-top:14px"><div class="ch">Review queue</div>' + ((q.queue || []).length ? '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:700px"><thead><tr style="text-align:left;color:#6B7280;font-size:11px;text-transform:uppercase"><th style="padding:6px">Form</th><th style="padding:6px">ID</th><th style="padding:6px">Summary</th><th style="padding:6px">Cluster / area</th><th style="padding:6px">Flag</th><th style="padding:6px">Reporter</th><th></th></tr></thead><tbody>' +
+      q.queue.map(function (r, i) {
+        var sum = r.form === 'obs' ? esc(r.res) + ' ' + esc((r.kind || '').toLowerCase()) + ': ' + esc(r.beh) : esc(r.type) + ' (' + esc(r.pot) + ')', flag = r.form === 'nm' ? (r.high ? '<b style="color:#c62828">HIGH POTENTIAL</b>' : '') : (r.action === 'Needs follow-up action' ? '<b style="color:#e65100">Follow-up requested</b>' : '');
+        return '<tr style="border-top:1px solid #EEF1FA"><td style="padding:6px"><span style="background:' + (r.form === 'obs' ? '#21409a' : '#c62828') + ';color:#fff;border-radius:10px;padding:2px 8px;font-size:10px">' + (r.form === 'obs' ? 'OBS' : 'NM') + '</span></td><td style="padding:6px;font-size:11px">' + esc(r.id) + '</td><td style="padding:6px">' + sum + '</td><td style="padding:6px">' + esc(r.cluster) + '<div style="font-size:10px;color:#6B7280">' + esc(r.area) + '</div></td><td style="padding:6px">' + flag + '</td><td style="padding:6px">' + esc(r.reporter) + '<div style="font-size:10px;color:' + (r.verif === 'Verified Employee' ? '#2e7d32' : '#e65100') + '">' + (r.verif === 'Verified Employee' ? 'VERIFIED' : 'UNVERIFIED') + '</div></td><td style="padding:6px"><button onclick="bbsOpenReview(' + i + ')" style="background:#f58220;color:#fff;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer">Review</button></td></tr>';
+      }).join('') + '</tbody></table></div>' : '<div style="text-align:center;padding:20px;color:#6B7280">Nothing waiting for review.</div>') + '</div>';
+  }
+  h += '<div class="cc" style="margin-top:14px"><div class="ch">Actions</div>' + (acts.length ? '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:720px"><thead><tr style="text-align:left;color:#6B7280;font-size:11px;text-transform:uppercase"><th style="padding:6px">Action</th><th style="padding:6px">Source</th><th style="padding:6px">Description</th><th style="padding:6px">Action party</th><th style="padding:6px">Due</th><th style="padding:6px">Status</th><th></th></tr></thead><tbody>' +
+    acts.map(function (x, i) {
+      var st = x.overdue ? '<b style="color:#c62828">Overdue</b>' : x.status === 'Closed' ? '<b style="color:#2e7d32">Closed</b>' : x.status === 'Pending Closeout Approval' ? '<b style="color:#8e44ad">Pending approval</b>' : 'Open', btn = '';
+      if (x.mine && x.status === 'Open') btn = '<button onclick="bbsEvidenceModal(' + i + ')" style="background:#21409a;color:#fff;border:none;padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer">Submit evidence</button>';
+      else if (a.isReviewer && x.status === 'Pending Closeout Approval') btn = '<button onclick="bbsCloseoutModal(' + i + ')" style="background:#8e44ad;color:#fff;border:none;padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer">Review closeout</button>';
+      return '<tr style="border-top:1px solid #EEF1FA"><td style="padding:6px;font-size:11px">' + esc(x.id) + '<div style="font-size:10px;color:#6B7280">' + esc(x.prio) + '</div></td><td style="padding:6px;font-size:11px">' + esc(x.form) + '<div style="font-size:10px;color:#6B7280">' + esc(x.src) + '</div></td><td style="padding:6px">' + esc(x.desc) + '</td><td style="padding:6px">' + esc(x.owner) + '</td><td style="padding:6px">' + esc(x.due) + '</td><td style="padding:6px">' + st + '</td><td style="padding:6px">' + btn + '</td></tr>';
+    }).join('') + '</tbody></table></div>' : '<div style="text-align:center;padding:20px;color:#6B7280">No actions yet.</div>') + '</div>';
+  root.innerHTML = h;
+}
+function bbsOpenReview(i) {
+  var r = (BBS.queue.queue || [])[i]; if (!r) return; var form = r.form, days = parseInt(r.days, 10) || 7, due = new Date(Date.now() + days * 864e5).toISOString().slice(0, 10);
+  var body = form === 'obs' ? bbsRow('Result', r.res + ' ' + (r.kind || '').toLowerCase()) + bbsRow('Activity', r.activity) + bbsRow('Behaviour / condition', r.beh) + bbsRow('Root causes', r.causes.join(', ')) + bbsRow('Action taken', r.action + (r.days ? ' (due in ' + r.days + ' days)' : '')) + bbsRow('People observed', r.kind === 'Act' ? r.people : '')
+    : bbsRow('Event', r.type) + bbsRow('Could have caused', r.pot + (r.high ? '  (HIGH POTENTIAL)' : '')) + bbsRow('Nearly harmed', r.aff) + bbsRow('Safeguard gaps', r.bars.join(', ')) + bbsRow('Stopped by', r.saved) + bbsRow('Immediate action', r.imm);
+  var inp = 'width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-family:inherit;font-size:13px';
+  bbsOpenModal('<div class="fd-head" style="border-bottom:2px solid #f58220"><div><span class="fd-id">Review ' + esc(r.id) + '</span><div class="fd-cat">' + esc(r.cluster) + ' &middot; ' + esc(r.area) + ' &middot; ' + esc(r.stamp) + '</div></div><button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div><div class="fd-content" style="padding-top:6px">' + body + bbsRow('Note', r.note) +
+    bbsRow('Reporter', r.reporter + ' (' + r.company + ')' + (r.repEmail ? ' - ' + r.repEmail : '') + (r.repId ? ' - ID ' + r.repId : '') + (r.contact ? ' - ' + r.contact : '') + ' - ' + r.verif) + '<div class="fd-sec"><label>Photos</label><div style="font-size:13px">' + bbsLinks(r.photos) + '</div></div>' +
+    '<div class="fd-sec"><label>Reviewer note (required to reject; sent to the reporter)</label><textarea id="bbsNotes" rows="2" style="' + inp + '"></textarea></div>' +
+    '<div class="fd-sec" style="background:#f7f9fd;border-radius:8px;padding:8px"><label>Optional: raise an action (not used when rejecting)</label><input id="bbsActDesc" placeholder="What must be done" style="' + inp + ';margin-bottom:6px"><div style="display:flex;gap:6px;flex-wrap:wrap"><input id="bbsActOwner" placeholder="owner@altasnim.com" style="' + inp + ';flex:2;min-width:160px"><input id="bbsActDue" type="date" value="' + due + '" style="' + inp + ';flex:1;min-width:130px"><select id="bbsActPrio" style="' + inp + ';flex:1;min-width:90px"><option>Medium</option><option>High</option><option>Low</option></select></div></div>' +
+    (form === 'nm' ? '<div class="fd-sec"><label>Link an existing LFI (optional cross-reference)</label><input id="bbsLfi" placeholder="LFI ID" style="' + inp + '"></div>' : '') +
+    '<div id="bbsDecMsg" style="font-size:12px;color:#c62828;min-height:16px"></div></div><div class="fd-actions" style="display:flex;gap:8px;flex-wrap:wrap">' +
+    '<button class="fc-act-btn" style="background:#2e7d32;color:#fff" onclick="bbsDecide(' + i + ',\'Approve\')">Approve &amp; Showcase</button><button class="fc-act-btn" style="background:#21409a;color:#fff" onclick="bbsDecide(' + i + ',\'Accept\')">Accept (count only)</button><button class="fc-act-btn" style="background:#c62828;color:#fff" onclick="bbsDecide(' + i + ',\'Reject\')">Reject</button></div>');
+}
+function bbsDecide(i, decision) {
+  var r = BBS.queue.queue[i], notes = (bbsId('bbsNotes').value || '').trim(), msg = bbsId('bbsDecMsg');
+  if (decision === 'Reject' && notes.length < 5) { msg.textContent = 'Give a reason when rejecting - the reporter is told why.'; return; }
+  var owner = (bbsId('bbsActOwner').value || '').trim(), desc = (bbsId('bbsActDesc').value || '').trim(), wantAct = decision !== 'Reject' && (owner || desc);
+  if (wantAct && (!/^[^\s@]+@altasnim\.com$/i.test(owner) || desc.length < 5)) { msg.textContent = 'To raise an action, give a description and an @altasnim.com owner.'; return; }
+  msg.style.color = '#6B7280'; msg.textContent = 'Saving...';
+  _cmCall('?action=bbsReview&form=' + r.form + '&id=' + encodeURIComponent(r.id) + '&decision=' + decision + '&notes=' + encodeURIComponent(notes), function (d) {
+    if (!d || !d.ok) { msg.style.color = '#c62828'; msg.textContent = (d && d.error) || 'Could not save the decision.'; return; }
+    var lfi = r.form === 'nm' && bbsId('bbsLfi') ? bbsId('bbsLfi').value.trim() : '', steps = [];
+    if (wantAct) steps.push('?action=bbsActionCreate&form=' + r.form + '&id=' + encodeURIComponent(r.id) + '&desc=' + encodeURIComponent(desc) + '&owner=' + encodeURIComponent(owner) + '&due=' + encodeURIComponent(bbsId('bbsActDue').value) + '&prio=' + encodeURIComponent(bbsId('bbsActPrio').value));
+    if (lfi && decision !== 'Reject') steps.push('?action=bbsLinkLfi&id=' + encodeURIComponent(r.id) + '&lfi=' + encodeURIComponent(lfi));
+    var errs = [];
+    (function next() {
+      if (!steps.length) { if (errs.length) { msg.style.color = '#c62828'; msg.textContent = 'Reviewed, but: ' + errs.join(' ') + ' Close this window and retry that step.'; BBS.queue = null; bbsRevLoad(); return; } closeFcDetail(); BBS.queue = null; bbsRevLoad(); return; }
+      _cmCall(steps.shift(), function (x) { if (!x || !x.ok) errs.push((x && x.error) || 'A follow-up step failed.'); next(); });
+    })();
+  });
+}
+function bbsEvidenceModal(i) {
+  var x = BBS.acts.actions[i], inp = 'width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-family:inherit;font-size:13px';
+  bbsOpenModal('<div class="fd-head" style="border-bottom:2px solid #21409a"><div><span class="fd-id">Submit evidence</span><div class="fd-cat">' + esc(x.id) + ' &middot; due ' + esc(x.due) + '</div></div><button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div><div class="fd-content" style="padding-top:6px">' + bbsRow('Action', x.desc) +
+    '<div class="fd-sec"><label>Evidence (Drive link, or describe what was done)</label><textarea id="bbsEv" rows="2" style="' + inp + '"></textarea></div><div class="fd-sec"><label>Notes (optional)</label><textarea id="bbsEvNotes" rows="2" style="' + inp + '"></textarea></div><div id="bbsEvMsg" style="font-size:12px;color:#c62828;min-height:16px"></div></div><div class="fd-actions"><button class="fc-act-btn" style="background:#21409a;color:#fff" onclick="bbsSendEvidence(' + i + ')">Submit for approval</button></div>');
+}
+function bbsSendEvidence(i) {
+  var x = BBS.acts.actions[i], ev = (bbsId('bbsEv').value || '').trim(), msg = bbsId('bbsEvMsg');
+  if (ev.length < 5) { msg.textContent = 'Add the evidence: a Drive link or a short description.'; return; }
+  _cmCall('?action=bbsActionEvidence&id=' + encodeURIComponent(x.id) + '&evidence=' + encodeURIComponent(ev) + '&notes=' + encodeURIComponent(bbsId('bbsEvNotes').value || ''), function (d) {
+    if (d && d.ok) { closeFcDetail(); BBS.queue = null; bbsRevLoad(); } else { msg.textContent = (d && d.error) || 'Could not submit.'; } });
+}
+function bbsCloseoutModal(i) {
+  var x = BBS.acts.actions[i], inp = 'width:100%;padding:8px;border:1px solid #dce1ee;border-radius:6px;font-family:inherit;font-size:13px', ev = /^https:\/\//.test(x.evid) ? '<a href="' + bbsA(x.evid) + '" target="_blank" rel="noopener" style="color:#21409a">' + esc(x.evid) + '</a>' : esc(x.evid);
+  bbsOpenModal('<div class="fd-head" style="border-bottom:2px solid #8e44ad"><div><span class="fd-id">Closeout review</span><div class="fd-cat">' + esc(x.id) + ' &middot; ' + esc(x.owner) + '</div></div><button class="fd-x" onclick="closeFcDetail()">&#10005;</button></div><div class="fd-content" style="padding-top:6px">' + bbsRow('Action', x.desc) + '<div class="fd-sec"><label>Evidence</label><div style="font-size:13px">' + ev + '</div></div>' + bbsRow('Owner notes', x.cnotes) +
+    '<div class="fd-sec"><label>Reviewer note (required to return)</label><textarea id="bbsCoNotes" rows="2" style="' + inp + '"></textarea></div><div id="bbsCoMsg" style="font-size:12px;color:#c62828;min-height:16px"></div></div><div class="fd-actions" style="display:flex;gap:8px"><button class="fc-act-btn" style="background:#2e7d32;color:#fff" onclick="bbsCloseout(' + i + ',\'Approve\')">Approve &amp; close</button><button class="fc-act-btn" style="background:#c62828;color:#fff" onclick="bbsCloseout(' + i + ',\'Reject\')">Return</button></div>');
+}
+function bbsCloseout(i, decision) {
+  var x = BBS.acts.actions[i], notes = (bbsId('bbsCoNotes').value || '').trim(), msg = bbsId('bbsCoMsg');
+  if (decision === 'Reject' && notes.length < 5) { msg.textContent = 'Give a reason when returning the evidence.'; return; }
+  _cmCall('?action=bbsActionReview&id=' + encodeURIComponent(x.id) + '&decision=' + decision + '&notes=' + encodeURIComponent(notes), function (d) {
+    if (d && d.ok) { closeFcDetail(); BBS.queue = null; bbsRevLoad(); } else { msg.textContent = (d && d.error) || 'Could not save.'; } });
+}
+
+// ── Performance ────────────────────────────────────────────────────────────────────────
+function bbsPerfLoad() {
+  var root = bbsId('bbsperfRoot'); root.innerHTML = '<div class="cc" style="padding:30px;text-align:center;color:#6B7280">Loading...</div>';
+  var view = BBS.view;
+  _cmCall('?action=bbsData&form=obs&view=' + view, function (o) {
+    if (!o || !o.ok) { root.innerHTML = '<div class="cc" style="padding:24px;color:#c62828">' + esc((o && o.error) || 'Could not load.') + '</div>'; return; }
+    BBS.canAll = !!o.canAll; BBS.ts = o.ts;
+    _cmCall('?action=bbsData&form=nm&view=' + view, function (n) {
+      _cmCall('?action=bbsActionList', function (a) { BBS.perf = { obs: o.rows, nm: (n && n.rows) || [], acts: (a && a.actions) || [] }; bbsPerfRender(); }); });
+  });
+}
+function bbsPerfRender() {
+  var P = BBS.perf, now = Date.now(), D90 = 90 * 864e5, valid = function (r) { return BBS.view !== 'all' || r.status === 'Approved' || r.status === 'Accepted'; };
+  var obs = P.obs.filter(valid), nm = P.nm.filter(valid), cur = obs.filter(function (r) { return r.ts >= now - D90; }), prev = obs.filter(function (r) { return r.ts < now - D90 && r.ts >= now - 2 * D90; });
+  var sc = bbsSafeScore(cur), sp = bbsSafeScore(prev), delta = (sc !== null && sp !== null) ? Math.round((sc - sp) * 10) / 10 : null;
+  var unsafe = cur.filter(function (r) { return r.res === 'Unsafe'; }), withAct = unsafe.filter(function (r) { return r.action === 'Needs follow-up action'; }).length;
+  var acts = P.acts, closed = acts.filter(function (x) { return x.status === 'Closed'; }), over = acts.filter(function (x) { return x.overdue; }).length;
+  var dtc = closed.map(function (x) { return x.daysToClose; }).filter(function (v) { return v !== null; }), avgClose = dtc.length ? Math.round(10 * dtc.reduce(function (s, v) { return s + v; }, 0) / dtc.length) / 10 : null;
+  var rh = obs.concat(nm).map(function (r) { return r.reviewHours; }).filter(function (v) { return v !== null && v !== undefined; }), avgRev = rh.length ? Math.round(10 * rh.reduce(function (s, v) { return s + v; }, 0) / rh.length) / 10 : null;
+  var nm90 = nm.filter(function (r) { return r.ts >= now - D90; }), high90 = nm90.filter(function (r) { return r.high; }).length, luck90 = nm90.filter(function (r) { return r.saved === BBS_LUCK; }).length;
+  var by = {}; obs.forEach(function (r) { if (r.kind !== 'Act' || (r.res !== 'Safe' && r.res !== 'Unsafe')) return; var o = by[r.beh] = by[r.beh] || { s: 0, t: 0, n: 0 }; var w = bbsWeight(r); o.t += w; o.n++; if (r.res === 'Safe') o.s += w; });
+  var retire = Object.keys(by).filter(function (k) { return by[k].n >= 10 && 100 * by[k].s / by[k].t >= BBS_THRESH.green; });
+  var months = {}; obs.forEach(function (r) { var m = (r.date || '').slice(0, 7); if (!m) return; var o = months[m] = months[m] || []; o.push(r); });
+  var ks = Object.keys(months).sort();
+  var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap"><span style="font-size:12px;color:#6B7280">' + (BBS.view === 'all' ? 'Full view: every valid record in your scope.' : 'Showcase view: approved reports only.') + ' Last 90 days unless stated.</span><span>' +
+    (BBS.canAll ? '<button class="adm-btn" onclick="bbsSetView(\'' + (BBS.view === 'all' ? 'showcase' : 'all') + '\')">' + (BBS.view === 'all' ? 'Switch to Showcase view' : 'Switch to Full view') + '</button> ' : '') + '<button class="adm-btn" onclick="bbsPerfLoad()">&#8635; Refresh</button></span></div>';
+  h += '<div class="ch" style="margin:6px 0">Behaviour (leading and outcome)</div><div class="krow" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">' +
+    bbsKpi('Observations / month', cur.length ? Math.round(10 * cur.length / 3) / 10 : '0', 'average, last 90 days', '#21409a') + bbsKpi('Safe score', sc === null ? '-' : sc + '%', delta === null ? 'no prior period' : (delta >= 0 ? '+' : '') + delta + ' pts vs previous 90 days', '#2e7d32') +
+    bbsKpi('Unsafe with action requested', unsafe.length ? Math.round(100 * withAct / unsafe.length) + '%' : '-', withAct + ' of ' + unsafe.length, '#f58220') + bbsKpi('Behaviours near retirement', retire.length, 'safe score of ' + BBS_THRESH.green + '% or more, n of 10 or more', '#00897b') + '</div>';
+  h += '<div class="ch" style="margin:14px 0 6px">Actions and response</div><div class="krow" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">' +
+    bbsKpi('Close-out rate', acts.length ? Math.round(100 * closed.length / acts.length) + '%' : '-', closed.length + ' of ' + acts.length + ' actions', '#2e7d32') + bbsKpi('Overdue now', over, '', '#c62828') + bbsKpi('Avg days to close', avgClose === null ? '-' : avgClose, '', '#21409a') + bbsKpi('Avg review turnaround', avgRev === null ? '-' : avgRev + ' h', 'report to decision', '#8e44ad') + '</div>';
+  h += '<div class="ch" style="margin:14px 0 6px">Near misses</div><div class="krow" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">' + bbsKpi('Near misses (90 days)', nm90.length, '', '#c62828') + bbsKpi('High potential', high90, 'Fatal potential or luck', '#c62828') + bbsKpi('Saved by luck', luck90, 'no working barrier', '#e65100') + '</div>';
+  h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px"><div class="cc"><div class="ch">Safe score by month</div><div style="height:240px"><canvas id="bbsc_perf_score"></canvas></div></div><div class="cc"><div class="ch">Action status</div><div style="height:240px"><canvas id="bbsc_perf_act"></canvas></div></div></div>';
+  h += '<div class="cc" style="margin-top:14px"><div class="ch">Not tracked in LFI CORE yet</div><div style="font-size:12px;color:#4d555b;line-height:1.7">Management site visits (Gemba) &middot; steering committee meetings held &middot; training coverage &middot; annual sustainability review. These are leading indicators an approval assessment looks for; they need their own logs (planned).</div></div>';
+  bbsId('bbsperfRoot').innerHTML = h;
+  var cv = bbsId('bbsc_perf_score'); if (BBS.CH.perfScore) BBS.CH.perfScore.destroy();
+  BBS.CH.perfScore = new Chart(cv.getContext('2d'), { type: 'line', data: { labels: ks, datasets: [{ label: 'Safe score %', data: ks.map(function (k) { return bbsSafeScore(months[k]); }), borderColor: '#2e7d32', backgroundColor: '#2e7d3233', fill: true, tension: .25 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } }, plugins: { legend: { display: false } } } });
+  var st = { Open: 0, 'Pending approval': 0, Closed: 0, Overdue: 0 }; acts.forEach(function (x) { if (x.overdue) st.Overdue++; else if (x.status === 'Closed') st.Closed++; else if (x.status === 'Pending Closeout Approval') st['Pending approval']++; else st.Open++; });
+  var cv2 = bbsId('bbsc_perf_act'); if (BBS.CH.perfAct) BBS.CH.perfAct.destroy();
+  BBS.CH.perfAct = new Chart(cv2.getContext('2d'), { type: 'doughnut', data: { labels: Object.keys(st), datasets: [{ data: Object.keys(st).map(function (k) { return st[k]; }), backgroundColor: ['#21409a', '#8e44ad', '#2e7d32', '#c62828'], borderColor: '#fff', borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '58%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } } } });
+}
+// Committee: read-only summary card (BBS data is never edited from the Committee page)
+function bbsCommitteeCard() {
+  var el = bbsId('bbsCommitteeCard'); if (!el) return;
+  _cmCall('?action=bbsPending', function (q) {
+    if (!q || !q.ok) { el.innerHTML = ''; return; }
+    var n = (q.queue || []).length, hi = (q.queue || []).filter(function (r) { return r.high; }).length;
+    el.innerHTML = '<div class="cc" style="margin-bottom:14px;border-left:4px solid #f58220;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div style="font-size:13px"><b>BBS</b> &middot; ' + n + ' report' + (n === 1 ? '' : 's') + ' awaiting review' + (hi ? ' &middot; <b style="color:#c62828">' + hi + ' high potential</b>' : '') + '</div><button class="adm-btn" onclick="navTo(\'bbsrev\',document.getElementById(\'nav-bbsrev\'))">Open BBS Review &amp; Actions</button></div>';
+  });
+}
+
 var CM_POLL_TIMER = null;
 var CM_POLL_INTERVAL_MS = 45000; // background sync — near-real-time without a persistent connection
 
@@ -1701,6 +2022,7 @@ function renderCommitteePage(){
     _renderBarrierChart(COMMITTEE_CACHE.barrier);
   }
   _cmStartPolling();
+  try{bbsCommitteeCard();}catch(e){}
   setTimeout(function(){_cmDebugPrint('renderCommitteePage end (async fetch may still be pending)');}, 50);
 }
 
@@ -2293,22 +2615,6 @@ function closeVideoModal(){
 }
 document.addEventListener('click',function(e){if(e.target.id==='videoModal')closeVideoModal();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePptModal();closeVideoModal();}});
-function sclang(btn,lang){
-  stopSpeech();
-  var card=btn.closest('.fc')||btn.closest('#fdCard');
-  var cont=card.querySelector('.fcc')||card.querySelector('.fd-tts');
-  if(!cont)return;
-  var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
-  var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
-  cont.className='fcc'+(dir==='rtl'?' rtl':'');cont.dataset.lang=lang;
-  cont.innerHTML='<div class="fcs"><label>Description of Incident</label><p>'+(esc(c.desc)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
-    '<div class="fcs"><label>Findings / Root Cause</label><p>'+(esc(c.find)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>'+
-    '<div class="fcs"><label>Learnings from Incident</label><p>'+(esc(c.learn)||'<em style="color:#aaa">Not yet translated</em>')+'</p></div>';
-  card.querySelectorAll('.lb').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  var spk=card.querySelector('.spk');
-  if(spk){spk.innerHTML=_spkLabel(lang,'read');spk.classList.remove('playing');}
-}
 
 // ── Voice Preload System ─────────────────────────────────────
 function initVoices(){
@@ -2331,8 +2637,9 @@ function initVoices(){
   }
 }
 function _primeLang(langCode,delay){
-  setTimeout(function(){
+  setTimeout(function run(){
     if(!window.speechSynthesis)return;
+    if(typeof LFA!=='undefined'&&LFA.st!=='idle'){setTimeout(run,1500);return;}
     try{var u=new SpeechSynthesisUtterance('.');u.lang=langCode;u.volume=0;u.rate=10;u.onerror=function(){};u.onend=function(){_vsUpdate();_vsUI();};window.speechSynthesis.speak(u);setTimeout(function(){try{window.speechSynthesis.cancel();}catch(e){}},150);}catch(e){}
   },delay);
 }
@@ -2398,80 +2705,357 @@ function admRefreshVoiceStatus(){
 }
 
 // ── Speech Play/Stop ─────────────────────────────────────────
-function stopSpeech(){
-  if(window.speechSynthesis)window.speechSynthesis.cancel();
-  if(CURRENT_AUDIO){try{CURRENT_AUDIO.pause();CURRENT_AUDIO.currentTime=0;}catch(e){}CURRENT_AUDIO=null;}
-  if(SPEAKING_BTN){
-    var cl=SPEAKING_BTN._spkLang||'en';
-    SPEAKING_BTN.innerHTML=_spkLabel(cl,'read');
-    SPEAKING_BTN.classList.remove('playing');
-    SPEAKING_BTN.classList.remove('loading');
-    SPEAKING_BTN=null;
-  }
+// ══════════════════════════════════════════════════════════════════════════
+// LFI AUDIO: engine, card + popup controls, Play all (toolbox talk), 24-at-a-time cards
+// Order of preference: pre-generated studio audio > device voice > online voice.
+// Every path reads the WHOLE alert (description, findings, learnings), in sentence-sized pieces.
+// ══════════════════════════════════════════════════════════════════════════
+var LFA_PL_MAX = 100, LFA_FILE_CACHE_MAX = 10, FC_STEP = 24, FC_LIMIT = 24, FC_SIG = '', FC_OBS = null;
+var LFA = { st: 'idle', idx: -1, id: '', lang: 'en', req: 'en', mode: '', seg: '', prog: 0, rate: 1, ep: 0, aud: null, info: null, err: '', index: null, indexOk: false, indexTried: false, indexQ: [],
+  files: {}, fileOrder: [], noFile: {}, pre: null, chunks: null, ci: 0, total: 1, onEnd: null, unlocked: false, pl: null, wake: null };
+var LFA_T = {
+  en: { listen: 'Listen', stop: 'Stop', pause: 'Pause', resume: 'Resume', loading: 'Loading...', playAll: 'Play all', showing: 'Showing', of: 'of', more: 'Show {n} more', left: 'left',
+    studio: 'Studio audio', device: 'Device voice', online: 'Online voice', speed: 'Speed', finished: 'All alerts played', close: 'Close', prev: 'Previous', next: 'Next', toolbox: 'Toolbox Talk',
+    desc: 'Description', find: 'Findings', learn: 'Learnings', audioFail: 'Audio could not be played. Check your connection and try again.', nothing: 'Nothing to read for this alert.', open: 'Open alert' },
+  hi: { listen: 'सुनें', stop: 'रोकें', pause: 'विराम', resume: 'जारी रखें', loading: 'लोड हो रहा है...', playAll: 'सभी चलाएँ', showing: 'दिखाए जा रहे', of: 'में से', more: '{n} और दिखाएँ', left: 'शेष',
+    studio: 'स्टूडियो ऑडियो', device: 'डिवाइस आवाज़', online: 'ऑनलाइन आवाज़', speed: 'गति', finished: 'सभी अलर्ट चल चुके', close: 'बंद करें', prev: 'पिछला', next: 'अगला', toolbox: 'टूलबॉक्स टॉक',
+    desc: 'विवरण', find: 'निष्कर्ष', learn: 'सीख', audioFail: 'ऑडियो नहीं चल सका। कनेक्शन जाँचें और फिर प्रयास करें।', nothing: 'इस अलर्ट में पढ़ने के लिए कुछ नहीं है।', open: 'अलर्ट खोलें' },
+  ar: { listen: 'استماع', stop: 'إيقاف', pause: 'إيقاف مؤقت', resume: 'متابعة', loading: 'جارٍ التحميل...', playAll: 'تشغيل الكل', showing: 'عرض', of: 'من', more: 'عرض {n} إضافية', left: 'متبقية',
+    studio: 'صوت استوديو', device: 'صوت الجهاز', online: 'صوت عبر الإنترنت', speed: 'السرعة', finished: 'تم تشغيل جميع التنبيهات', close: 'إغلاق', prev: 'السابق', next: 'التالي', toolbox: 'حديث الموقع',
+    desc: 'الوصف', find: 'النتائج', learn: 'الدروس', audioFail: 'تعذر تشغيل الصوت. تحقق من الاتصال وحاول مجددا.', nothing: 'لا يوجد ما يُقرأ في هذا التنبيه.', open: 'فتح التنبيه' }
+};
+function lt(k, n) { var d = LFA_T[LANG] || LFA_T.en, s = d[k] || LFA_T.en[k] || k; return n !== undefined ? s.replace('{n}', n) : s; }
+var LFA_LBL = { en: 'EN', hi: '\u0939\u093f', ar: '\u0639' }, LFA_FLAG = { en: '\uD83C\uDDEC\uD83C\uDDE7', hi: '\uD83C\uDDEE\uD83C\uDDF3', ar: '\uD83C\uDDF4\uD83C\uDDF2' };
+
+// ---------- text, fingerprint, chunks (identical rules to the server) ----------
+function lfaNorm(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
+function lfaHash(s) { var h = 5381; for (var i = 0; i < s.length; i++) { h = ((h << 5) + h + s.charCodeAt(i)) | 0; } return (h >>> 0).toString(36); }
+function lfaFind(id) { if (!RAW) return null; for (var i = 0; i < RAW.length; i++) if (RAW[i].id === id) return RAW[i]; return null; }
+function lfaRec(idx) { var e = window._FC_PPT && window._FC_PPT[idx]; return e ? lfaFind(e.id) : null; }
+function lfaSegs(r, lang) {
+  function build(l) { var c = gc(r, l), o = []; [['desc', c.desc], ['find', c.find], ['learn', c.learn]].forEach(function (p) { var t = lfaNorm(p[1]); if (t) o.push({ k: p[0], text: t }); }); return o; }
+  var s = build(lang), eff = lang; if (!s.length && lang !== 'en') { s = build('en'); eff = 'en'; }
+  return { lang: eff, segs: s, hash: lfaHash(s.map(function (x) { return x.k + ':' + x.text; }).join('\u0001') + '|' + eff) };
 }
-// Smart routing: English=browser TTS, Hindi/Arabic=Cloud TTS (if no browser voice)
-function speakCard(btn){
-  if(SPEAKING_BTN===btn){stopSpeech();return;}
-  stopSpeech();
-  var card=btn.closest('.fc')||btn.closest('#fdCard');
-  var cont=card.querySelector('.fcc')||card.querySelector('.fd-tts');
-  if(!cont)return;
-  var cardLang=cont.dataset.lang||'en';
-  var r=JSON.parse(cont.dataset.row.replace(/&lt;/g,'<').replace(/&#39;/g,"'"));
-  var voice=cardLang==='hi'?VS.hi:cardLang==='ar'?VS.ar:VS.en;
-  var useCloud=(cardLang!=='en'&&!voice);
-  var c=gc(r,cardLang);
-  var text=[c.desc,c.find,c.learn].filter(function(s){return s&&s.trim();}).join('. ');
-  if(!text){
-    var ce=gc(r,'en');
-    text=[ce.desc,ce.find,ce.learn].filter(function(s){return s&&s.trim();}).join('. ');
-    useCloud=false;cardLang='en';voice=VS.en;
-  }
-  if(!text)return;
-  btn._spkLang=cardLang;SPEAKING_BTN=btn;
-  if(useCloud){
-    btn.innerHTML=_spkLabel(cardLang,'loading');btn.classList.add('loading');
-    _cloudTTS(btn,text,cardLang);
-  }else{
-    btn.innerHTML=_spkLabel(cardLang,'stop');btn.classList.add('playing');
-    var u=new SpeechSynthesisUtterance(text);
-    u.lang=cardLang==='ar'?'ar-SA':cardLang==='hi'?'hi-IN':'en-US';
-    u.rate=0.85;if(voice)u.voice=voice;
-    function rb(){if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}}
-    u.onend=rb;u.onerror=rb;
-    window.speechSynthesis.speak(u);
-  }
+function lfaSplit(text, max) {
+  var parts = String(text).match(/[^.!?\u061F\u0964\n]+[.!?\u061F\u0964]*\s*/g) || [String(text)], out = [], cur = '';
+  parts.forEach(function (p) {
+    p = p.replace(/\s+/g, ' ');
+    while (p.length > max) { var cut = p.lastIndexOf(' ', max); if (cut < max * 0.4) cut = max; if (cur) { out.push(cur.trim()); cur = ''; } out.push(p.substring(0, cut).trim()); p = p.substring(cut); }
+    if ((cur + p).length > max) { if (cur.trim()) out.push(cur.trim()); cur = p; } else cur += p;
+  });
+  if (cur.trim()) out.push(cur.trim());
+  return out.filter(Boolean);
+}
+function lfaChunksOf(info, max) { var out = [], pos = 0; info.segs.forEach(function (s) { lfaSplit(s.text, max).forEach(function (c) { out.push({ k: s.k, text: c, start: pos }); pos += c.length; }); }); return { list: out, total: pos || 1 }; }
+function lfaSegAt(sizes, prog) { var tot = 0, i; for (i = 0; i < sizes.length; i++) tot += sizes[i].c; var c = 0; for (i = 0; i < sizes.length; i++) { c += sizes[i].c; if (prog * tot <= c) return sizes[i].k; } return sizes.length ? sizes[sizes.length - 1].k : ''; }
+
+// ---------- network helpers ----------
+function lfaJsonp(qs, ms, cb) {
+  var name = 'lfa' + Date.now() + Math.floor(Math.random() * 1e6), sc = document.createElement('script'), done = false, tid;
+  function fin(d) { if (done) return; done = true; clearTimeout(tid); try { delete window[name]; } catch (e) { window[name] = undefined; } if (sc.parentNode) sc.parentNode.removeChild(sc); cb(d || null); }
+  tid = setTimeout(function () { fin(null); }, ms || 15000);
+  window[name] = function (d) { fin(d); }; sc.onerror = function () { fin(null); };
+  sc.src = API_BASE + qs + '&callback=' + name; document.head.appendChild(sc);
+}
+function lfaIndex(cb) {
+  if (LFA.index) { cb(); return; }
+  LFA.indexQ.push(cb); if (LFA.indexTried) return; LFA.indexTried = true;
+  lfaJsonp('?action=audioIndex', 8000, function (d) {
+    LFA.indexOk = !!(d && d.ok && d.keys); LFA.index = LFA.indexOk ? d.keys : {};
+    LFA.indexQ.splice(0).forEach(function (f) { try { f(); } catch (e) {} });
+  });
+}
+function lfaHas(id, lang, hash) { if (!LFA.index || !LFA.indexOk) return null; var e = LFA.index[id + '|' + lang]; return !!(e && e.h === hash); }
+function lfaFile(id, lang, hash, cb) {
+  var k = id + '|' + lang + '|' + hash;
+  if (LFA.files[k]) { cb(LFA.files[k]); return; } if (LFA.noFile[k]) { cb(null); return; }
+  lfaJsonp('?action=audio&id=' + encodeURIComponent(id) + '&lang=' + lang, 25000, function (d) {
+    if (d && d.ok && d.audio && (!d.h || d.h === hash)) {
+      LFA.files[k] = { url: 'data:audio/mpeg;base64,' + d.audio, segs: d.s || [] }; LFA.fileOrder.push(k);
+      while (LFA.fileOrder.length > LFA_FILE_CACHE_MAX) delete LFA.files[LFA.fileOrder.shift()];
+      cb(LFA.files[k]);
+    } else { LFA.noFile[k] = 1; cb(null); }
+  });
+}
+// ---------- one shared audio element, unlocked on the first tap (iOS / Android autoplay rules) ----------
+function lfaEl() { if (!LFA.aud) { LFA.aud = new Audio(); LFA.aud.preload = 'auto'; } return LFA.aud; }
+function lfaUnlock() {
+  if (LFA.unlocked) return; LFA.unlocked = true;
+  try { var a = lfaEl(); a.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA='; var p = a.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
 }
 
-// _cloudTTS: calls Apps Script TTS endpoint, plays returned MP3
-// No OS install needed. Works in Google Sites iframe. Works on all devices.
-function _cloudTTS(btn,text,cardLang){
-  var ttsLangs={en:'en-US',hi:'hi-IN',ar:'ar-XA'};
-  var langCode=ttsLangs[cardLang]||'ar-XA';
-  var cbName='tts'+Date.now(),script=document.createElement('script'),done=false;
-  var tid=setTimeout(function(){
-    if(done)return;done=true;delete window[cbName];
-    if(script.parentNode)script.parentNode.removeChild(script);
-    if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('loading');SPEAKING_BTN=null;}
-  },12000);
-  window[cbName]=function(data){
-    if(done)return;done=true;clearTimeout(tid);delete window[cbName];
-    if(script.parentNode)script.parentNode.removeChild(script);
-    if(data&&data.audio&&SPEAKING_BTN===btn){
-      var audio=new Audio('data:audio/mp3;base64,'+data.audio);
-      CURRENT_AUDIO=audio;
-      btn.innerHTML=_spkLabel(cardLang,'stop');btn.classList.remove('loading');btn.classList.add('playing');
-      audio.onended=function(){CURRENT_AUDIO=null;if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}};
-      audio.onerror=function(){CURRENT_AUDIO=null;if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}};
-      audio.play().catch(function(){CURRENT_AUDIO=null;if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('playing');SPEAKING_BTN=null;}});
-    }else if(SPEAKING_BTN===btn){
-      btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('loading');SPEAKING_BTN=null;
-    }
-  };
-  script.onerror=function(){if(done)return;done=true;clearTimeout(tid);delete window[cbName];if(SPEAKING_BTN===btn){btn.innerHTML=_spkLabel(cardLang,'read');btn.classList.remove('loading');SPEAKING_BTN=null;}};
-  script.src=API_BASE+'?action=tts&lang='+encodeURIComponent(langCode)+'&text='+encodeURIComponent(text.substring(0,800))+'&callback='+cbName;
-  document.head.appendChild(script);
+// ---------- playback control ----------
+function lfaHalt() {
+  try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
+  if (LFA.aud) { LFA.aud.onended = LFA.aud.onerror = LFA.aud.ontimeupdate = null; try { LFA.aud.pause(); } catch (e) {} }
+  LFA.pre = null;
 }
+function lfaPlay(idx, lang, opts) {
+  opts = opts || {}; lfaUnlock();
+  var r = lfaRec(idx); if (!r) return;
+  var ep = ++LFA.ep; lfaHalt(); var info = lfaSegs(r, lang);
+  LFA.retry = 0; LFA.idx = idx; LFA.id = r.id; LFA.req = lang; LFA.lang = info.lang; LFA.info = info; LFA.prog = 0; LFA.err = ''; LFA.mode = ''; LFA.seg = info.segs[0] ? info.segs[0].k : ''; LFA.onEnd = opts.onEnd || null;
+  if (!info.segs.length) { LFA.st = 'idle'; LFA.err = lt('nothing'); lfaRender(); var cb0 = LFA.onEnd; LFA.onEnd = null; if (cb0) cb0('empty'); return; }
+  LFA.st = 'loading'; lfaRender();
+  lfaIndex(function () {
+    if (ep !== LFA.ep) return;
+    var has = lfaHas(r.id, info.lang, info.hash);
+    if (has === false) { lfaLive(ep, info); return; }
+    lfaFile(r.id, info.lang, info.hash, function (f) { if (ep !== LFA.ep) return; if (f) lfaPlayFile(ep, f, info); else lfaLive(ep, info); });
+  });
+}
+function lfaLive(ep, info) {
+  if (ep !== LFA.ep) return;
+  var hasVoice = !!(window.speechSynthesis && (info.lang === 'en' || VS[info.lang]));
+  if (hasVoice) lfaBrowser(ep, info, 0); else lfaCloud(ep, info, 0);
+}
+function lfaPlayFile(ep, f, info) {
+  LFA.mode = 'studio'; var a = lfaEl(), sizes = (f.segs && f.segs.length) ? f.segs : info.segs.map(function (s) { return { k: s.k, c: s.text.length }; });
+  a.onended = a.onerror = a.ontimeupdate = null; LFA.pre = null;
+  a.ontimeupdate = function () { if (ep !== LFA.ep || !a.duration) return; LFA.prog = a.currentTime / a.duration; LFA.seg = lfaSegAt(sizes, LFA.prog); lfaRender(); };
+  a.onended = function () { if (ep !== LFA.ep) return; lfaDone(ep); };
+  a.onerror = function () { if (ep !== LFA.ep) return; lfaLive(ep, info); };
+  a.src = f.url; a.playbackRate = LFA.rate; LFA.st = 'playing';
+  var p = a.play(); if (p && p.catch) p.catch(function () { if (ep !== LFA.ep) return; lfaLive(ep, info); });
+  lfaRender();
+}
+function lfaBrowser(ep, info, from) {
+  var ch = lfaChunksOf(info, 220), voice = VS[info.lang], codes = { en: 'en-US', hi: 'hi-IN', ar: 'ar-SA' };
+  LFA.mode = 'device'; LFA.chunks = ch.list; LFA.total = ch.total; LFA.ci = from || 0; LFA.st = 'playing';
+  (function next() {
+    if (ep !== LFA.ep) return;
+    if (LFA.ci >= ch.list.length) { lfaDone(ep); return; }
+    var c = ch.list[LFA.ci], u = new SpeechSynthesisUtterance(c.text);
+    u.lang = codes[info.lang]; u.rate = 0.85 * LFA.rate; if (voice) u.voice = voice;
+    u.onstart = function () { if (ep !== LFA.ep) return; LFA.seg = c.k; LFA.prog = c.start / ch.total; lfaRender(); };
+    u.onend = function () { if (ep !== LFA.ep || LFA.st !== 'playing') return; LFA.retry = 0; LFA.prog = (c.start + c.text.length) / ch.total; LFA.ci++; next(); };
+    u.onerror = function (e) {
+      if (ep !== LFA.ep) return;
+      if (e && (e.error === 'canceled' || e.error === 'interrupted')) {   // something else cancelled the speech queue: carry on from this piece
+        if (LFA.st === 'playing' && (LFA.retry || 0) < 4) { LFA.retry = (LFA.retry || 0) + 1; setTimeout(function () { if (ep === LFA.ep && LFA.st === 'playing') next(); }, 300); }
+        return;
+      }
+      lfaFail(ep, info, 'device');
+    };
+    window.speechSynthesis.speak(u); lfaRender();
+  })();
+}
+function lfaCloud(ep, info, from) {
+  var ch = lfaChunksOf(info, 180), codes = { en: 'en-US', hi: 'hi-IN', ar: 'ar-XA' };
+  LFA.mode = 'online'; LFA.chunks = ch.list; LFA.total = ch.total; LFA.ci = from || 0; LFA.st = 'loading'; LFA.pre = null; lfaRender();
+  function get(i, cb) {
+    if (LFA.pre && LFA.pre.i === i && LFA.pre.ep === ep) { var d = LFA.pre.d; LFA.pre = null; cb(d); return; }
+    lfaJsonp('?action=tts&lang=' + codes[info.lang] + '&text=' + encodeURIComponent(ch.list[i].text), 14000, function (d) { cb(d && d.audio ? d.audio : null); });
+  }
+  (function step() {
+    if (ep !== LFA.ep) return;
+    if (LFA.ci >= ch.list.length) { lfaDone(ep); return; }
+    var i = LFA.ci, c = ch.list[i];
+    get(i, function (b64) {
+      if (ep !== LFA.ep) return;
+      if (!b64) { lfaFail(ep, info, 'online'); return; }
+      var a = lfaEl(); a.ontimeupdate = null; LFA.st = 'playing'; LFA.seg = c.k; LFA.prog = c.start / ch.total;
+      a.onended = function () { if (ep !== LFA.ep || LFA.st !== 'playing') return; LFA.prog = (c.start + c.text.length) / ch.total; LFA.ci++; step(); };
+      a.onerror = function () { if (ep !== LFA.ep) return; lfaFail(ep, info, 'online'); };
+      a.src = 'data:audio/mp3;base64,' + b64; a.playbackRate = LFA.rate;
+      var p = a.play(); if (p && p.catch) p.catch(function () { if (ep !== LFA.ep) return; lfaFail(ep, info, 'online'); });
+      lfaRender();
+      if (i + 1 < ch.list.length) lfaJsonp('?action=tts&lang=' + codes[info.lang] + '&text=' + encodeURIComponent(ch.list[i + 1].text), 14000, function (d) { if (ep === LFA.ep && d && d.audio) LFA.pre = { i: i + 1, ep: ep, d: d.audio }; });
+    });
+  })();
+}
+function lfaFail(ep, info, from) {
+  if (ep !== LFA.ep) return;
+  if (from === 'device' && info.lang !== 'en') { lfaCloud(ep, info, LFA.ci); return; }
+  if (from === 'online' && window.speechSynthesis) { lfaBrowser(ep, info, LFA.ci); return; }
+  LFA.st = 'idle'; LFA.err = lt('audioFail'); lfaHalt(); lfaRender();
+  var cb = LFA.onEnd; LFA.onEnd = null; if (cb) cb('error');
+}
+function lfaDone(ep) {
+  if (ep !== LFA.ep) return;
+  LFA.st = 'idle'; LFA.prog = 1; var cb = LFA.onEnd; LFA.onEnd = null; lfaRender(); if (cb) cb('done');
+}
+function lfaPause() { if (LFA.st !== 'playing') return; LFA.st = 'paused'; if (LFA.mode === 'device') { try { window.speechSynthesis.cancel(); } catch (e) {} } else if (LFA.aud) LFA.aud.pause(); lfaRender(); }
+function lfaResume() {
+  if (LFA.st !== 'paused') return; LFA.st = 'playing';
+  if (LFA.mode === 'device') lfaBrowser(LFA.ep, LFA.info, LFA.ci); else if (LFA.aud) { var p = LFA.aud.play(); if (p && p.catch) p.catch(function () {}); }
+  lfaRender();
+}
+function lfaStop() { LFA.ep++; lfaHalt(); LFA.st = 'idle'; LFA.onEnd = null; LFA.err = ''; LFA.prog = 0; lfaRender(); }
+function stopSpeech() { lfaStop(); }
+function lfaSetRate(r) { LFA.rate = r; if (LFA.aud) LFA.aud.playbackRate = r; lfaRender(); }
+function lfaCycleRate() { var rs = [0.75, 1, 1.25], i = rs.indexOf(LFA.rate); lfaSetRate(rs[(i + 1) % rs.length]); }
+function lfaSeek(frac) { if (LFA.mode !== 'studio' || !LFA.aud || !LFA.aud.duration) return; LFA.aud.currentTime = Math.max(0, Math.min(1, frac)) * LFA.aud.duration; }
+function lfaPrefetch(idx, lang) {
+  var r = lfaRec(idx); if (!r) return; var info = lfaSegs(r, lang);
+  lfaIndex(function () { if (lfaHas(r.id, info.lang, info.hash) === true) lfaFile(r.id, info.lang, info.hash, function () {}); });
+}
+
+// ---------- rendering of every audio control ----------
+function lfaModeLabel() { return LFA.mode === 'studio' ? lt('studio') : LFA.mode === 'device' ? lt('device') : LFA.mode === 'online' ? lt('online') : ''; }
+function lfaRender() {
+  var btns = document.querySelectorAll('.fc-listen');
+  for (var i = 0; i < btns.length; i++) {
+    var b = btns[i], ix = +b.getAttribute('data-i'), me = LFA.idx === ix && LFA.st !== 'idle', cls = 'fc-listen', lab;
+    if (me && LFA.st === 'loading') { cls += ' loading'; lab = '\u23F3 ' + lt('loading'); }
+    else if (me && LFA.st === 'playing') { cls += ' playing'; lab = '\u23F9 ' + lt('stop'); }
+    else if (me && LFA.st === 'paused') { cls += ' paused'; lab = '\u25B6 ' + lt('resume'); }
+    else lab = '\uD83D\uDD0A ' + lt('listen') + ' \u00B7 ' + LFA_LBL[LANG];
+    if (b.className !== cls) b.className = cls; if (b.textContent !== lab) b.textContent = lab;
+  }
+  lfaRenderPopup(); lfaPlRender();
+}
+function lfaBarHtml() {
+  var mine = LFA.idx === _FD.idx && LFA.st !== 'idle', h = '<div class="fdl-langs">';
+  ['en', 'hi', 'ar'].forEach(function (l) {
+    var on = mine && LFA.req === l, ic = on ? (LFA.st === 'playing' ? '\u23F8' : LFA.st === 'loading' ? '\u23F3' : '\u25B6') : '\u25B6';
+    h += '<button class="fdl-l' + (_FD.lang === l ? ' active' : '') + (on ? ' on' : '') + '" onclick="fdListen(\'' + l + '\')" aria-label="' + lt('listen') + ' ' + LFA_LBL[l] + '">' + LFA_FLAG[l] + ' ' + LFA_LBL[l] + ' ' + ic + '</button>';
+  });
+  h += '</div>';
+  if (mine) {
+    h += '<div class="fdl-strip"><button class="fdl-b" onclick="lfaToggle()" aria-label="' + lt(LFA.st === 'playing' ? 'pause' : 'resume') + '">' + (LFA.st === 'playing' ? '\u23F8' : '\u25B6') + '</button><button class="fdl-b stop" onclick="lfaStop()" aria-label="' + lt('stop') + '">\u23F9</button>' +
+      '<div class="fdl-bar" onclick="fdlSeek(event)"><div class="fdl-fill" style="width:' + Math.round(LFA.prog * 100) + '%"></div></div><button class="fdl-rate" onclick="lfaCycleRate()" aria-label="' + lt('speed') + '">' + LFA.rate + '\u00D7</button><div class="fdl-info">' + lfaModeLabel() + '</div></div>';
+  }
+  if (LFA.err && LFA.idx === _FD.idx) h += '<div class="fdl-err">' + esc(LFA.err) + '</div>';
+  return h;
+}
+function lfaRenderPopup() {
+  var host = document.getElementById('fdListen'); if (!host || typeof _FD === 'undefined') return;
+  var mine = LFA.idx === _FD.idx && LFA.st !== 'idle', key = [mine, LFA.st === 'playing', LFA.req, LFA.rate, LFA.mode, LFA.err, _FD.lang, LANG].join('|');
+  if (host._k !== key) { host._k = key; host.innerHTML = lfaBarHtml(); }
+  var f = host.querySelector('.fdl-fill'); if (f) f.style.width = Math.round(LFA.prog * 100) + '%';
+  var secs = document.querySelectorAll('#fdBody .fd-sec[data-k]');
+  for (var i = 0; i < secs.length; i++) { var on = mine && LFA.lang === _FD.lang && (LFA.st === 'playing' || LFA.st === 'paused') && secs[i].getAttribute('data-k') === LFA.seg; secs[i].classList.toggle('reading', on); }
+}
+function fdListen(l) {
+  if (_FD.lang !== l) fdLang(l);
+  if (LFA.idx === _FD.idx && LFA.req === l) { if (LFA.st === 'playing') { lfaPause(); return; } if (LFA.st === 'paused') { lfaResume(); return; } if (LFA.st === 'loading') { lfaStop(); return; } }
+  lfaPlay(_FD.idx, l);
+}
+function lfaToggle() { if (LFA.st === 'playing') lfaPause(); else if (LFA.st === 'paused') lfaResume(); }
+function fdlSeek(ev) { var rc = ev.currentTarget.getBoundingClientRect(); if (rc.width) lfaSeek((ev.clientX - rc.left) / rc.width); }
+
+// ---------- cards: whole card opens the popup, one audio button ----------
+function fcOpen(idx, ev) { if (ev && ev.target && ev.target.closest && ev.target.closest('.fc-listen')) return; if (!(LFA.idx === idx && LFA.st !== 'idle')) lfaStop(); openFcDetail(idx); }
+function fcKey(ev, idx) { if (ev.target !== ev.currentTarget) return; if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); fcOpen(idx); } }
+function fcListen(idx) {
+  if (LFA.idx === idx) { if (LFA.st === 'playing' || LFA.st === 'loading') { lfaStop(); return; } if (LFA.st === 'paused') { lfaResume(); return; } }
+  lfaPlay(idx, LANG);
+}
+function fcCardHtml(r, idx) {
+  var accent = catColor(r.cat || ''), hasPpt = !!r.pptLink, hasThumb = !!r.thumb, hasAny = !!(r.descEN || r.descHI || r.descAR);
+  var thumbHtml = hasThumb
+    ? '<div class="fc-thumb-wrap"><img src="' + esc(r.thumb) + '" alt="" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=&quot;fc-thumb-placeholder&quot; style=&quot;background:linear-gradient(145deg,' + accent + ',#080c14)&quot;><div class=&quot;tpi&quot;>&#128203;</div></div>\'">' + (hasPpt ? '<div class="fc-thumb-badge">&#128218; Slides EN &middot; &#2361;&#2367; &middot; &#1593;</div>' : '') + '</div>'
+    : '<div class="fc-thumb-wrap" style="background:linear-gradient(145deg,' + accent + ',#080c14)"><div class="fc-thumb-placeholder"><div class="tpi">&#128203;</div><span>' + (r.ppt ? 'Preview pending' : t('ppt_pending')) + '</span></div></div>';
+  return '<div class="fc" role="button" tabindex="0" data-i="' + idx + '" aria-label="' + esc(lt('open') + ' ' + r.id) + '" style="border-top:3px solid ' + accent + '" onclick="fcOpen(' + idx + ',event)" onkeydown="fcKey(event,' + idx + ')">' +
+    thumbHtml +
+    '<div class="fc-audio"><button class="fc-listen" data-i="' + idx + '" onclick="fcListen(' + idx + ')"' + (hasAny ? '' : ' disabled') + '></button></div>' +
+    '<div class="fch"><div class="fct"><span class="fid">' + esc(r.id) + '</span>' + mkbadge(r.st) + '<span style="font-size:12px;color:var(--muted)">&#9660;</span></div>' +
+    '<div class="fcv">' + esc(r.cat) + '</div><div class="fcm"><span>&#128205; ' + esc(r.loc) + '</span><span>&#128197; ' + esc(r.dt) + '</span><span>&#128736; ' + esc(r.disc) + '</span></div></div></div>';
+}
+function fcCardSafe(r, idx) {
+  try { return fcCardHtml(r, idx); }
+  catch (rowErr) { console.error('renderFC row ' + idx + ' error:', rowErr, r); return '<div class="fc" style="border-top:3px solid #dc3545;opacity:.6"><div class="fch"><div class="fct"><span class="fid">' + (r && r.id ? r.id : 'Row ' + idx) + '</span></div><div class="fcm" style="color:#dc3545">Render error: ' + String(rowErr) + '</div></div></div>'; }
+}
+function fcSig() {
+  var ids = ['fDiv', 'fCat', 'fLoc', 'fSt', 'fDisc', 'fQ', 'fFrom', 'fTo'], v = ids.map(function (i) { var e = document.getElementById(i); return e ? e.value : ''; });
+  return v.join('|') + '|' + JSON.stringify(DRILL || null) + '|' + (RAW ? RAW.length : 0);
+}
+function renderFC() {
+  var rows = getF(), grid = document.getElementById('fcGrid'); if (!grid) return;
+  if (!RAW) { grid.innerHTML = '<div class="empty"><div class="eicon">&#128203;</div><p>' + t('fc_empty_nodata') + '</p><div class="esub">' + t('fc_empty_nodata_sub') + '</div></div>'; fcFooter(0, 0); return; }
+  if (!rows.length) { grid.innerHTML = '<div class="empty"><div class="eicon">&#128203;</div><p>' + t('fc_empty_filter') + '</p><div class="esub">' + t('fc_empty_filter_sub') + '</div></div>'; window._FC_SORTED = []; window._FC_PPT = []; fcFooter(0, 0); return; }
+  var sorted = rows.slice().sort(function (a, b) { var da = a.dateObj ? a.dateObj.getTime() : 0, db = b.dateObj ? b.dateObj.getTime() : 0; return db - da; });
+  var sig = fcSig(); if (sig !== FC_SIG) { FC_SIG = sig; FC_LIMIT = FC_STEP; }
+  window._FC_SORTED = sorted; window._FC_PPT = sorted.map(function (r) { return { link: r.pptLink || '', id: r.id || '' }; });
+  var n = Math.min(FC_LIMIT, sorted.length), html = '';
+  for (var i = 0; i < n; i++) html += fcCardSafe(sorted[i], i);
+  grid.innerHTML = html; fcFooter(n, sorted.length); lfaRender();
+}
+function fcLoadMore() {
+  var s = window._FC_SORTED || [], grid = document.getElementById('fcGrid'); if (!grid) return;
+  var from = grid.querySelectorAll('.fc').length, to = Math.min(from + FC_STEP, s.length), html = '';
+  if (from >= s.length) return; FC_LIMIT = to;
+  for (var i = from; i < to; i++) html += fcCardSafe(s[i], i);
+  grid.insertAdjacentHTML('beforeend', html); fcFooter(to, s.length); lfaRender();
+}
+function fcFooter(shown, total) {
+  var tb = document.getElementById('fcToolbar'), mo = document.getElementById('fcMore');
+  if (tb) tb.innerHTML = total ? '<div class="fc-tools"><span class="fc-count">' + lt('showing') + ' ' + shown + ' ' + lt('of') + ' ' + total + '</span><button class="fc-playall" onclick="lfaPlaylistStart()">\u25B6 ' + lt('playAll') + ' (' + Math.min(total, LFA_PL_MAX) + ')</button></div>' : '';
+  if (FC_OBS) { try { FC_OBS.disconnect(); } catch (e) {} FC_OBS = null; }
+  if (!mo) return;
+  if (shown < total) {
+    mo.innerHTML = '<button class="fc-more" onclick="fcLoadMore()">' + lt('more', Math.min(FC_STEP, total - shown)) + ' (' + (total - shown) + ' ' + lt('left') + ')</button><div id="fcSentinel" style="height:1px"></div>';
+    if (window.IntersectionObserver) { FC_OBS = new IntersectionObserver(function (es) { if (es[0] && es[0].isIntersecting) fcLoadMore(); }, { rootMargin: '500px' }); FC_OBS.observe(document.getElementById('fcSentinel')); }
+  } else mo.innerHTML = '';
+}
+
+// ---------- Play all (toolbox talk) ----------
+function lfaPlEnsure() {
+  if (document.getElementById('lfaPl')) return;
+  var d = document.createElement('div'); d.id = 'lfaPl'; d.className = 'lfa-pl'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true');
+  d.innerHTML = '<div class="lfa-pl-top"><div><b id="lfaPlTitle"></b><span id="lfaPlCount"></span></div><button class="lfa-pl-x" id="lfaPlX" onclick="lfaPlClose()" aria-label="Close">&#10005;</button></div><div class="lfa-pl-main" id="lfaPlMain"></div>' +
+    '<div class="lfa-pl-bar"><div class="lfa-pl-prog"><i id="lfaPlFill"></i></div><div class="lfa-pl-ctl"><button onclick="lfaPlPrev()" id="lfaPlPrev">\u23EE</button><button class="main" onclick="lfaPlToggle()" id="lfaPlMainBtn">\u23F8</button><button onclick="lfaPlNext()" id="lfaPlNext">\u23ED</button><button onclick="lfaCycleRate()" id="lfaPlRate">1\u00D7</button></div>' +
+    '<div class="lfa-pl-langs" id="lfaPlLangs"></div><div class="lfa-pl-info" id="lfaPlInfo"></div></div>';
+  document.body.appendChild(d);
+}
+function lfaPlaylistStart() {
+  var s = window._FC_SORTED || [], items = []; for (var i = 0; i < s.length && items.length < LFA_PL_MAX; i++) if (s[i].descEN || s[i].descHI || s[i].descAR) items.push(i);
+  if (!items.length) return; lfaPlEnsure(); lfaUnlock(); lfaStop();
+  LFA.pl = { items: items, pos: 0, lang: LANG, timer: null, fin: false, hold: false, _k: '' };
+  document.getElementById('lfaPl').classList.add('vis'); document.body.style.overflow = 'hidden';
+  try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { LFA.wake = l; }).catch(function () {}); } catch (e) {}
+  try { if (navigator.mediaSession) { navigator.mediaSession.setActionHandler('play', function () { lfaPlToggle(); }); navigator.mediaSession.setActionHandler('pause', function () { lfaPlToggle(); }); navigator.mediaSession.setActionHandler('nexttrack', function () { lfaPlNext(); }); navigator.mediaSession.setActionHandler('previoustrack', function () { lfaPlPrev(); }); } } catch (e) {}
+  lfaPlItem(0);
+}
+function lfaPlItem(pos) {
+  var pl = LFA.pl; if (!pl) return; clearTimeout(pl.timer); pl.timer = null; pl.hold = false; pl.fin = false; pl.pos = Math.max(0, Math.min(pl.items.length - 1, pos));
+  var idx = pl.items[pl.pos], p = pl.pos;
+  try { var r = lfaRec(idx); if (r && navigator.mediaSession && window.MediaMetadata) navigator.mediaSession.metadata = new MediaMetadata({ title: r.cat + ' \u00B7 ' + r.id, artist: 'LFI CORE' }); } catch (e) {}
+  lfaPlay(idx, pl.lang, { onEnd: function (why) {
+    if (!LFA.pl || LFA.pl.pos !== p) return;
+    LFA.pl.timer = setTimeout(function () { if (!LFA.pl || LFA.pl.pos !== p) return; if (p + 1 < LFA.pl.items.length) lfaPlItem(p + 1); else { LFA.pl.fin = true; lfaPlRender(); } }, why === 'done' ? 1200 : 400);
+  } });
+  if (p + 1 < pl.items.length) lfaPrefetch(pl.items[p + 1], pl.lang);
+  lfaPlRender();
+}
+function lfaPlPrev() { if (!LFA.pl) return; if (LFA.prog > 0.15 && LFA.st !== 'idle') lfaPlItem(LFA.pl.pos); else lfaPlItem(LFA.pl.pos - 1); }
+function lfaPlNext() { var pl = LFA.pl; if (!pl) return; if (pl.pos + 1 < pl.items.length) lfaPlItem(pl.pos + 1); else { clearTimeout(pl.timer); lfaStop(); pl.fin = true; lfaPlRender(); } }
+function lfaPlToggle() {
+  var pl = LFA.pl; if (!pl) return;
+  if (pl.fin) { lfaPlItem(0); return; }
+  if (LFA.st === 'playing') lfaPause(); else if (LFA.st === 'paused') lfaResume();
+  else if (pl.timer) { clearTimeout(pl.timer); pl.timer = null; pl.hold = true; lfaPlRender(); }
+  else if (pl.hold) { pl.hold = false; lfaPlItem(pl.pos + 1 < pl.items.length ? pl.pos + 1 : pl.pos); }
+}
+function lfaPlLang(l) { if (!LFA.pl) return; LFA.pl.lang = l; lfaPlItem(LFA.pl.pos); }
+function lfaPlClose() {
+  var pl = LFA.pl; if (pl) clearTimeout(pl.timer); LFA.pl = null; lfaStop();
+  var el = document.getElementById('lfaPl'); if (el) el.classList.remove('vis'); document.body.style.overflow = '';
+  try { if (LFA.wake) { LFA.wake.release(); LFA.wake = null; } } catch (e) {}
+}
+function lfaPlRender() {
+  var pl = LFA.pl; if (!pl) return; var el = document.getElementById('lfaPl'); if (!el) return;
+  var idx = pl.items[pl.pos], r = lfaRec(idx), k = pl.pos + '|' + pl.lang + '|' + LANG + '|' + pl.fin; if (!r) return;
+  if (pl._k !== k) {
+    pl._k = k; document.getElementById('lfaPlTitle').textContent = lt('toolbox'); document.getElementById('lfaPlCount').textContent = (pl.pos + 1) + ' ' + lt('of') + ' ' + pl.items.length + ' \u00B7 ' + r.id;
+    if (pl.fin) document.getElementById('lfaPlMain').innerHTML = '<div class="lfa-pl-done">\u2705 ' + lt('finished') + '</div>';
+    else {
+      var info = lfaSegs(r, pl.lang), labels = { desc: lt('desc'), find: lt('find'), learn: lt('learn') }, rtl = info.lang === 'ar';
+      document.getElementById('lfaPlMain').innerHTML = '<div class="lfa-pl-cat" style="color:' + catColor(r.cat || '') + '">' + esc(r.cat) + '</div><div class="lfa-pl-meta"><span>' + esc(r.id) + '</span><span>&#128205; ' + esc(r.loc) + '</span><span>&#128197; ' + esc(r.dt) + '</span></div>' + _fcImgStrip(r) +
+        info.segs.map(function (s) { return '<div class="lfa-pl-sec' + (rtl ? ' rtl' : '') + '" data-k="' + s.k + '"><label>' + esc(labels[s.k]) + '</label>' + esc(s.text) + '</div>'; }).join('');
+    }
+    document.getElementById('lfaPlLangs').innerHTML = ['en', 'hi', 'ar'].map(function (l) { return '<button class="' + (pl.lang === l ? 'active' : '') + '" onclick="lfaPlLang(\'' + l + '\')">' + LFA_FLAG[l] + ' ' + LFA_LBL[l] + '</button>'; }).join('');
+    document.getElementById('lfaPlPrev').setAttribute('aria-label', lt('prev')); document.getElementById('lfaPlNext').setAttribute('aria-label', lt('next'));
+  }
+  var mine = LFA.idx === idx && LFA.st !== 'idle';
+  document.getElementById('lfaPlMainBtn').textContent = pl.fin ? '\u21BB' : (LFA.st === 'playing' ? '\u23F8' : '\u25B6'); document.getElementById('lfaPlRate').textContent = LFA.rate + '\u00D7';
+  var overall = pl.items.length ? (pl.pos + (mine ? LFA.prog : 0)) / pl.items.length : 0; document.getElementById('lfaPlFill').style.width = Math.round((pl.fin ? 1 : overall) * 100) + '%';
+  document.getElementById('lfaPlInfo').textContent = LFA.err && !mine ? LFA.err : (mine ? lfaModeLabel() + (LFA.st === 'loading' ? ' \u00B7 ' + lt('loading') : '') : '');
+  var secs = document.querySelectorAll('#lfaPlMain .lfa-pl-sec'); for (var i = 0; i < secs.length; i++) secs[i].classList.toggle('reading', mine && LFA.st !== 'loading' && secs[i].getAttribute('data-k') === LFA.seg);
+}
+document.addEventListener('keydown', function (e) { if (LFA.pl && e.key === 'Escape') lfaPlClose(); });
 
 // ── Admin voice tests ─────────────────────────────────────────
 function admTestAllVoices(){
@@ -2871,7 +3455,7 @@ function admShowPwdErr(msg){var el=document.getElementById('adminPwdErr');if(!el
 var I18N={
   en:{
     sb_overview:'Overview',sb_lfi:'LFI Register',sb_admin:'Admin Controls',sb_submit:'+ Submit New LFI',
-    sb_sec_dash:'Dashboard',sb_sec_sys:'System',sb_sec_gov:'Governance',sb_committee:'LFI Committee',
+    sb_sec_dash:'Dashboard',sb_sec_sys:'System',sb_sec_gov:'Governance',sb_committee:'LFI Committee',sb_sec_bbs:'BBS',sb_bbs:'BBS Reports',sb_bbs_obs:'Observations',sb_bbs_nm:'Near Misses',sb_bbs_rev:'Review & Actions',sb_bbs_perf:'Performance',
     ptitle_overview:'Overview Dashboard',ptitle_lfi:'LFI Register \u2014 Flashcards',ptitle_admin:'Admin Controls',
     topbar_export:'Export',topbar_refresh:'Refresh Data',
     filter_from:'From Date',filter_to:'To Date',filter_div:'Division',filter_loc:'Cluster',
@@ -2899,7 +3483,7 @@ var I18N={
   },
   hi:{
     sb_overview:'\u0905\u0935\u0932\u094b\u0915\u0928',sb_lfi:'LFI \u0930\u091c\u093f\u0938\u094d\u091f\u0930',sb_admin:'\u0905\u0921\u092e\u093f\u0928 \u0915\u0902\u091f\u094d\u0930\u094b\u0932',sb_submit:'+ \u0928\u092f\u093e LFI \u091c\u092e\u093e \u0915\u0930\u0947\u0902',
-    sb_sec_dash:'\u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921',sb_sec_gov:'\u0936\u093e\u0938\u0928',sb_committee:'LFI \u0938\u092e\u093f\u0924\u093f',sb_sec_sys:'\u0938\u093f\u0938\u094d\u091f\u092e',
+    sb_sec_dash:'\u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921',sb_sec_gov:'\u0936\u093e\u0938\u0928',sb_committee:'LFI \u0938\u092e\u093f\u0924\u093f',sb_sec_bbs:'BBS',sb_bbs:'BBS रिपोर्ट',sb_bbs_obs:'निरीक्षण',sb_bbs_nm:'नियर मिस',sb_bbs_rev:'समीक्षा और कार्रवाइयाँ',sb_bbs_perf:'प्रदर्शन',sb_sec_sys:'\u0938\u093f\u0938\u094d\u091f\u092e',
     ptitle_overview:'\u0905\u0935\u0932\u094b\u0915\u0928 \u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921',ptitle_lfi:'LFI \u0930\u091c\u093f\u0938\u094d\u091f\u0930',ptitle_admin:'\u0905\u0921\u092e\u093f\u0928 \u0915\u0902\u091f\u094d\u0930\u094b\u0932',
     topbar_export:'\u090f\u0915\u094d\u0938\u092a\u094b\u0930\u094d\u091f',topbar_refresh:'\u0921\u0947\u091f\u093e \u0930\u093f\u092b\u094d\u0930\u0947\u0936',
     filter_from:'\u0924\u093e\u0930\u0940\u0916 \u0938\u0947',filter_to:'\u0924\u093e\u0930\u0940\u0916 \u0924\u0915',filter_div:'\u0921\u093f\u0935\u093f\u091c\u0928',filter_loc:'\u0915\u094d\u0932\u0938\u094d\u091f\u0930',
@@ -2926,7 +3510,7 @@ var I18N={
   },
   ar:{
     sb_overview:'\u0646\u0638\u0631\u0629 \u0639\u0627\u0645\u0629',sb_lfi:'\u0633\u062c\u0644 LFI',sb_admin:'\u0644\u0648\u062d\u0629 \u0627\u0644\u062a\u062d\u0643\u0645',sb_submit:'+ \u0625\u0636\u0627\u0641\u0629 LFI',
-    sb_sec_dash:'\u0644\u0648\u062d\u0629 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a',sb_sec_gov:'\u0627\u0644\u062d\u0648\u0643\u0645\u0629',sb_committee:'\u0644\u062c\u0646\u0629 LFI',sb_sec_sys:'\u0627\u0644\u0646\u0638\u0627\u0645',
+    sb_sec_dash:'\u0644\u0648\u062d\u0629 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a',sb_sec_gov:'\u0627\u0644\u062d\u0648\u0643\u0645\u0629',sb_committee:'\u0644\u062c\u0646\u0629 LFI',sb_sec_bbs:'BBS',sb_bbs:'تقارير BBS',sb_bbs_obs:'الملاحظات',sb_bbs_nm:'الحوادث الوشيكة',sb_bbs_rev:'المراجعة والإجراءات',sb_bbs_perf:'الأداء',sb_sec_sys:'\u0627\u0644\u0646\u0638\u0627\u0645',
     ptitle_overview:'\u0644\u0648\u062d\u0629 \u0627\u0644\u0645\u0631\u0627\u0642\u0628\u0629',ptitle_lfi:'\u0633\u062c\u0644 LFI',ptitle_admin:'\u0644\u0648\u062d\u0629 \u0627\u0644\u062a\u062d\u0643\u0645',
     topbar_export:'\u062a\u0635\u062f\u064a\u0631',topbar_refresh:'\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a',
     filter_from:'\u0645\u0646 \u062a\u0627\u0631\u064a\u062e',filter_to:'\u0625\u0644\u0649 \u062a\u0627\u0631\u064a\u062e',filter_div:'\u0627\u0644\u0642\u0633\u0645',filter_loc:'\u0627\u0644\u062a\u062c\u0645\u0639',
@@ -3058,6 +3642,7 @@ function applyI18n(){
 function setLang(lang,btn){
   stopSpeech();
   LANG=lang;
+  try{localStorage.setItem('lfi_lang',lang);}catch(e){}
   document.querySelectorAll('.lbt').forEach(function(b){b.classList.remove('active');});
   if(btn)btn.classList.add('active');
   applyI18n();
@@ -3669,6 +4254,7 @@ function _startAutoRetry(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
+  try{var _sv=localStorage.getItem('lfi_lang');if(_sv==='hi'||_sv==='ar'){setLang(_sv,document.querySelectorAll('.lbt')[_sv==='hi'?1:2]);}}catch(e){}
   // Register PPT slide navigator keyboard/touch events now that DOM is ready
   try{_initPptNavEvents();}catch(e){console.error('_initPptNavEvents() failed:',e);}
   try{initVoices();}catch(e){console.error('initVoices() failed:',e);}
