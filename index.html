@@ -651,6 +651,59 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 .lfa-pl-langs button.active{background:#fff;color:#21409a;border-color:#fff}
 .lfa-pl-info{text-align:center;font-size:11px;opacity:.7;margin-top:8px}
 @media(min-width:900px){.lfa-pl-sec{font-size:20px}}
+
+/* ═══ PHONE / PORTRAIT LAYER. Everything that changes layout is inside @media(max-width:768px): desktop is untouched. ═══ */
+.more-sheet{display:none;position:fixed;inset:0;z-index:9300}
+.more-sheet.vis{display:block}
+.more-backdrop{position:absolute;inset:0;background:rgba(8,12,24,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.more-panel{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:24px 24px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -14px 44px rgba(0,0,0,.28);animation:moreUp .32s cubic-bezier(.2,.8,.2,1)}
+@supports(height:100dvh){.more-panel{max-height:88dvh}}
+@keyframes moreUp{from{transform:translateY(100%)}to{transform:none}}
+.more-grab{width:44px;height:5px;border-radius:3px;background:#c9d0e0;margin:2px auto 12px}
+.more-submit{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;border:none;border-radius:18px;background:linear-gradient(180deg,#ffb870,#f58220 55%,#d46d16);color:#2b1600;font-size:16px;font-weight:800;box-shadow:inset 0 2px 1px rgba(255,255,255,.65),0 12px 24px -10px rgba(245,130,32,.9);cursor:pointer}
+.more-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.more-item{display:flex;align-items:center;gap:10px;min-height:56px;padding:0 14px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,.9);font-size:13px;font-weight:700;color:#212529;text-align:start;cursor:pointer}
+.more-item:active{transform:scale(.97)}.more-ic{font-size:20px}
+.more-sec{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:18px 2px 0}
+.more-foot{font-size:11px;color:var(--muted);text-align:center;margin-top:14px}
+.mn-tab.open{color:var(--or)}
+@media(max-width:768px){
+  html,body{overflow-x:hidden;max-width:100%}
+  body{min-height:100vh}
+  @supports(height:100dvh){body{min-height:100dvh}}
+  #main{min-width:0;max-width:100%;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  img,canvas,svg,video{max-width:100%}
+  #mobileNav{height:calc(60px + env(safe-area-inset-bottom,0px))}
+  .mn-tab{min-width:44px}.mn-tab-label{font-size:10px;line-height:1.1}
+  #topbar{flex-wrap:nowrap;overflow:visible;gap:8px;padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
+  #topbar #ptitle{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+  #topbar .btn-exp,#topbar #refBtn,#topbar #lu{display:none!important}
+  .ltgl{flex:0 0 auto}
+  .lbt{min-height:40px;min-width:46px;padding:0 8px;font-size:12px}
+  input,select,textarea{font-size:16px!important}
+  #fb{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  #fb .fg{min-width:0}
+  .fg select,.fg input{height:44px!important;width:100%}
+  .adm-btn,.fc-act-btn,.spk,.bexp,.bref{min-height:44px}
+  .fd-x,.xbtn{min-width:44px;min-height:44px}
+  .cc{padding:14px}
+  table.rt{min-width:0!important;width:100%!important}
+  table.rt thead{display:none}
+  table.rt,table.rt tbody{display:block}
+  table.rt tr{display:block;margin:0 0 10px;padding:10px 12px;background:rgba(255,255,255,.8);border:1px solid var(--border);border-radius:14px;box-shadow:0 4px 14px rgba(33,64,90,.08)}
+  table.rt td{display:flex!important;justify-content:space-between;align-items:flex-start;gap:12px;width:100%!important;padding:5px 0!important;border:none!important;text-align:left!important;font-size:13px;word-break:break-word}
+  table.rt td::before{content:attr(data-label);flex:0 0 36%;max-width:36%;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+  table.rt td:first-child{font-weight:800;color:var(--bl)}
+  table.rt td[data-label=""]{justify-content:flex-end}table.rt td[data-label=""]::before{display:none}
+  table.rt td[data-empty]{display:none!important}
+  table.rt td button{min-height:40px}
+  #page-admin [style*="grid-template-columns"]{grid-template-columns:1fr!important}
+  #page-admin input,#page-admin select,#page-admin textarea{width:100%!important;min-width:0!important}
+  #page-admin [style*="display:flex"]{flex-wrap:wrap!important}
+  #page-admin .adm-btn{flex:1 1 auto}
+  #page-committee [style*="display:flex"]{flex-wrap:wrap}
+}
+/* ═══ END PHONE LAYER ═══ */
 </style>
 </head>
 
@@ -1092,6 +1145,7 @@ function navTo(page,el){
   if(el&&!el.getAttribute('href'))el.classList.add('active');
   // Mobile bottom nav sync
   document.querySelectorAll('.mn-tab').forEach(function(t){t.classList.toggle('active',t.dataset&&t.dataset.page===page);});
+  try{mobSyncMore(page);}catch(e){}
   // Page titles
   var T={overview:'Overview Dashboard',lfi:'LFI Hub — Flashcards & Videos',videos:'LFI Hub — Flashcards & Videos',admin:'Admin Controls',bbsobs:'BBS \u2014 Observations',bbsnm:'BBS \u2014 Near Misses',bbsrev:'BBS \u2014 Review & Actions',bbsperf:'BBS \u2014 Performance',committee:'LFI Committee \u2014 Barriers & Action Tracking'};
   document.getElementById('ptitle').textContent=T[page]||'Dashboard';
@@ -3067,6 +3121,71 @@ function lfaPlRender() {
 }
 document.addEventListener('keydown', function (e) { if (LFA.pl && e.key === 'Escape') lfaPlClose(); });
 
+// ── Phone layer: More sheet, translated tab labels, tables that become cards ──
+var MOB_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform', MOB_OBS = null, MOB_TIMER = null;
+var MOB_T = {
+  en: { hub: 'Hub', overview: 'Overview', videos: 'Videos', committee: 'Committee', more: 'More', submit: 'Submit New LFI', admin: 'Admin', excel: 'Export Excel', pdf: 'Export PDF', refresh: 'Refresh Data', bbs: 'BBS', updated: 'Last updated' },
+  hi: { hub: 'हब', overview: 'अवलोकन', videos: 'वीडियो', committee: 'समिति', more: 'और', submit: 'नया LFI जमा करें', admin: 'एडमिन', excel: 'Excel एक्सपोर्ट', pdf: 'PDF एक्सपोर्ट', refresh: 'डेटा रीफ्रेश', bbs: 'BBS', updated: 'अंतिम अपडेट' },
+  ar: { hub: 'المركز', overview: 'نظرة عامة', videos: 'فيديو', committee: 'اللجنة', more: 'المزيد', submit: 'تقديم LFI جديد', admin: 'الإدارة', excel: 'تصدير Excel', pdf: 'تصدير PDF', refresh: 'تحديث البيانات', bbs: 'BBS', updated: 'آخر تحديث' }
+};
+function mobT(k) { var d = MOB_T[LANG] || MOB_T.en; return d[k] || MOB_T.en[k] || k; }
+function mobLabels() {
+  var tabs = document.querySelectorAll('.mn-tab[data-k]');
+  for (var i = 0; i < tabs.length; i++) { var l = tabs[i].querySelector('.mn-tab-label'); if (l) l.textContent = mobT(tabs[i].getAttribute('data-k')); }
+}
+function mobSheetHtml() {
+  var it = function (ic, label, fn) { return '<button class="more-item" onclick="' + fn + '"><span class="more-ic">' + ic + '</span><span>' + label + '</span></button>'; };
+  var lu = document.getElementById('lu'), luTxt = lu ? lu.textContent.trim() : '';
+  return '<div class="more-grab"></div><button class="more-submit" onclick="moreGo(\'submit\')">&#128221; ' + mobT('submit') + '</button>' +
+    '<div class="more-grid">' + it('&#9881;', mobT('admin'), "moreGo('admin')") + it('&#8635;', mobT('refresh'), "moreGo('refresh')") + it('&#128202;', mobT('excel'), "moreGo('excel')") + it('&#128196;', mobT('pdf'), "moreGo('pdf')") + '</div>' +
+    '<div class="more-sec" data-bbs="1">' + mobT('bbs') + '</div><div class="more-grid" data-bbs="1">' + it('&#128065;', t('sb_bbs_obs'), "moreGo('bbsobs')") + it('&#9889;', t('sb_bbs_nm'), "moreGo('bbsnm')") + it('&#9989;', t('sb_bbs_rev'), "moreGo('bbsrev')") + it('&#128200;', t('sb_bbs_perf'), "moreGo('bbsperf')") + '</div>' +
+    (luTxt ? '<div class="more-foot">' + esc(luTxt) + '</div>' : '');
+}
+function openMore() {
+  var s = document.getElementById('moreSheet'); if (!s) return;
+  document.getElementById('morePanel').innerHTML = mobSheetHtml(); try { bbsApplyFlag(); } catch (e) {}
+  s.classList.add('vis'); s.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+  var m = document.querySelector('.mn-tab[data-more]'); if (m) m.classList.add('open');
+}
+function closeMore() {
+  var s = document.getElementById('moreSheet'); if (!s) return;
+  s.classList.remove('vis'); s.setAttribute('aria-hidden', 'true'); document.body.style.overflow = '';
+  var m = document.querySelector('.mn-tab[data-more]'); if (m) m.classList.remove('open');
+}
+function moreGo(what) {
+  closeMore();
+  if (what === 'submit') { window.open(MOB_FORM_URL, '_blank'); return; }
+  if (what === 'excel') { exportExcel(); return; } if (what === 'pdf') { exportPDF(); return; } if (what === 'refresh') { refresh(); return; }
+  navTo(what, null);
+}
+function mobSyncMore(page) { var m = document.querySelector('.mn-tab[data-more]'); if (m) m.classList.toggle('active', ['admin', 'bbsobs', 'bbsnm', 'bbsrev', 'bbsperf'].indexOf(page) >= 0); }
+// Every table gets a data-label on each cell (from its header) so phone CSS can show it as a card. Safe to run repeatedly.
+function mobTables() {
+  var ts = document.querySelectorAll('table');
+  for (var i = 0; i < ts.length; i++) {
+    var t = ts[i]; if (t.classList.contains('no-rt')) continue;
+    var ths = t.querySelectorAll('thead th'); if (!ths.length) continue;
+    var labels = []; for (var k = 0; k < ths.length; k++) labels.push((ths[k].textContent || '').replace(/\s+/g, ' ').trim());
+    t.classList.add('rt');
+    var rows = t.querySelectorAll('tbody tr');
+    for (var r = 0; r < rows.length; r++) {
+      var cells = rows[r].children;
+      for (var c = 0; c < cells.length; c++) {
+        var cell = cells[c]; if (cell.hasAttribute('data-label')) continue;
+        cell.setAttribute('data-label', labels[c] !== undefined ? labels[c] : '');
+        if (!(cell.textContent || '').trim() && !cell.querySelector('*')) cell.setAttribute('data-empty', '1');
+      }
+    }
+  }
+}
+function mobSchedule() { clearTimeout(MOB_TIMER); MOB_TIMER = setTimeout(mobTables, 40); }
+function mobInit() {
+  mobLabels(); mobTables();
+  if (window.MutationObserver && !MOB_OBS) { MOB_OBS = new MutationObserver(mobSchedule); MOB_OBS.observe(document.body, { childList: true, subtree: true }); }
+}
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var s = document.getElementById('moreSheet'); if (s && s.classList.contains('vis')) closeMore(); } });
+
+
 // ── Admin voice tests ─────────────────────────────────────────
 function admTestAllVoices(){
   _vsUpdate();admLog('=== Voice Test ===');admLog('Total: '+VS.all.length);
@@ -3555,6 +3674,7 @@ function t(key){
 }
 
 function applyI18n(){
+  try{mobLabels();}catch(e){}
   var lang=LANG,dir=lang==='ar'?'rtl':'ltr';
   document.documentElement.lang=lang;
   document.documentElement.dir=dir;
@@ -4265,6 +4385,7 @@ function _startAutoRetry(){
 
 document.addEventListener('DOMContentLoaded',function(){
   try{bbsApplyFlag();}catch(e){}
+  try{mobInit();}catch(e){}
   try{var _sv=localStorage.getItem('lfi_lang');if(_sv==='hi'||_sv==='ar'){setLang(_sv,document.querySelectorAll('.lbt')[_sv==='hi'?1:2]);}}catch(e){}
   // Register PPT slide navigator keyboard/touch events now that DOM is ready
   try{_initPptNavEvents();}catch(e){console.error('_initPptNavEvents() failed:',e);}
@@ -4292,28 +4413,14 @@ window.addEventListener('focus',function(){
 <!-- MOBILE BOTTOM NAVIGATION -->
 <nav id="mobileNav" aria-label="Mobile navigation">
   <div class="mn-inner">
-    <button class="mn-tab" onclick="navTo('overview',this)" data-page="overview">
-      <span class="mn-tab-icon">&#128200;</span>
-      <span class="mn-tab-label">Overview</span>
-    </button>
-    <button class="mn-tab active" onclick="navTo('lfi',this)" data-page="lfi">
-      <span class="mn-tab-icon">&#128203;</span>
-      <span class="mn-tab-label">Register</span>
-    </button>
-    <button class="mn-tab" onclick="navTo('videos',this)" data-page="videos">
-      <span class="mn-tab-icon">&#127909;</span>
-      <span class="mn-tab-label">Videos</span>
-    </button>
-    <button class="mn-tab" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSf0zZmuBdu4yUvkzim7Ji-1F6R0Q4XGPRGcNdF0NmaYkMSB5g/viewform','_blank')">
-      <span class="mn-tab-icon">&#128221;</span>
-      <span class="mn-tab-label">Submit</span>
-    </button>
-    <button class="mn-tab" onclick="navTo('admin',this)" data-page="admin">
-      <span class="mn-tab-icon">&#9881;</span>
-      <span class="mn-tab-label">Admin</span>
-    </button>
+    <button class="mn-tab active" onclick="navTo('lfi',this)" data-page="lfi" data-k="hub"><span class="mn-tab-icon">&#128203;</span><span class="mn-tab-label">Hub</span></button>
+    <button class="mn-tab" onclick="navTo('overview',this)" data-page="overview" data-k="overview"><span class="mn-tab-icon">&#128200;</span><span class="mn-tab-label">Overview</span></button>
+    <button class="mn-tab" onclick="navTo('videos',this)" data-page="videos" data-k="videos"><span class="mn-tab-icon">&#127909;</span><span class="mn-tab-label">Videos</span></button>
+    <button class="mn-tab" onclick="navTo('committee',this)" data-page="committee" data-k="committee"><span class="mn-tab-icon">&#9878;</span><span class="mn-tab-label">Committee</span></button>
+    <button class="mn-tab" onclick="openMore()" data-more="1" data-k="more" aria-haspopup="dialog"><span class="mn-tab-icon">&#9776;</span><span class="mn-tab-label">More</span></button>
   </div>
 </nav>
+<div id="moreSheet" class="more-sheet" aria-hidden="true"><div class="more-backdrop" onclick="closeMore()"></div><div class="more-panel" id="morePanel" role="dialog" aria-modal="true"></div></div>
 
 <!-- CINEMATIC VIDEO ENGINE MODAL -->
 <div id="cveModal">
