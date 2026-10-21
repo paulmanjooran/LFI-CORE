@@ -652,6 +652,113 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 .lfa-pl-info{text-align:center;font-size:11px;opacity:.7;margin-top:8px}
 @media(min-width:900px){.lfa-pl-sec{font-size:20px}}
 
+/* ═══ ALERT POPUP + SLIDES: big window, landscape photos, dock & swap, subtle fluid-candy-glass (strength 30% = 70% transparent) ═══ */
+:root{--fx:.30;--fx-blob:.30;--glass-bg:rgba(255,255,255,.34);--glass-bg-strong:rgba(255,255,255,.42);--glass-border:rgba(255,255,255,.66);--glass-shadow:0 10px 34px rgba(33,64,90,.12);--muted:#4d576a;--on-orange:#2b1600}
+/* soft colour drifting far behind every screen */
+#fxBg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+#fxBg i{position:absolute;border-radius:50%;filter:blur(60px);opacity:var(--fx-blob);will-change:transform}
+#fxBg i:nth-child(1){width:46vmax;height:46vmax;left:-14vmax;top:-16vmax;background:#ffb066;animation:fxd1 44s ease-in-out infinite}
+#fxBg i:nth-child(2){width:40vmax;height:40vmax;right:-12vmax;top:4vmax;background:#7b97ff;animation:fxd2 52s ease-in-out infinite}
+#fxBg i:nth-child(3){width:34vmax;height:34vmax;left:26vmax;bottom:-18vmax;background:#7fe0cf;animation:fxd3 48s ease-in-out infinite}
+#fxBg i:nth-child(4){width:24vmax;height:24vmax;right:18vmax;bottom:8vmax;background:#c6a8ff;animation:fxd2 40s ease-in-out infinite reverse}
+@keyframes fxd1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8vmax,6vmax) scale(1.12)}}
+@keyframes fxd2{0%,100%{transform:translate(0,0) scale(1.05)}50%{transform:translate(-7vmax,8vmax) scale(.92)}}
+@keyframes fxd3{0%,100%{transform:translate(0,0) scale(.95)}50%{transform:translate(6vmax,-7vmax) scale(1.1)}}
+html.pops #fxBg i{animation-play-state:paused}
+/* a faint sheen on every glass surface, and a soft candy edge on class-based buttons */
+.cc,.kc,.fc,.vl-card,#fb,#topbar,.vsbar,.exp-menu{background-image:linear-gradient(180deg,rgba(255,255,255,calc(var(--fx)*1.2)),rgba(255,255,255,0) 42%)}
+.adm-btn,.bref,.fc-more{box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--fx)*1.6)),inset 0 -2px 5px rgba(0,0,0,calc(var(--fx)*.35))}
+.bexp,.fc-playall{box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--fx)*1.6)),inset 0 -2px 5px rgba(0,0,0,calc(var(--fx)*.35)),0 3px 10px rgba(33,64,154,.3)}
+.fc-listen{box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--fx)*1.6)),inset 0 -2px 5px rgba(0,0,0,calc(var(--fx)*.35)),0 3px 10px rgba(245,130,32,.35)}
+/* photos: landscape holders, whole photo always shown */
+.fc-imgs{display:flex;gap:12px;margin:8px 0}
+.fc-img{position:relative;flex:1;aspect-ratio:16/9;max-height:none;border-radius:12px;overflow:hidden;background:rgba(18,28,52,.78);border:2px solid transparent;display:flex;align-items:center;justify-content:center}
+.fc-img img{width:100%;height:100%;object-fit:contain;display:block;cursor:zoom-in}
+.fc-img .fci-tag{left:8px;right:auto;bottom:8px;width:auto;border-radius:999px;padding:3px 12px}
+#fdLightbox{display:none;position:fixed;inset:0;z-index:9600;background:rgba(6,10,20,.86);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:4vmin}
+#fdLightbox.on{display:flex}#fdLightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px}
+#fdLightbox button{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:14px;width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer}
+/* the alert popup only (other screens that reuse the popup shell are NOT affected: everything is scoped with :has) */
+#fdModal:has(.fd-alert-root){padding:2.4vh 1.6vw}
+#fdModal.vis:has(.fd-alert-root){align-items:center}
+#fdCard:has(.fd-alert-root){width:min(96vw,1500px);max-width:1500px;height:min(95vh,1000px);display:flex;flex-direction:column;overflow:hidden;position:relative;background:linear-gradient(145deg,rgba(255,255,255,.68),rgba(255,255,255,.52));border:1px solid rgba(255,255,255,.78);box-shadow:0 30px 80px -20px rgba(15,25,70,.5),inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.3)}
+@supports(height:100dvh){#fdCard:has(.fd-alert-root){height:min(95dvh,1000px)}}
+#fdCard:has(.fd-alert-root) #fdBody{flex:1;min-height:0;display:flex;flex-direction:column;padding:0}
+.fd-alert-root{display:flex;flex-direction:column;flex:1;min-height:0;position:relative}
+.fd-alert-root::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 92% -8%,rgba(255,176,102,calc(var(--fx)*1.1)),transparent 42%),radial-gradient(circle at -6% 108%,rgba(143,176,255,calc(var(--fx)*1.1)),transparent 42%)}
+.fd-alert-root>*{position:relative}
+.fd-alert-root .fd-sticky{position:relative;margin:0;padding:16px 22px 10px;border-radius:0;background:transparent;border-bottom:1px solid rgba(255,255,255,.55);flex-shrink:0}
+.fd-alert-root .fd-head{align-items:center;gap:12px;margin:0 0 8px;padding-bottom:10px}
+.fd-ht{min-width:0;flex:1}
+.fd-alert-root .fd-id{font-size:17px}
+.fd-alert-root .fd-meta{margin:4px 0 0;font-size:12px;color:var(--muted);gap:4px 14px}
+.fd-alert-root .fd-x{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.9),rgba(255,255,255,.4));box-shadow:inset 0 1px 2px #fff,0 6px 14px -6px rgba(0,0,0,.4)}
+.fd-main{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding:10px 22px 4px;overflow:auto}
+.fd-media{flex:1 1 54%;min-height:150px;display:flex;justify-content:center}
+.fd-media .fc-imgs{margin:0;width:100%;height:100%;justify-content:center;align-items:stretch}
+.fd-media .fc-img{height:100%;flex:0 1 auto;max-width:calc(50% - 6px)}
+.fd-media .fc-img:only-child{max-width:70%}
+.fd-reading{flex:1 1 46%;min-height:120px}.fd-reading.solo{flex:1 1 100%}
+.fd-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;height:100%}
+.fd-cols .fd-sec{overflow:auto;min-height:0;margin:0;padding:10px 12px;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.74),rgba(255,255,255,.46));border:1px solid rgba(255,255,255,.7);box-shadow:0 10px 22px -14px rgba(20,35,90,.4),inset 0 1px 0 rgba(255,255,255,.95)}
+.fd-cols .fd-sec p{font-size:clamp(13px,1.3vw,16px);line-height:1.55;margin:0}
+.fd-cols .fd-sec label{display:inline-block;padding:2px 11px;border-radius:999px;margin-bottom:6px;font-size:10px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px;box-shadow:inset 0 1px 1px rgba(255,255,255,.55)}
+.fd-sec[data-k="desc"] label{background:linear-gradient(180deg,#ffb870,#f58220);color:var(--on-orange)}
+.fd-sec[data-k="find"] label{background:linear-gradient(180deg,#3a5cc4,#14246a)}
+.fd-sec[data-k="learn"] label{background:linear-gradient(180deg,#2a8236,#124818)}
+.fd-cols .fd-sec.reading{background:rgba(245,130,32,.16);border-left:4px solid var(--or)}
+.fd-cols.rtl{direction:rtl}.fd-cols.rtl .fd-sec.reading{border-left:1px solid rgba(255,255,255,.7);border-right:4px solid var(--or)}
+@media(min-width:769px) and (max-width:999px){.fd-cols{grid-template-columns:1fr;height:auto}.fd-reading{flex:0 0 auto}}
+.fd-alert-root .fd-actions{margin:0;padding:10px 22px 16px;flex-shrink:0}
+.fd-actions .fc-act-btn{position:relative;overflow:hidden;min-height:48px;border-radius:999px;border:1px solid rgba(255,255,255,.4);color:#fff;font-size:13px;font-weight:800;background:linear-gradient(180deg,var(--c1),var(--c2));box-shadow:0 10px 22px -10px var(--glowc),inset 0 2px 1px rgba(255,255,255,calc(var(--fx)*1.6)),inset 0 -8px 12px rgba(0,0,0,calc(var(--fx)*.7));text-shadow:0 1px 2px rgba(0,0,0,.4);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.fd-actions .fc-act-btn::before{content:"";position:absolute;left:7%;right:7%;top:5%;height:46%;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,calc(var(--fx)*1.4)),rgba(255,255,255,0));pointer-events:none}
+.fd-actions .fc-act-btn:hover{transform:translateY(-2px)}.fd-actions .fc-act-btn:active{transform:scale(.96,.92)}
+.fd-actions .fc-act-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.fd-actions .fx-sl{--c1:#3a5cc4;--c2:#14246a;--glowc:rgba(33,64,154,.55)}
+.fd-actions .fx-vi{--c1:#2a8236;--c2:#124818;--glowc:rgba(27,94,32,.55)}
+.fd-actions .fx-co{--c1:#9a52bf;--c2:#5f2780;--glowc:rgba(142,68,173,.5)}
+/* docked mini cards (hidden unless a second window is open) */
+.fd-mini,.ppt-mini,.dual-seg{display:none}
+.fd-mini,.ppt-mini{align-items:center;gap:10px;width:100%;height:100%;padding:10px 14px;cursor:pointer;color:var(--ink,#1A1F2B)}
+.fd-mini-t{display:flex;flex-direction:column;min-width:0;flex:1}.fd-mini-t b{font-size:14px}.fd-mini-t i{font-style:normal;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fd-mini-a{width:40px;height:40px;border:none;border-radius:50%;background:linear-gradient(180deg,#ffb870,#f58220);color:var(--on-orange);cursor:pointer;font-size:16px;display:none}
+.fd-mini-a.pulse{animation:dpulse 1.2s ease-in-out infinite}@keyframes dpulse{50%{opacity:.55}}
+.fd-mini-x,.ppt-mini-x{font-size:18px;opacity:.7}
+.ppt-mini{color:#fff}.ppt-mini-t{flex:1;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dmorph{animation:dsq .55s cubic-bezier(.34,1.3,.64,1)}@keyframes dsq{0%{transform:scale(1)}30%{transform:scale(1.03,.97)}62%{transform:scale(.99,1.015)}100%{transform:scale(1)}}
+@media(min-width:769px){
+  html.dual #pptModal .ppt-modal-box{width:min(92vw,1280px,calc((100vh - 150px)*1.7778))}
+  html.dual-sld #pptModal{z-index:8700}
+  html.dual-sld #fdModal{z-index:8900;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;pointer-events:none;overflow:visible}
+  html.dual-sld #fdCard{position:fixed!important;left:14px;top:14px;width:min(330px,36vw)!important;max-width:none!important;height:78px!important;overflow:hidden;pointer-events:auto;cursor:pointer;border-radius:34px 20px 30px 18px/22px 32px 18px 28px}
+  html.dual-sld #fdCard .fd-ht,html.dual-sld #fdCard .fd-x,html.dual-sld #fdCard .fd-seg,html.dual-sld #fdCard .fd-listen,html.dual-sld #fdCard .fd-main,html.dual-sld #fdCard .fd-actions{display:none!important}
+  html.dual-sld #fdCard .fd-sticky{padding:0;border:0}
+  html.dual-sld #fdCard .fd-head{border:0!important;margin:0;padding:0;height:78px}
+  html.dual-sld #fdCard .fd-mini{display:flex}
+  html.dual-det #pptModal{z-index:8800;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;pointer-events:none}
+  html.dual-det #pptModal .ppt-modal-box{position:fixed;left:14px;top:14px;width:min(330px,36vw);height:78px;pointer-events:auto;cursor:pointer;overflow:hidden;border-radius:20px 34px 18px 30px/28px 22px 32px 18px}
+  html.dual-det #pptModal .ppt-modal-box>*:not(.ppt-mini){display:none}
+  html.dual-det #pptModal .ppt-mini{display:flex}
+}
+@media(max-width:768px){
+  #fdModal:has(.fd-alert-root){padding:0}
+  #fdCard:has(.fd-alert-root){width:100%;max-width:100%;height:100vh;border-radius:0}
+  @supports(height:100dvh){#fdCard:has(.fd-alert-root){height:100dvh}}
+  .fd-alert-root .fd-sticky{padding:10px 14px 8px}
+  .fd-main{display:block;overflow:auto;padding:8px 14px 4px}
+  .fd-media{display:block}.fd-media .fc-imgs{flex-direction:column;height:auto}.fd-media .fc-img{width:100%;height:auto;max-width:none}
+  .fd-cols{display:block;height:auto}.fd-cols .fd-sec{margin-bottom:8px;overflow:visible}
+  .fd-alert-root .fd-actions{padding:8px 14px calc(12px + env(safe-area-inset-bottom,0px))}
+  html.dual-sld #fdModal{display:none!important}
+  html.dual-det #pptModal{display:none!important}
+  html.dual .dual-seg{display:flex}
+  .dual-seg{gap:6px;padding:8px 14px 0}.dual-seg button{flex:1;min-height:44px;border:none;border-radius:999px;font-weight:800;font-size:13px;background:rgba(0,0,0,.08);color:inherit;cursor:pointer}
+  .dual-seg button.on{background:linear-gradient(180deg,#3a5cc4,#14246a);color:#fff}
+  #pptModal .ppt-modal-box{width:100%;border-radius:0}
+  #fxBg i{animation:none}#fxBg i:nth-child(n+3){display:none}
+}
+@media(prefers-reduced-motion:reduce){#fxBg i,.dmorph,.fd-mini-a.pulse{animation:none!important}}
+/* ═══ END POPUP LAYER ═══ */
 /* ═══ PHONE / PORTRAIT LAYER. Everything that changes layout is inside @media(max-width:768px): desktop is untouched. ═══ */
 .more-sheet{display:none;position:fixed;inset:0;z-index:9300}
 .more-sheet.vis{display:block}
@@ -708,6 +815,7 @@ html[dir="rtl"] .exp-menu{right:auto;left:0}
 </head>
 
 <body>
+<div id="fxBg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <button id="stog" onclick="document.getElementById('sb').classList.toggle('open')">&#9776;</button>
 <div id="sb">
   <div class="sb-brand">
@@ -1397,29 +1505,71 @@ function _fcImgStrip(r){
   var u=r.unsafePic||'',s=r.safePic||'';
   if(!u&&!s)return '';
   var out='<div class="fc-imgs">';
-  if(u)out+='<div class="fc-img unsafe"><img src="'+esc(u)+'" loading="lazy" onerror="this.parentElement.style.display=&quot;none&quot;"><span class="fci-tag bad">&#9888; UNSAFE</span></div>';
-  if(s)out+='<div class="fc-img safe"><img src="'+esc(s)+'" loading="lazy" onerror="this.parentElement.style.display=&quot;none&quot;"><span class="fci-tag good">&#10003; SAFE</span></div>';
+  if(u)out+='<div class="fc-img unsafe"><img src="'+esc(u)+'" loading="lazy" onclick="fdZoom(this)" onerror="this.parentElement.style.display=&quot;none&quot;"><span class="fci-tag bad">&#9888; UNSAFE</span></div>';
+  if(s)out+='<div class="fc-img safe"><img src="'+esc(s)+'" loading="lazy" onclick="fdZoom(this)" onerror="this.parentElement.style.display=&quot;none&quot;"><span class="fci-tag good">&#10003; SAFE</span></div>';
   return out+'</div>';
 }
 
 // ── Glassmorph LFI Detail Modal ──────────────────────────────
 var _FD={idx:-1,lang:null};
+// ══ Alert popup: big window, photos on top, three text columns, Slides dock & swap ══
+var DUAL = { slides: false, main: 'det', closing: false };
+function dualClasses() {
+  var r = document.documentElement; r.classList.toggle('dual', DUAL.slides); r.classList.toggle('dual-det', DUAL.slides && DUAL.main === 'det'); r.classList.toggle('dual-sld', DUAL.slides && DUAL.main === 'sld');
+  [].forEach.call(document.querySelectorAll('[data-dual]'), function (b) { b.classList.toggle('on', b.getAttribute('data-dual') === DUAL.main); });
+}
+function dualMorph() {
+  var els = [document.getElementById('fdCard'), document.querySelector('#pptModal .ppt-modal-box')];
+  els.forEach(function (e) { if (!e) return; e.classList.remove('dmorph'); void e.offsetWidth; e.classList.add('dmorph'); });
+  setTimeout(function () { els.forEach(function (e) { if (e) e.classList.remove('dmorph'); }); }, 650);
+}
+function dualOpenSlides(idx) {
+  var e = window._FC_PPT && window._FC_PPT[idx]; if (!e || !e.link) return;
+  if (!pptFileId(e.link)) { window.open(e.link, '_blank'); return; }
+  DUAL.slides = true; DUAL.main = 'sld'; openPptModal(e.link, e.id);
+  var mt = document.getElementById('pptMiniTxt'); if (mt) mt.textContent = e.id + ' \u00b7 Slides';
+  dualClasses(); dualMorph();
+}
+function dualSwap() {
+  if (!DUAL.slides) return; DUAL.main = DUAL.main === 'sld' ? 'det' : 'sld'; dualClasses(); dualMorph();
+  if (DUAL.main === 'sld') { var m = document.getElementById('pptModal'); if (m) setTimeout(function () { m.focus(); }, 60); }
+}
+function dualGo(w) { if (!DUAL.slides) { if (w === 'sld') _fcOpenPpt(_FD.idx); return; } if (DUAL.main !== w) dualSwap(); }
+function dualEnd() { if (!DUAL.slides) return; DUAL.closing = true; try { _pptCloseCore(); } catch (e) {} DUAL.closing = false; DUAL.slides = false; DUAL.main = 'det'; dualClasses(); }
+function closeAllPops() { DUAL.closing = true; try { _pptCloseCore(); } catch (e) {} try { _fdCloseCore(); } catch (e) {} DUAL.slides = false; DUAL.main = 'det'; DUAL.closing = false; dualClasses(); }
+function fdMiniAudio() { if (typeof LFA === 'undefined' || LFA.idx !== _FD.idx) return; if (LFA.st === 'playing') lfaPause(); else if (LFA.st === 'paused') lfaResume(); }
+function fdZoom(img) {
+  var s = img && img.getAttribute('src'); if (!s) return;
+  var lb = document.getElementById('fdLightbox');
+  if (!lb) { lb = document.createElement('div'); lb.id = 'fdLightbox'; lb.innerHTML = '<img alt=""><button aria-label="Close">&#10005;</button>'; lb.onclick = function () { lb.classList.remove('on'); }; document.body.appendChild(lb); }
+  lb.querySelector('img').src = s; lb.classList.add('on');
+}
+function fxPops() { var any = ['fdModal', 'pptModal', 'moreSheet'].some(function (i) { var e = document.getElementById(i); return e && e.classList.contains('vis'); }); document.documentElement.classList.toggle('pops', any); }
+function fxInit() { if (!window.MutationObserver) return; ['fdModal', 'pptModal', 'moreSheet'].forEach(function (i) { var e = document.getElementById(i); if (e) new MutationObserver(fxPops).observe(e, { attributes: true, attributeFilter: ['class'] }); }); fxPops(); }
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  var lb = document.getElementById('fdLightbox'); if (lb && lb.classList.contains('on')) { lb.classList.remove('on'); e.stopImmediatePropagation(); return; }
+  if (document.querySelector('#fdModal.vis .fd-alert-root')) closeFcDetail();
+}, true);
+
 function openFcDetail(idx){
   var entry=window._FC_PPT&&window._FC_PPT[idx];if(!entry)return;
   var r=null;if(RAW){for(var i=0;i<RAW.length;i++){if(RAW[i].id===entry.id){r=RAW[i];break;}}}
   if(!r)return;
+  if(DUAL.slides)dualEnd();
   _FD.idx=idx;_FD.lang=LANG;
   _renderFcDetail(r);
   var modal=document.getElementById('fdModal');
   modal.classList.add('vis');
   document.body.style.overflow='hidden';
 }
-function closeFcDetail(){
+function _fdCloseCore(){
   var modal=document.getElementById('fdModal');
   modal.classList.remove('vis');
   document.body.style.overflow='';
   stopSpeech();
 }
+function closeFcDetail(){ if(DUAL.slides&&!DUAL.closing){closeAllPops();return;} _fdCloseCore(); }
 function fdLang(l){
   _FD.lang=l;
   var entry=window._FC_PPT&&window._FC_PPT[_FD.idx];if(!entry)return;
@@ -1441,23 +1591,26 @@ function _renderFcDetail(r){
   var c=gc(r,lang),dir=lang==='ar'?'rtl':'ltr';
   var accent=catColor(r.cat||'');
   var body=document.getElementById('fdBody');
-  var h='<div class="fd-sticky"><div class="fd-head" style="border-bottom:2px solid '+accent+'">'
-    +'<div><span class="fd-id">'+esc(r.id)+'</span> '+mkbadge(r.st)+'<div class="fd-cat" style="color:'+accent+'">'+esc(r.cat)+'</div></div>'
-    +'<button class="fd-x" aria-label="Close" onclick="closeFcDetail()">&#10005;</button></div>'
-    +'<div class="fd-listen" id="fdListen"></div></div>'
-    +'<div class="fd-meta"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span><span>&#127959; '+esc(r.div)+'</span><span>&#128100; '+esc(r.by)+'</span></div>'
-    +_recurrenceBadge(r)
-    +_fcImgStrip(r)
-    +'<div class="fd-content'+(dir==='rtl'?' rtl':'')+'">'
-    +'<div class="fd-sec" data-k="desc"><label>'+t('fc_desc')+'</label><p>'+(esc(c.desc)||'<em>Not yet translated</em>')+'</p></div>'
-    +'<div class="fd-sec" data-k="find"><label>'+t('fc_find')+'</label><p>'+(esc(c.find)||'<em>Not yet translated</em>')+'</p></div>'
-    +'<div class="fd-sec" data-k="learn"><label>'+t('fc_learn')+'</label><p>'+(esc(c.learn)||'<em>Not yet translated</em>')+'</p></div>'
-    +'</div>'
+  var imgs=_fcImgStrip(r),nt='<em>Not yet translated</em>';
+  var h='<div class="fd-alert-root">'
+    +'<div class="fd-sticky"><div class="fd-head" style="border-bottom:2px solid '+accent+'">'
+      +'<div class="fd-ht"><span class="fd-id">'+esc(r.id)+'</span> '+mkbadge(r.st)+'<div class="fd-cat" style="color:'+accent+'">'+esc(r.cat)+'</div>'
+        +'<div class="fd-meta"><span>&#128205; '+esc(r.loc)+'</span><span>&#128197; '+esc(r.dt)+'</span><span>&#128736; '+esc(r.disc)+'</span><span>&#127959; '+esc(r.div)+'</span><span>&#128100; '+esc(r.by)+'</span></div></div>'
+      +'<div class="fd-mini" role="button" tabindex="0" aria-label="Back to details" onclick="dualSwap()"><span class="fd-mini-t"><b>'+esc(r.id)+'</b><i>'+esc(r.cat)+'</i></span><button class="fd-mini-a" id="fdMiniAudio" aria-label="Audio" onclick="event.stopPropagation();fdMiniAudio()">&#128266;</button><span class="fd-mini-x">&#10530;</span></div>'
+      +'<button class="fd-x" aria-label="Close" onclick="closeFcDetail()">&#10005;</button></div>'
+      +'<div class="fd-seg dual-seg"><button data-dual="det" class="on" onclick="dualGo(\'det\')">Details</button><button data-dual="sld" onclick="dualGo(\'sld\')">Slides</button></div>'
+      +'<div class="fd-listen" id="fdListen"></div></div>'
+    +'<div class="fd-main">'+(imgs?'<div class="fd-media">'+imgs+'</div>':'')+_recurrenceBadge(r)
+      +'<div class="fd-reading'+(imgs?'':' solo')+'"><div class="fd-cols fd-content'+(dir==='rtl'?' rtl':'')+'">'
+        +'<div class="fd-sec" data-k="desc"><label>'+t('fc_desc')+'</label><p>'+(esc(c.desc)||nt)+'</p></div>'
+        +'<div class="fd-sec" data-k="find"><label>'+t('fc_find')+'</label><p>'+(esc(c.find)||nt)+'</p></div>'
+        +'<div class="fd-sec" data-k="learn"><label>'+t('fc_learn')+'</label><p>'+(esc(c.learn)||nt)+'</p></div>'
+      +'</div></div></div>'
     +'<div class="fd-actions">'
-    +'<button class="fc-act-btn ppt-act" onclick="_fcOpenPpt('+_FD.idx+')"'+(r.pptLink?'':' disabled')+'>&#128218; Slides</button>'
-    +'<button class="fc-act-btn vid-act" onclick="closeFcDetail();openCveModal('+_FD.idx+')">&#127909; LFI Video</button>'
-    +'<button class="fc-act-btn" style="background:#8e44ad;color:#fff" onclick="openCommitteeActionForm(&quot;'+esc(r.id)+'&quot;)">&#9878; LFI Committee Action</button>'
-    +'</div>';
+      +'<button class="fc-act-btn ppt-act fx-sl" onclick="_fcOpenPpt('+_FD.idx+')"'+(r.pptLink?'':' disabled')+'>&#128218; Slides</button>'
+      +'<button class="fc-act-btn vid-act fx-vi" onclick="closeFcDetail();openCveModal('+_FD.idx+')">&#127909; LFI Video</button>'
+      +'<button class="fc-act-btn fx-co" onclick="dualEnd();openCommitteeActionForm(&quot;'+esc(r.id)+'&quot;)">&#9878; LFI Committee Action</button>'
+    +'</div></div>';
   body.innerHTML=h;
   var host=document.getElementById('fdListen');if(host)host._k='';
   lfaRenderPopup();
@@ -2265,6 +2418,7 @@ var PPT_IDS_CACHE={}; // fileId → {ids:[], urls:[]} — avoid refetching same 
 function _fcOpenPpt(idx){
   var entry=window._FC_PPT&&window._FC_PPT[idx];
   if(!entry||!entry.link)return;
+  if(document.querySelector('#fdModal.vis .fd-alert-root')&&_FD.idx===idx){dualOpenSlides(idx);return;}
   openPptModal(entry.link,entry.id);
 }
 
@@ -2325,6 +2479,7 @@ function _pptGoSlide(n){
   document.querySelectorAll('.ppt-sd').forEach(function(d,i){d.classList.toggle('active',i===n-1);});
   // UI: label
   var lbl=document.getElementById('pptSlideLabel');
+  try{var mt=document.getElementById('pptMiniTxt');if(mt)mt.textContent=(PPT_STATE.lfiId||'Slides')+' \u00b7 '+n+'/'+PPT_STATE.totalSlides;}catch(e){}
   if(lbl)lbl.textContent='Slide '+n+' of '+PPT_STATE.totalSlides+' \u2014 '+(SLIDE_LABELS[n-1]||'');
   // UI: nav arrows
   var prev=document.getElementById('pptNavPrev'),next=document.getElementById('pptNavNext');
@@ -2377,10 +2532,11 @@ function _pptShowLoading(show){var el=document.getElementById('pptLoading');if(e
 
 // Public wrappers called from HTML onclick
 function pptGoSlide(n,tabBtn){_pptGoSlide(n);}
-function closePptModal(){
+function _pptCloseCore(){
   var modal=document.getElementById('pptModal');if(modal)modal.classList.remove('vis');
   _pptResetUI();document.body.style.overflow='';
 }
+function closePptModal(){ if(DUAL.slides&&!DUAL.closing){closeAllPops();return;} _pptCloseCore(); }
 document.addEventListener('click',function(e){if(e.target.id==='pptModal')closePptModal();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closePptModal();});
 
@@ -2989,6 +3145,7 @@ function lfaRenderPopup() {
   var mine = LFA.idx === _FD.idx && LFA.st !== 'idle', key = [mine, LFA.st === 'playing', LFA.req, LFA.rate, LFA.mode, LFA.err, _FD.lang, LANG].join('|');
   if (host._k !== key) { host._k = key; host.innerHTML = lfaBarHtml(); }
   var f = host.querySelector('.fdl-fill'); if (f) f.style.width = Math.round(LFA.prog * 100) + '%';
+  var mb = document.getElementById('fdMiniAudio'); if (mb) { mb.style.display = (mine && LFA.st !== 'idle') ? 'inline-block' : 'none'; mb.className = 'fd-mini-a' + (LFA.st === 'playing' ? ' pulse' : ''); }
   var secs = document.querySelectorAll('#fdBody .fd-sec[data-k]');
   for (var i = 0; i < secs.length; i++) { var on = mine && LFA.lang === _FD.lang && (LFA.st === 'playing' || LFA.st === 'paused') && secs[i].getAttribute('data-k') === LFA.seg; secs[i].classList.toggle('reading', on); }
 }
@@ -4386,6 +4543,7 @@ function _startAutoRetry(){
 document.addEventListener('DOMContentLoaded',function(){
   try{bbsApplyFlag();}catch(e){}
   try{mobInit();}catch(e){}
+  try{fxInit();}catch(e){}
   try{var _sv=localStorage.getItem('lfi_lang');if(_sv==='hi'||_sv==='ar'){setLang(_sv,document.querySelectorAll('.lbt')[_sv==='hi'?1:2]);}}catch(e){}
   // Register PPT slide navigator keyboard/touch events now that DOM is ready
   try{_initPptNavEvents();}catch(e){console.error('_initPptNavEvents() failed:',e);}
@@ -4499,6 +4657,8 @@ window.addEventListener('focus',function(){
 <!-- PPT SLIDE NAVIGATOR MODAL — glassmorphic with slide-by-slide navigation -->
 <div id="pptModal" tabindex="-1" style="outline:none">
   <div class="ppt-modal-box">
+    <div class="ppt-seg dual-seg"><button data-dual="det" onclick="dualGo('det')">Details</button><button data-dual="sld" class="on" onclick="dualGo('sld')">Slides</button></div>
+    <div class="ppt-mini" role="button" tabindex="0" aria-label="Back to slides" onclick="dualSwap()"><span>&#128218;</span><span class="ppt-mini-t" id="pptMiniTxt">Slides</span><span class="ppt-mini-x">&#10530;</span></div>
     <div class="ppt-modal-header">
       <span style="font-size:16px;flex-shrink:0">&#128218;</span>
       <div class="ppt-modal-title" id="pptModalTitle">LFI Alert</div>
